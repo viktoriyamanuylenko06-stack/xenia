@@ -1,0 +1,2601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Xenia's Learning Space</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --cream:#f5f0e8;--ink:#1a1410;--rose:#c8715a;--sage:#7a9e87;
+  --gold:#c9a84c;--paper:#ede8dc;--shadow:rgba(26,20,16,.12);
+  --muted:#7a6e64;--border:rgba(26,20,16,.09);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);min-height:100vh;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:100;opacity:.35;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");}
+
+/* Header */
+header{padding:2.2rem 2rem 0;text-align:center;}
+.greeting{font-weight:300;font-size:.78rem;letter-spacing:.2em;text-transform:uppercase;color:var(--rose);margin-bottom:.55rem;opacity:0;animation:fadeUp .6s ease forwards .1s;}
+h1{font-family:'Playfair Display',serif;font-size:clamp(1.9rem,5vw,3.4rem);font-weight:700;line-height:1.05;letter-spacing:-.02em;opacity:0;animation:fadeUp .7s ease forwards .25s;}
+h1 em{font-style:italic;color:var(--rose);}
+.subtitle{font-size:.88rem;color:var(--muted);margin-top:.6rem;font-weight:300;opacity:0;animation:fadeUp .7s ease forwards .4s;}
+/* Save indicator */
+.save-bar{display:flex;align-items:center;justify-content:center;gap:.5rem;font-size:.68rem;color:var(--sage);margin-top:.5rem;height:20px;opacity:0;animation:fadeUp .6s ease forwards .45s;}
+.save-bar.show .save-status{opacity:1;}
+.save-status{opacity:0;transition:opacity .5s;display:flex;align-items:center;gap:.3rem;}
+.sync-btns{display:flex;gap:.4rem;margin-left:.4rem;}
+.btn-sync{padding:.18rem .6rem;border-radius:3px;font-family:'DM Sans',sans-serif;font-size:.67rem;font-weight:500;cursor:pointer;transition:all .2s;border:1.5px solid var(--border);background:var(--paper);color:var(--muted);}
+.btn-sync:hover{border-color:var(--rose);color:var(--rose);}
+.btn-sync.export{border-color:var(--sage);color:var(--sage);}
+.btn-sync.export:hover{background:var(--sage);color:white;}
+.btn-sync.import-btn{border-color:var(--gold);color:var(--gold);}
+.btn-sync.import-btn:hover{background:var(--gold);color:white;}
+.save-dot{width:6px;height:6px;border-radius:50%;background:var(--sage);}
+
+/* Tabs */
+.tab-nav{display:flex;justify-content:center;margin:1.6rem auto 0;max-width:440px;background:var(--paper);border-radius:4px;padding:3px;opacity:0;animation:fadeUp .6s ease forwards .55s;}
+.tab-btn{flex:1;padding:.52rem .9rem;background:transparent;border:none;font-family:'DM Sans',sans-serif;font-size:.79rem;font-weight:500;color:var(--muted);cursor:pointer;border-radius:3px;transition:all .2s;white-space:nowrap;}
+.tab-btn.active{background:var(--ink);color:var(--cream);}
+.tab-btn:not(.active):hover{color:var(--ink);}
+.tab-page{display:none;}.tab-page.active{display:block;}
+
+/* Units page */
+.units-page{max-width:860px;margin:2rem auto 3rem;padding:0 1.5rem;}
+.units-page-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.4rem;opacity:0;animation:fadeUp .5s ease forwards .05s;}
+.units-page-header h2{font-family:'Playfair Display',serif;font-size:1.45rem;font-weight:700;}
+.units-page-header h2 span{color:var(--rose);font-style:italic;}
+.btn-new-unit{display:flex;align-items:center;gap:.4rem;background:var(--ink);color:var(--cream);border:none;border-radius:3px;padding:.48rem .9rem;font-family:'DM Sans',sans-serif;font-size:.77rem;font-weight:500;cursor:pointer;transition:background .2s;}
+.btn-new-unit:hover{background:var(--rose);}
+
+/* Unit accordion */
+.unit-item{background:var(--paper);border-radius:5px;border:1px solid var(--border);margin-bottom:.6rem;overflow:hidden;transition:box-shadow .2s;opacity:0;animation:fadeUp .45s ease forwards;}
+.unit-item:nth-child(1){animation-delay:.07s}.unit-item:nth-child(2){animation-delay:.14s}.unit-item:nth-child(3){animation-delay:.21s}
+.unit-item:hover{box-shadow:0 3px 16px var(--shadow);}
+.unit-header{display:flex;align-items:center;padding:.9rem 1.4rem;cursor:pointer;user-select:none;gap:1rem;}
+.unit-number{font-family:'Playfair Display',serif;font-size:.7rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--rose);min-width:52px;}
+.unit-title-text{font-size:.9rem;font-weight:500;flex:1;}
+.unit-chevron{font-size:.6rem;color:#9a8e84;transition:transform .25s;margin-left:.4rem;}
+.unit-item.open .unit-chevron{transform:rotate(180deg);}
+.unit-body{max-height:0;overflow:hidden;transition:max-height .45s ease;}
+.unit-item.open .unit-body{max-height:999999px;}
+.unit-body-inner{padding:.5rem 1.2rem 1.2rem;border-top:1px solid var(--border);}
+
+/* ── Lesson sub-accordion ── */
+.lesson-accordion{border:1px solid var(--border);border-radius:4px;margin-top:.6rem;overflow:hidden;}
+.lesson-acc-header{display:flex;align-items:center;padding:.65rem 1rem;cursor:pointer;user-select:none;gap:.7rem;background:rgba(26,20,16,.02);transition:background .15s;}
+.lesson-acc-header:hover{background:rgba(26,20,16,.045);}
+.lesson-acc-tag{font-family:'Playfair Display',serif;font-size:.75rem;font-weight:700;color:var(--rose);min-width:68px;flex-shrink:0;}
+.lesson-acc-title{font-size:.78rem;font-weight:400;flex:1;color:var(--muted);}
+.lesson-acc-meta{font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;color:#bbb;white-space:nowrap;}
+.prog-ring{position:relative;width:26px;height:26px;flex-shrink:0;}
+.prog-ring svg{transform:rotate(-90deg);}
+.prog-ring .bg{stroke:rgba(26,20,16,.1);fill:none;stroke-width:2.5;}
+.prog-ring .fg{stroke:var(--sage);fill:none;stroke-width:2.5;stroke-linecap:round;stroke-dasharray:70;stroke-dashoffset:70;transition:stroke-dashoffset .5s ease;}
+.prog-ring .label{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:.46rem;font-weight:700;color:var(--muted);}
+.lesson-acc-chevron{font-size:.55rem;color:#9a8e84;transition:transform .25s;margin-left:.2rem;}
+.lesson-accordion.open .lesson-acc-chevron{transform:rotate(180deg);}
+.lesson-acc-body{max-height:0;overflow:hidden;transition:max-height .4s ease;}
+.lesson-accordion.open .lesson-acc-body{max-height:999999px;}
+.lesson-acc-inner{padding:.4rem .9rem 1rem;}
+.lesson-meta-line{font-size:.67rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:.35rem 0 .8rem;padding-bottom:.5rem;border-bottom:1px solid var(--border);}
+
+/* Section tags */
+.section-tag{display:inline-block;font-size:.6rem;font-weight:700;letter-spacing:.13em;text-transform:uppercase;padding:.16rem .5rem;border-radius:2px;margin-bottom:.6rem;margin-top:.7rem;}
+.tag-vocab{background:#d4e8dc;color:#3a6e50;}.tag-grammar{background:#dce8f0;color:#2a5870;}
+.tag-pronun{background:#f0e8d0;color:#7a5820;}.tag-listen{background:#e8dce0;color:#6a3040;}
+.tag-writing{background:#e0e8dc;color:#3a5838;}
+
+/* Exercise blocks */
+.ex-block{margin-bottom:1.3rem;}
+.ex-block:last-child{margin-bottom:.4rem;}
+.ex-instruction{font-size:.84rem;font-weight:500;line-height:1.5;margin-bottom:.7rem;color:#2a1e18;}
+.ex-instruction strong{font-weight:700;}
+.ex-items{list-style:none;counter-reset:item;}
+.ex-items li{counter-increment:item;display:flex;gap:.55rem;padding:.45rem 0;border-bottom:1px solid rgba(26,20,16,.05);font-size:.82rem;line-height:1.6;align-items:flex-start;flex-wrap:wrap;}
+.ex-items li:last-child{border-bottom:none;}
+.ex-items li::before{content:counter(item);min-width:17px;font-weight:700;color:var(--rose);font-size:.75rem;padding-top:.18rem;flex-shrink:0;}
+
+/* Multiple choice pills */
+.pick{display:inline-flex;gap:.28rem;flex-wrap:wrap;vertical-align:middle;}
+.pick-opt{padding:.12rem .52rem;border:1.5px solid var(--border);border-radius:20px;font-size:.75rem;cursor:pointer;transition:all .15s;font-family:'DM Sans',sans-serif;background:var(--cream);}
+.pick-opt:hover{border-color:var(--rose);}
+.pick-opt.selected{background:var(--rose);color:white;border-color:var(--rose);}
+.pick-opt.pick-correct{background:var(--sage)!important;color:white!important;border-color:var(--sage)!important;}
+.pick-opt.pick-wrong{background:#c8715a!important;color:white!important;border-color:#c8715a!important;}
+.pick-opt.pick-hint{background:var(--gold)!important;color:white!important;border-color:var(--gold)!important;}
+
+/* Gap inputs */
+.gap{display:inline-block;border:none;border-bottom:1.5px solid #c8b4a0;background:transparent;font-family:'DM Sans',sans-serif;font-size:.82rem;color:var(--ink);outline:none;min-width:88px;padding:.04rem .22rem;vertical-align:middle;transition:border-color .2s;}
+.gap:focus{border-color:var(--ink);}
+.gap.sm{min-width:54px;}.gap.lg{min-width:155px;}
+.gap.correct{border-bottom-color:var(--sage)!important;background:rgba(122,158,135,.08);}
+.gap.wrong{border-bottom-color:#c8715a!important;background:rgba(200,113,90,.07);}
+.gap.hint-on{border-bottom-color:var(--gold)!important;}
+.order-input{width:34px;border:none;border-bottom:1.5px solid #c8b4a0;background:transparent;font-family:'DM Sans',sans-serif;font-size:.82rem;text-align:center;outline:none;padding:.04rem;}
+.order-input.correct{border-bottom-color:var(--sage)!important;background:rgba(122,158,135,.08);}
+.order-input.wrong{border-bottom-color:#c8715a!important;background:rgba(200,113,90,.07);}
+
+/* T/F */
+.tf-row{display:flex;align-items:center;padding:.4rem 0;font-size:.82rem;border-bottom:1px solid rgba(26,20,16,.05);gap:.5rem;}
+.tf-row:last-child{border-bottom:none;}
+.tf-n{min-width:17px;font-weight:700;color:var(--rose);font-size:.74rem;flex-shrink:0;}
+.tf-btns{display:flex;gap:.28rem;margin-left:auto;flex-shrink:0;}
+.tf-btn{padding:.09rem .52rem;border:1.5px solid var(--border);border-radius:12px;font-size:.7rem;font-weight:600;cursor:pointer;background:var(--cream);transition:all .15s;font-family:'DM Sans',sans-serif;}
+.tf-btn:hover{border-color:var(--rose);}
+.tf-btn.sel-t,.tf-btn.tf-correct-t{background:var(--sage);color:white;border-color:var(--sage);}
+.tf-btn.sel-f,.tf-btn.tf-correct-f{background:#c8715a;color:white;border-color:#c8715a;}
+.tf-btn.tf-wrong{background:#c8715a!important;color:white!important;border-color:#c8715a!important;opacity:.6;}
+.tf-btn.tf-right-answer{background:var(--sage)!important;color:white!important;border-color:var(--sage)!important;}
+
+/* Conversation */
+.convo{background:rgba(26,20,16,.025);border-radius:4px;padding:.85rem 1rem;font-size:.82rem;line-height:1.85;}
+.convo-line{display:flex;gap:.45rem;margin-bottom:.05rem;}
+.convo-sp{font-weight:700;min-width:20px;color:var(--rose);flex-shrink:0;}
+
+/* Word box */
+.word-box{background:rgba(26,20,16,.04);border:1px solid var(--border);border-radius:3px;padding:.55rem .85rem;margin-bottom:.7rem;font-size:.79rem;line-height:1.7;}
+
+/* Write area */
+.write-area{width:100%;border:1.5px solid var(--border);border-radius:3px;padding:.6rem .85rem;font-family:'DM Sans',sans-serif;font-size:.82rem;background:var(--cream);color:var(--ink);outline:none;resize:vertical;min-height:85px;transition:border-color .2s;line-height:1.6;}
+.write-area:focus{border-color:var(--rose);}
+.word-count{font-size:.7rem;color:var(--muted);margin-top:.25rem;}
+
+/* ── Check/Hint action bar ── */
+.ex-actions{display:flex;gap:.3rem;margin-top:.5rem;flex-wrap:wrap;align-items:center;}
+.btn-check{padding:.26rem .7rem;background:var(--sage);color:white;border:none;border-radius:3px;font-family:'DM Sans',sans-serif;font-size:.71rem;font-weight:500;cursor:pointer;transition:background .2s;}
+.btn-check:hover{background:#5d8a6e;}
+.btn-hint{padding:.26rem .7rem;background:var(--gold);color:white;border:none;border-radius:3px;font-family:'DM Sans',sans-serif;font-size:.71rem;font-weight:500;cursor:pointer;transition:background .2s;}
+.btn-hint:hover{background:#b09038;}
+.btn-show-ans{padding:.26rem .7rem;background:rgba(26,20,16,.08);color:var(--ink);border:none;border-radius:3px;font-family:'DM Sans',sans-serif;font-size:.71rem;cursor:pointer;transition:background .2s;}
+.btn-show-ans:hover{background:rgba(26,20,16,.14);}
+.btn-reset-ex{padding:.26rem .6rem;background:none;border:1px solid rgba(26,20,16,.16);border-radius:3px;font-family:'DM Sans',sans-serif;font-size:.69rem;cursor:pointer;color:var(--muted);transition:all .2s;}
+.btn-reset-ex:hover{border-color:var(--rose);color:var(--rose);}
+.ex-score{font-size:.69rem;color:var(--muted);margin-left:.2rem;}
+
+/* Inline answer label shown after check/show */
+.ans-label{display:none;font-size:.72rem;color:var(--sage);font-weight:600;margin-left:.35rem;vertical-align:middle;}
+.ans-label.vis{display:inline;}
+.ans-label.wrong-lbl{color:#c8715a;}
+
+/* Simple HW list */
+.simple-hw-list{list-style:none;}
+.simple-hw-list li{display:flex;align-items:flex-start;gap:.55rem;padding:.45rem 0;border-bottom:1px solid rgba(26,20,16,.05);font-size:.82rem;}
+.simple-hw-list li:last-child{border-bottom:none;}
+.hw-chk{width:15px;height:15px;border:1.5px solid var(--rose);border-radius:3px;flex-shrink:0;margin-top:2px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.58rem;color:white;transition:all .15s;}
+.hw-chk.done{background:var(--sage);border-color:var(--sage);}
+.hw-txt{flex:1;color:#4a3e34;transition:all .15s;}
+.hw-txt.done{text-decoration:line-through;color:#a89e94;}
+.btn-add-hw{display:flex;align-items:center;gap:.32rem;background:none;border:1.5px dashed rgba(26,20,16,.15);border-radius:3px;padding:.35rem .7rem;font-family:'DM Sans',sans-serif;font-size:.74rem;color:var(--muted);cursor:pointer;transition:all .2s;margin-top:.5rem;}
+.btn-add-hw:hover{border-color:var(--rose);color:var(--rose);}
+.add-hw-form{display:none;flex-direction:column;gap:.38rem;margin-top:.5rem;padding:.75rem;background:rgba(26,20,16,.03);border-radius:3px;}
+.add-hw-form.visible{display:flex;}
+.form-row{display:flex;gap:.38rem;flex-wrap:wrap;}
+.form-row input{padding:.44rem .65rem;border:1.5px solid rgba(26,20,16,.14);border-radius:3px;font-family:'DM Sans',sans-serif;font-size:.81rem;background:var(--cream);color:var(--ink);outline:none;transition:border-color .2s;}
+.form-row input:focus{border-color:var(--rose);}
+.inp-main{flex:1;min-width:120px;}.inp-pages{width:85px;}.inp-url{flex:1;min-width:100px;}
+.form-actions{display:flex;gap:.38rem;}
+.btn-save-hw{background:var(--rose);color:white;border:none;border-radius:3px;padding:.4rem .85rem;font-family:'DM Sans',sans-serif;font-size:.76rem;font-weight:500;cursor:pointer;}
+.btn-cancel-hw{background:none;border:1.5px solid rgba(26,20,16,.15);border-radius:3px;padding:.4rem .7rem;font-family:'DM Sans',sans-serif;font-size:.76rem;cursor:pointer;color:var(--muted);}
+
+/* Materials */
+.materials-page{max-width:860px;margin:2rem auto 1rem;padding:0 1.5rem;}
+.materials-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem;opacity:0;animation:fadeUp .5s ease forwards .05s;}
+.materials-header h2{font-family:'Playfair Display',serif;font-size:1.25rem;font-weight:700;}
+.materials-header h2 span{color:var(--rose);font-style:italic;}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(195px,1fr));gap:.85rem;}
+.card{background:var(--paper);border-radius:4px;padding:1.2rem 1.3rem;position:relative;overflow:hidden;cursor:pointer;transition:transform .25s,box-shadow .25s;opacity:0;animation:fadeUp .5s ease forwards;text-decoration:none;color:inherit;display:block;border:1px solid var(--border);}
+.card:nth-child(1){animation-delay:.08s}.card:nth-child(2){animation-delay:.16s}.card:nth-child(3){animation-delay:.24s}.card:nth-child(4){animation-delay:.32s}.card:nth-child(5){animation-delay:.4s}
+.card:hover{transform:translateY(-3px);box-shadow:0 8px 20px var(--shadow);}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--card-accent,var(--rose));transform:scaleX(0);transform-origin:left;transition:transform .25s;}
+.card:hover::before{transform:scaleX(1);}
+.card-icon{font-size:1.35rem;margin-bottom:.75rem;display:block;}
+.card-label{font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;color:var(--card-accent,var(--rose));font-weight:500;margin-bottom:.28rem;}
+.card h3{font-family:'Playfair Display',serif;font-size:.95rem;font-weight:700;line-height:1.2;margin-bottom:.35rem;}
+.card p{font-size:.75rem;color:#6b5f55;line-height:1.42;font-weight:300;}
+.card-arrow{position:absolute;bottom:.9rem;right:1rem;font-size:.88rem;color:var(--card-accent,var(--rose));opacity:0;transform:translateX(-5px);transition:all .25s;}
+.card:hover .card-arrow{opacity:1;transform:translateX(0);}
+.card.sage{--card-accent:var(--sage)}.card.gold{--card-accent:var(--gold)}.card.rose{--card-accent:var(--rose)}.card.blue{--card-accent:#5a7a9e}
+.card.board{grid-column:1/-1;display:flex;align-items:center;gap:1.2rem;padding:1.2rem 1.7rem;background:var(--ink);color:var(--cream);--card-accent:var(--gold);}
+.card.board p{color:#b0a89e}.card.board .card-label{color:var(--gold)}.card.board .card-arrow{color:var(--gold)}
+.board-text{flex:1}.board-visual{width:46px;height:46px;border:2px solid var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;animation:spin 20s linear infinite;}
+@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+.add-section{max-width:860px;margin:.7rem auto 3rem;padding:0 1.5rem;opacity:0;animation:fadeUp .5s ease forwards .5s;}
+.add-btn{display:flex;align-items:center;gap:.55rem;background:transparent;border:1.5px dashed rgba(26,20,16,.2);border-radius:4px;padding:.85rem 1.4rem;width:100%;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:.82rem;color:var(--muted);transition:all .25s;}
+.add-btn:hover{border-color:var(--rose);color:var(--rose);}
+
+/* Modals */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(26,20,16,.55);z-index:200;align-items:center;justify-content:center;backdrop-filter:blur(4px);}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--cream);border-radius:6px;padding:1.9rem;width:90%;max-width:415px;position:relative;animation:scaleIn .25s ease;}
+@keyframes scaleIn{from{transform:scale(.95);opacity:0}to{transform:scale(1);opacity:1}}
+.modal h3{font-family:'Playfair Display',serif;font-size:1.25rem;margin-bottom:1rem;}
+.modal label{display:block;font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:.32rem;margin-top:.8rem;}
+.modal input,.modal select{width:100%;padding:.62rem .82rem;border:1.5px solid rgba(26,20,16,.14);border-radius:3px;font-family:'DM Sans',sans-serif;font-size:.85rem;background:var(--paper);color:var(--ink);outline:none;transition:border-color .2s;}
+.modal input:focus,.modal select:focus{border-color:var(--rose);}
+.modal-actions{display:flex;gap:.75rem;margin-top:1.5rem;}
+.btn-modal-add{flex:1;padding:.72rem;background:var(--rose);color:white;border:none;border-radius:3px;font-family:'DM Sans',sans-serif;font-size:.84rem;font-weight:500;cursor:pointer;transition:background .2s;}
+.btn-modal-add:hover{background:#b5604a;}
+.btn-modal-cancel{padding:.72rem 1.1rem;background:transparent;border:1.5px solid rgba(26,20,16,.18);border-radius:3px;font-family:'DM Sans',sans-serif;font-size:.84rem;cursor:pointer;}
+.close-modal{position:absolute;top:.95rem;right:1.1rem;background:none;border:none;font-size:1.05rem;cursor:pointer;color:var(--muted);}
+
+
+/* ── Unit Notes & Vocab sections ── */
+.unit-notes-section{padding:.6rem 0 .4rem;border-bottom:1px solid var(--border);margin-bottom:.8rem;}
+.unit-notes-row{display:grid;grid-template-columns:1fr 1fr;gap:.8rem;}
+@media(max-width:600px){.unit-notes-row{grid-template-columns:1fr;}}
+.unit-notes-col{display:flex;flex-direction:column;gap:.3rem;}
+.unit-notes-label{font-size:.65rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);}
+.unit-textarea{width:100%;border:1.5px solid var(--border);border-radius:3px;padding:.55rem .7rem;font-family:'DM Sans',sans-serif;font-size:.8rem;background:var(--cream);color:var(--ink);outline:none;resize:vertical;min-height:70px;line-height:1.55;transition:border-color .2s;}
+.unit-textarea:focus{border-color:var(--rose);}
+.unit-textarea::placeholder{color:#bbb;}
+/* ── Global notes ── */
+.global-notes-wrap{max-width:560px;margin:1.2rem auto 0;padding:0 1.5rem;opacity:0;animation:fadeUp .6s ease forwards .48s;}
+.global-notes-header{display:flex;align-items:center;justify-content:space-between;padding:.45rem .75rem;background:var(--paper);border:1px solid var(--border);border-radius:4px 4px 0 0;cursor:pointer;user-select:none;transition:background .15s;}
+.global-notes-header:hover{background:#e8e2d6;}
+.global-notes-title{font-size:.75rem;font-weight:600;letter-spacing:.06em;color:var(--muted);}
+.global-notes-chevron{font-size:.55rem;color:#aaa;transition:transform .25s;}
+.global-notes-wrap.open .global-notes-chevron{transform:rotate(180deg);}
+.global-notes-body{max-height:0;overflow:hidden;transition:max-height .3s ease;}
+.global-notes-wrap.open .global-notes-body{max-height:300px;}
+.global-notes-area{display:block;width:100%;border:1px solid var(--border);border-top:none;border-radius:0 0 4px 4px;padding:.65rem .75rem;font-family:'DM Sans',sans-serif;font-size:.82rem;background:var(--cream);color:var(--ink);outline:none;resize:none;height:100px;line-height:1.6;transition:border-color .2s;}
+.global-notes-area:focus{border-color:var(--rose);}
+.global-notes-area::placeholder{color:#bbb;}
+/* ── Block picker ── */
+.btn-add-block{display:flex;align-items:center;gap:.35rem;background:none;border:1.5px dashed rgba(26,20,16,.18);border-radius:3px;padding:.38rem .75rem;font-family:'DM Sans',sans-serif;font-size:.76rem;color:var(--muted);cursor:pointer;transition:all .2s;margin-top:.7rem;width:100%;justify-content:center;}
+.btn-add-block:hover{border-color:var(--rose);color:var(--rose);}
+.block-picker{display:none;flex-wrap:wrap;gap:.4rem;margin-top:.5rem;padding:.7rem;background:rgba(26,20,16,.03);border-radius:3px;border:1px solid var(--border);}
+.block-picker.open{display:flex;}
+.block-type-btn{padding:.35rem .8rem;border:1.5px solid var(--border);border-radius:3px;font-family:'DM Sans',sans-serif;font-size:.76rem;cursor:pointer;background:var(--cream);color:var(--ink);transition:all .15s;}
+.block-type-btn:hover{border-color:var(--rose);color:var(--rose);}
+/* Image block */
+.block-img-upload{display:flex;flex-direction:column;gap:.5rem;}
+.block-img-preview{max-width:100%;border-radius:4px;display:none;margin-top:.4rem;}
+.block-img-preview.show{display:block;}
+.block-img-btn{padding:.35rem .8rem;background:var(--paper);border:1.5px solid var(--border);border-radius:3px;font-size:.76rem;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;}
+.block-img-btn:hover{border-color:var(--rose);color:var(--rose);}
+.block-img-caption{width:100%;border:1px solid var(--border);border-radius:3px;padding:.4rem .6rem;font-family:'DM Sans',sans-serif;font-size:.8rem;background:var(--paper);outline:none;margin-top:.4rem;}
+.block-img-caption:focus{border-color:var(--rose);}
+/* Text block (rich) */
+.block-text-area{width:100%;min-height:80px;border:1px solid var(--border);border-radius:3px;padding:.6rem .8rem;font-family:'DM Sans',sans-serif;font-size:.85rem;line-height:1.7;background:var(--paper);outline:none;resize:vertical;color:var(--ink);}
+.block-text-area:focus{border-color:var(--rose);}
+/* ── Teacher Mode ── */
+.teacher-mode-btn{position:fixed;bottom:1.2rem;right:1.2rem;background:var(--ink);color:var(--cream);border:none;border-radius:20px;padding:.5rem 1rem;font-family:'DM Sans',sans-serif;font-size:.75rem;font-weight:600;cursor:pointer;z-index:200;box-shadow:0 4px 14px var(--shadow);transition:all .2s;display:flex;align-items:center;gap:.4rem;letter-spacing:.04em;}
+.teacher-mode-btn:hover{background:var(--rose);}
+.teacher-mode-btn.active{background:var(--rose);}
+.teacher-mode-bar{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--ink);color:var(--cream);padding:.5rem 1.5rem;z-index:199;font-size:.75rem;align-items:center;gap:1rem;box-shadow:0 -4px 16px rgba(0,0,0,.2);}
+.teacher-mode-bar.show{display:flex;}
+.teacher-mode-bar span{opacity:.7;}
+/* Editable elements in teacher mode */
+body.teacher-mode [contenteditable="true"]{outline:1.5px dashed rgba(200,113,90,.5);border-radius:3px;padding:.1rem .2rem;background:rgba(200,113,90,.04);cursor:text;min-width:20px;display:inline-block;}
+body.teacher-mode [contenteditable="true"]:focus{outline:2px solid var(--rose);background:rgba(200,113,90,.08);}
+body.teacher-mode input.gap{border-bottom:2px dashed var(--rose)!important;background:rgba(200,113,90,.06)!important;}
+body.teacher-mode input.gap::placeholder{color:var(--rose);opacity:.5;}
+body.teacher-mode .pick-opt{border:1.5px dashed var(--rose)!important;cursor:text!important;}
+body.teacher-mode .pick-opt.selected{border-style:solid!important;}
+body.teacher-mode .lesson-acc-title{cursor:text;}
+body.teacher-mode .ex-actions{opacity:.4;pointer-events:none;}
+body.teacher-mode .btn-edit-ex{opacity:1!important;pointer-events:auto!important;}
+.ans-badge{display:none;font-size:.6rem;background:var(--gold);color:white;padding:.05rem .3rem;border-radius:2px;margin-left:.2rem;vertical-align:middle;}
+body.teacher-mode .ans-badge{display:inline;}
+.ans-edit-popup{display:none;position:absolute;z-index:300;background:white;border:1.5px solid var(--rose);border-radius:6px;padding:.6rem .8rem;box-shadow:0 6px 20px rgba(0,0,0,.15);min-width:180px;}
+.ans-edit-popup.show{display:block;}
+.ans-edit-popup input{width:100%;border:1px solid var(--border);border-radius:3px;padding:.3rem .5rem;font-family:'DM Sans',sans-serif;font-size:.82rem;outline:none;margin-top:.3rem;}
+.ans-edit-popup input:focus{border-color:var(--rose);}
+.ans-edit-popup label{font-size:.68rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);}
+.ans-edit-popup button{margin-top:.4rem;padding:.25rem .6rem;background:var(--rose);color:white;border:none;border-radius:3px;font-size:.72rem;cursor:pointer;width:100%;}
+.btn-edit-ex{padding:.26rem .6rem;background:none;border:1px solid rgba(26,20,16,.16);border-radius:3px;font-family:'DM Sans',sans-serif;font-size:.69rem;cursor:pointer;color:var(--muted);transition:all .2s;}
+.btn-edit-ex:hover{border-color:var(--gold);color:var(--gold);}
+.btn-edit-ex.editing{background:var(--gold);color:white;border-color:var(--gold);}
+.ex-edit-area{width:100%;border:1.5px solid var(--gold);border-radius:3px;padding:.5rem .7rem;font-family:'DM Sans',sans-serif;font-size:.84rem;outline:none;background:rgba(201,168,76,.05);resize:vertical;line-height:1.5;margin-bottom:.4rem;}
+/* Blocks */
+.content-block{border:1px solid var(--border);border-radius:4px;padding:.7rem .9rem;margin-top:.6rem;background:var(--cream);position:relative;}
+.content-block .block-label{font-size:.62rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:.4rem;}
+.content-block .block-delete{position:absolute;top:.5rem;right:.6rem;background:none;border:none;cursor:pointer;color:#c0b4aa;font-size:.75rem;transition:color .15s;}
+.content-block .block-delete:hover{color:var(--rose);}
+.block-textarea{width:100%;border:1px solid var(--border);border-radius:3px;padding:.5rem .65rem;font-family:'DM Sans',sans-serif;font-size:.82rem;background:var(--paper);color:var(--ink);outline:none;resize:vertical;min-height:70px;line-height:1.6;transition:border-color .2s;}
+.block-textarea:focus{border-color:var(--rose);}
+.block-link-row{display:flex;gap:.5rem;align-items:center;}
+.block-link-input{flex:1;border:1px solid var(--border);border-radius:3px;padding:.45rem .65rem;font-family:'DM Sans',sans-serif;font-size:.82rem;background:var(--paper);color:var(--ink);outline:none;transition:border-color .2s;}
+.block-link-input:focus{border-color:var(--rose);}
+.block-link-btn{padding:.4rem .8rem;background:var(--rose);color:white;border:none;border-radius:3px;font-size:.75rem;cursor:pointer;white-space:nowrap;}
+.block-task-list{list-style:none;margin:.3rem 0;}
+.block-task-item{display:flex;align-items:center;gap:.5rem;padding:.3rem 0;font-size:.82rem;border-bottom:1px solid rgba(26,20,16,.05);}
+.block-task-item:last-child{border-bottom:none;}
+.block-task-check{width:14px;height:14px;border:1.5px solid var(--rose);border-radius:3px;flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.58rem;color:white;transition:all .15s;}
+.block-task-check.done{background:var(--sage);border-color:var(--sage);}
+.block-task-text{flex:1;}
+.block-task-text.done{text-decoration:line-through;color:#a89e94;}
+.block-add-task{display:flex;gap:.4rem;margin-top:.5rem;}
+.block-add-task input{flex:1;border:1px solid var(--border);border-radius:3px;padding:.4rem .6rem;font-family:'DM Sans',sans-serif;font-size:.8rem;background:var(--paper);outline:none;}
+.block-add-task input:focus{border-color:var(--rose);}
+.block-add-task button{padding:.4rem .7rem;background:var(--sage);color:white;border:none;border-radius:3px;font-size:.78rem;cursor:pointer;}
+.vocab-table{width:100%;border-collapse:collapse;font-size:.82rem;margin-top:.3rem;}
+.vocab-table th{text-align:left;font-size:.65rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);padding:.3rem .5rem;border-bottom:1.5px solid var(--border);}
+.vocab-table td{padding:.3rem .5rem;border-bottom:1px solid rgba(26,20,16,.05);}
+.vocab-table input{width:100%;border:none;background:transparent;font-family:'DM Sans',sans-serif;font-size:.82rem;color:var(--ink);outline:none;padding:.1rem 0;}
+.vocab-table tr:last-child td{border-bottom:none;}
+.btn-add-vocab-row{font-size:.73rem;color:var(--muted);background:none;border:none;cursor:pointer;margin-top:.4rem;padding:.2rem 0;}
+.btn-add-vocab-row:hover{color:var(--rose);}
+footer{text-align:center;padding:2rem;font-size:.7rem;color:#a89e94;letter-spacing:.05em;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(15px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:600px){.card.board{flex-direction:column;text-align:center}h1{font-size:1.9rem}.lesson-acc-title{display:none}}
+</style>
+</head>
+<body>
+<header>
+  <p class="greeting">Learning Space</p>
+  <h1>Hello, <em>Xenia</em> ✦</h1>
+  <p class="subtitle">Everything you need — in one place.</p>
+  <div class="save-bar" id="saveBar">
+    <div class="save-status"></div>
+  </div>
+  <div class="global-notes-wrap">
+    <div class="global-notes-header" onclick="toggleGlobalNotes()">
+      <span class="global-notes-title">🗒 Notes</span>
+      <span class="global-notes-chevron" id="globalNotesChevron">▼</span>
+    </div>
+    <div class="global-notes-body" id="globalNotesBody">
+      <textarea class="global-notes-area" id="globalNotes" placeholder="General notes, reminders, anything…" oninput="saveAll()"></textarea>
+    </div>
+  </div>
+  <nav class="tab-nav" style="max-width:680px">
+    <button class="tab-btn active" data-tab="classwork">🖊 Classwork</button>
+    <button class="tab-btn" data-tab="homework">✏️ Homework</button>
+    <button class="tab-btn" data-tab="vocabulary">📖 Vocabulary</button>
+    <button class="tab-btn" data-tab="review">⭐ Review</button>
+    <button class="tab-btn" data-tab="materials">📚 Materials</button>
+  </nav>
+</header>
+
+<!-- CLASSWORK TAB -->
+<div class="tab-page active" id="tab-classwork">
+  <div class="units-page">
+    <div class="units-page-header">
+      <h2><span>Classwork</span> Units</h2>
+      <button class="btn-new-unit" onclick="openModal('cunit')">＋ Add unit</button>
+    </div>
+    <div id="cwUnitsList">
+      <div class="unit-item" id="cw-unit-1">
+        <div class="unit-header" onclick="toggleUnit('cw-unit-1')">
+          <span class="unit-number">Unit 1</span><span class="unit-title-text">Unit 1</span>
+          <span class="unit-hw-count" id="count-cw-unit-1">0 tasks</span><span class="unit-chevron">▼</span>
+        </div>
+        <div class="unit-body"><div class="unit-body-inner">
+
+<!-- Notes & Vocab for unit 1 -->
+<div class="unit-notes-section">
+  <div class="unit-notes-row">
+    <div class="unit-notes-col">
+      <div class="unit-notes-label">📝 Homework Notes</div>
+      <textarea class="unit-textarea" id="hwnotes-cw-1" placeholder="Write what's assigned for homework…" oninput="saveAll()"></textarea>
+    </div>
+    <div class="unit-notes-col">
+      <div class="unit-notes-label">📖 Vocabulary</div>
+      <textarea class="unit-textarea" id="vocabnotes-cw-1" placeholder="New words, phrases, translations…" oninput="saveAll()"></textarea>
+    </div>
+  </div>
+</div>
+          <ul id="hw-cw-unit-1" style="list-style:none"></ul>
+          <button class="btn-add-hw" onclick="showHwForm('cw-unit-1')">＋ Add classwork</button>
+          <div class="add-hw-form" id="hwform-cw-unit-1">
+            <div class="form-row"><input type="text" class="inp-main" placeholder="Task…" id="hwtxt-cw-unit-1"><input type="text" class="inp-pages" placeholder="p. 10" id="hwpages-cw-unit-1"></div>
+            <div class="form-row"><input type="url" class="inp-url" placeholder="Link (optional)" id="hwurl-cw-unit-1"></div>
+            <div class="form-actions"><button class="btn-save-hw" onclick="saveHw('cw-unit-1')">Save</button><button class="btn-cancel-hw" onclick="hideHwForm('cw-unit-1')">Cancel</button></div>
+          </div>
+        
+<div id="blocks-cw-unit-1"></div>
+<div class="block-picker" id="blockpicker-cw-unit-1">
+  <button class="block-type-btn" onclick="addBlock('cw-unit-1','note')">📝 Note</button>
+  <button class="block-type-btn" onclick="addBlock('cw-unit-1','text')">📄 Text</button>
+  <button class="block-type-btn" onclick="addBlock('cw-unit-1','image')">🖼️ Image</button>
+  <button class="block-type-btn" onclick="addBlock('cw-unit-1','link')">🔗 Link</button>
+  <button class="block-type-btn" onclick="addBlock('cw-unit-1','task')">✅ Tasks</button>
+  <button class="block-type-btn" onclick="addBlock('cw-unit-1','vocab')">📋 Vocabulary</button>
+</div>
+<button class="btn-add-block" onclick="toggleBlockPicker('cw-unit-1')">＋ Add block</button>
+</div></div>
+      </div>
+      <div class="unit-item" id="cw-unit-2">
+        <div class="unit-header" onclick="toggleUnit('cw-unit-2')">
+          <span class="unit-number">Unit 2</span><span class="unit-title-text">Unit 2</span>
+          <span class="unit-hw-count" id="count-cw-unit-2">0 tasks</span><span class="unit-chevron">▼</span>
+        </div>
+        <div class="unit-body"><div class="unit-body-inner">
+
+<!-- Notes & Vocab for unit 2 -->
+<div class="unit-notes-section">
+  <div class="unit-notes-row">
+    <div class="unit-notes-col">
+      <div class="unit-notes-label">📝 Homework Notes</div>
+      <textarea class="unit-textarea" id="hwnotes-cw-2" placeholder="Write what's assigned for homework…" oninput="saveAll()"></textarea>
+    </div>
+    <div class="unit-notes-col">
+      <div class="unit-notes-label">📖 Vocabulary</div>
+      <textarea class="unit-textarea" id="vocabnotes-cw-2" placeholder="New words, phrases, translations…" oninput="saveAll()"></textarea>
+    </div>
+  </div>
+</div>
+          <ul id="hw-cw-unit-2" style="list-style:none"></ul>
+          <button class="btn-add-hw" onclick="showHwForm('cw-unit-2')">＋ Add classwork</button>
+          <div class="add-hw-form" id="hwform-cw-unit-2">
+            <div class="form-row"><input type="text" class="inp-main" placeholder="Task…" id="hwtxt-cw-unit-2"><input type="text" class="inp-pages" placeholder="p. 10" id="hwpages-cw-unit-2"></div>
+            <div class="form-row"><input type="url" class="inp-url" placeholder="Link (optional)" id="hwurl-cw-unit-2"></div>
+            <div class="form-actions"><button class="btn-save-hw" onclick="saveHw('cw-unit-2')">Save</button><button class="btn-cancel-hw" onclick="hideHwForm('cw-unit-2')">Cancel</button></div>
+          </div>
+        
+<div id="blocks-cw-unit-2"></div>
+<div class="block-picker" id="blockpicker-cw-unit-2">
+  <button class="block-type-btn" onclick="addBlock('cw-unit-2','note')">📝 Note</button>
+  <button class="block-type-btn" onclick="addBlock('cw-unit-2','text')">📄 Text</button>
+  <button class="block-type-btn" onclick="addBlock('cw-unit-2','image')">🖼️ Image</button>
+  <button class="block-type-btn" onclick="addBlock('cw-unit-2','link')">🔗 Link</button>
+  <button class="block-type-btn" onclick="addBlock('cw-unit-2','task')">✅ Tasks</button>
+  <button class="block-type-btn" onclick="addBlock('cw-unit-2','vocab')">📋 Vocabulary</button>
+</div>
+<button class="btn-add-block" onclick="toggleBlockPicker('cw-unit-2')">＋ Add block</button>
+</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- HOMEWORK TAB -->
+<div class="tab-page" id="tab-homework">
+  <div class="units-page">
+    <div class="units-page-header">
+      <h2><span>Homework</span> Units</h2>
+      <button class="btn-new-unit" onclick="openModal('hwunit')">＋ Add unit</button>
+    </div>
+    <div id="hwUnitsList">
+
+      <div class="unit-item open" id="hw-unit-1">
+        <div class="unit-header" onclick="toggleUnit('hw-unit-1')">
+          <span class="unit-number">Unit 1</span>
+          <span class="unit-title-text">Unit 1</span>
+          <span class="unit-hw-count" id="count-hw-unit-1"></span>
+          <span class="unit-chevron">▼</span>
+        </div>
+        <div class="unit-body"><div class="unit-body-inner">
+
+<div class="unit-notes-section">
+  <div class="unit-notes-row">
+    <div class="unit-notes-col">
+      <div class="unit-notes-label">📝 Homework Notes</div>
+      <textarea class="unit-textarea" id="hwnotes-hw-1" placeholder="Notes…" oninput="saveAll()"></textarea>
+    </div>
+    <div class="unit-notes-col">
+      <div class="unit-notes-label">📖 Vocabulary</div>
+      <textarea class="unit-textarea" id="vocabnotes-hw-1" placeholder="New words…" oninput="saveAll()"></textarea>
+    </div>
+  </div>
+</div>
+
+<!-- LESSON 1A -->
+<div class="lesson-accordion" id="x-acc-1a">
+  <div class="lesson-acc-header" onclick="toggleAcc('x-acc-1a')">
+    <span class="lesson-acc-tag">Lesson 1A</span>
+    <span class="lesson-acc-title">Jobs &amp; studies · Present simple: I, you, we, they</span>
+    <span class="lesson-acc-chevron">▼</span>
+  </div>
+  <div class="lesson-acc-body"><div class="lesson-acc-inner">
+  <div class="lesson-meta-line">Grammar: present simple I, you, we, they · Vocabulary: jobs and studies · Pronunciation: weak forms and linking: do you</div>
+
+  <span class="section-tag tag-vocab">Vocabulary — jobs and studies</span>
+
+  <div class="ex-block" id="x-ex-1a-1">
+    <p class="ex-instruction"><strong>1A</strong> Complete the phrases with the words in the box.</p>
+    <div class="word-box">art · basketball · bus · business · farm · hotel · office · tennis · train · university</div>
+    <p style="font-size:.83rem;line-height:2.2">
+      <input class="gap" type="text" placeholder="…"> | <input class="gap" type="text" placeholder="…"> player<br>
+      <input class="gap" type="text" placeholder="…"> | <input class="gap" type="text" placeholder="…"> worker<br>
+      <input class="gap" type="text" placeholder="…"> | <input class="gap" type="text" placeholder="…"> driver<br>
+      <input class="gap" type="text" placeholder="…"> | <input class="gap" type="text" placeholder="…"> student<br>
+      <input class="gap" type="text" placeholder="…"> | <input class="gap" type="text" placeholder="…"> manager
+    </p>
+    <div class="ex-actions">
+      <button class="btn-reset-ex" onclick="resetExercise('x-ex-1a-1')">↺ Reset</button>
+      <button class="btn-edit-ex" onclick="toggleEditExercise(this,'x-ex-1a-1')">✏️ Edit</button>
+    </div>
+  </div>
+
+  <div class="ex-block" id="x-ex-1a-1b">
+    <p class="ex-instruction"><strong>1B</strong> Choose the correct word to complete the sentences.</p>
+    <ol class="ex-items">
+      <li>I'm a taxi <span class="pick"><span class="pick-opt" onclick="pick(this)">a worker</span><span class="pick-opt" onclick="pick(this)">b driver</span><span class="pick-opt" onclick="pick(this)">c player</span></span> and I work at night.</li>
+      <li>Are you a university <span class="pick"><span class="pick-opt" onclick="pick(this)">a driver</span><span class="pick-opt" onclick="pick(this)">b player</span><span class="pick-opt" onclick="pick(this)">c student</span></span>?</li>
+      <li>I'd like to be a business <span class="pick"><span class="pick-opt" onclick="pick(this)">a manager</span><span class="pick-opt" onclick="pick(this)">b player</span><span class="pick-opt" onclick="pick(this)">c driver</span></span>.</li>
+      <li>I'm an office <span class="pick"><span class="pick-opt" onclick="pick(this)">a driver</span><span class="pick-opt" onclick="pick(this)">b student</span><span class="pick-opt" onclick="pick(this)">c worker</span></span> and I work from 9 to 5.</li>
+      <li>Would you like to be a train <span class="pick"><span class="pick-opt" onclick="pick(this)">a driver</span><span class="pick-opt" onclick="pick(this)">b player</span><span class="pick-opt" onclick="pick(this)">c student</span></span>?</li>
+      <li>My favourite tennis <span class="pick"><span class="pick-opt" onclick="pick(this)">a worker</span><span class="pick-opt" onclick="pick(this)">b player</span><span class="pick-opt" onclick="pick(this)">c driver</span></span> is Ashleigh Barty.</li>
+    </ol>
+    <div class="ex-actions">
+      <button class="btn-reset-ex" onclick="resetExercise('x-ex-1a-1b')">↺ Reset</button>
+      <button class="btn-edit-ex" onclick="toggleEditExercise(this,'x-ex-1a-1b')">✏️ Edit</button>
+    </div>
+  </div>
+
+  <div class="ex-block" id="x-ex-1a-2a">
+    <p class="ex-instruction"><strong>2A</strong> Complete the words with one letter in each gap. Some letters are given.</p>
+    <ol class="ex-items">
+      <li>a<input class="gap sm" type="text" placeholder="">t<input class="gap sm" type="text" placeholder="">r</li>
+      <li>s<input class="gap sm" type="text" placeholder="">p<input class="gap sm" type="text" placeholder="">a<input class="gap sm" type="text" placeholder="">s<input class="gap sm" type="text" placeholder="">a<input class="gap sm" type="text" placeholder="">t</li>
+      <li>p<input class="gap sm" type="text" placeholder="">l<input class="gap sm" type="text" placeholder="">t</li>
+      <li>e<input class="gap sm" type="text" placeholder="">g<input class="gap sm" type="text" placeholder="">n<input class="gap sm" type="text" placeholder="">er</li>
+      <li>p<input class="gap sm" type="text" placeholder="">l<input class="gap sm" type="text" placeholder="">ce o<input class="gap sm" type="text" placeholder="">f<input class="gap sm" type="text" placeholder="">cer</li>
+      <li>wr<input class="gap sm" type="text" placeholder="">t<input class="gap sm" type="text" placeholder="">r</li>
+      <li>l<input class="gap sm" type="text" placeholder="">w<input class="gap sm" type="text" placeholder="">er</li>
+      <li>n<input class="gap sm" type="text" placeholder="">rs<input class="gap sm" type="text" placeholder=""></li>
+      <li>re<input class="gap sm" type="text" placeholder="">i<input class="gap sm" type="text" placeholder="">d</li>
+      <li>un<input class="gap sm" type="text" placeholder="">plo<input class="gap sm" type="text" placeholder="">ed</li>
+    </ol>
+    <div class="ex-actions">
+      <button class="btn-reset-ex" onclick="resetExercise('x-ex-1a-2a')">↺ Reset</button>
+      <button class="btn-edit-ex" onclick="toggleEditExercise(this,'x-ex-1a-2a')">✏️ Edit</button>
+    </div>
+  </div>
+
+  <div class="ex-block" id="x-ex-1a-2b">
+    <p class="ex-instruction"><strong>2B</strong> Match the jobs from the box with the sentences (1–6).</p>
+    <div class="word-box">digital designer · doctor · pilot · politician · scientist · singer</div>
+    <ol class="ex-items">
+      <li>I help people who are ill. → <input class="gap" type="text" placeholder="job…"></li>
+      <li>I make music. → <input class="gap" type="text" placeholder="job…"></li>
+      <li>I work in the government. → <input class="gap" type="text" placeholder="job…"></li>
+      <li>I study new medicines. → <input class="gap" type="text" placeholder="job…"></li>
+      <li>I make websites for different companies. → <input class="gap" type="text" placeholder="job…"></li>
+      <li>I fly planes. → <input class="gap" type="text" placeholder="job…"></li>
+    </ol>
+    <div class="ex-actions">
+      <button class="btn-reset-ex" onclick="resetExercise('x-ex-1a-2b')">↺ Reset</button>
+      <button class="btn-edit-ex" onclick="toggleEditExercise(this,'x-ex-1a-2b')">✏️ Edit</button>
+    </div>
+  </div>
+
+  <span class="section-tag tag-grammar">Grammar — present simple: I, you, we, they</span>
+
+  <div class="ex-block" id="x-ex-1a-3a">
+    <p class="ex-instruction"><strong>3A</strong> Choose the correct word to complete the sentences.</p>
+    <ol class="ex-items">
+      <li>They <span class="pick"><span class="pick-opt" onclick="pick(this)">don't</span><span class="pick-opt" onclick="pick(this)">are</span><span class="pick-opt" onclick="pick(this)">do</span></span> scientists.</li>
+      <li>We <span class="pick"><span class="pick-opt" onclick="pick(this)">don't</span><span class="pick-opt" onclick="pick(this)">aren't</span><span class="pick-opt" onclick="pick(this)">do</span></span> speak Japanese. We speak Korean.</li>
+      <li>A: Do you like sport? B: Yes, I <span class="pick"><span class="pick-opt" onclick="pick(this)">like</span><span class="pick-opt" onclick="pick(this)">am</span><span class="pick-opt" onclick="pick(this)">do</span></span>.</li>
+      <li>My parents <span class="pick"><span class="pick-opt" onclick="pick(this)">do</span><span class="pick-opt" onclick="pick(this)">are</span><span class="pick-opt" onclick="pick(this)">don't</span></span> from Berlin.</li>
+      <li>A: Are Ricky and Sam brothers? B: No, they <span class="pick"><span class="pick-opt" onclick="pick(this)">aren't</span><span class="pick-opt" onclick="pick(this)">don't</span><span class="pick-opt" onclick="pick(this)">are</span></span>.</li>
+      <li>They <span class="pick"><span class="pick-opt" onclick="pick(this)">are</span><span class="pick-opt" onclick="pick(this)">don't</span><span class="pick-opt" onclick="pick(this)">aren't</span></span> Spanish. They're Portuguese.</li>
+    </ol>
+    <div class="ex-actions">
+      <button class="btn-reset-ex" onclick="resetExercise('x-ex-1a-3a')">↺ Reset</button>
+      <button class="btn-edit-ex" onclick="toggleEditExercise(this,'x-ex-1a-3a')">✏️ Edit</button>
+    </div>
+  </div>
+
+  <div class="ex-block" id="x-ex-1a-3b">
+    <p class="ex-instruction"><strong>3B</strong> Complete the text with one word in each gap.</p>
+    <div class="convo" style="font-size:.83rem;line-height:2.1;background:rgba(26,20,16,.03);border-radius:4px;padding:1rem 1.2rem;">
+      I have an international family. My wife and I <sup>1</sup><input class="gap sm" type="text" placeholder="…"> Polish, but we <sup>2</sup><input class="gap sm" type="text" placeholder="…"> live in Poland. We <sup>3</sup><input class="gap sm" type="text" placeholder="…"> in Scotland. Our children <sup>4</sup><input class="gap sm" type="text" placeholder="…"> Scottish and they both <sup>5</sup><input class="gap sm" type="text" placeholder="…"> English. <sup>6</sup><input class="gap sm" type="text" placeholder="…"> my parents live in Poland? No, they <sup>7</sup><input class="gap sm" type="text" placeholder="…">. They <sup>8</sup><input class="gap sm" type="text" placeholder="…"> in France and speak Polish, French and English!
+    </div>
+    <div class="ex-actions">
+      <button class="btn-reset-ex" onclick="resetExercise('x-ex-1a-3b')">↺ Reset</button>
+      <button class="btn-edit-ex" onclick="toggleEditExercise(this,'x-ex-1a-3b')">✏️ Edit</button>
+    </div>
+  </div>
+
+  <div class="ex-block" id="x-ex-1a-3c">
+    <p class="ex-instruction"><strong>3C</strong> Put the words in the correct order to make questions.</p>
+    <ol class="ex-items">
+      <li>you / speak / Do / Spanish? → <input class="gap lg" type="text" placeholder="…" style="min-width:200px"></li>
+      <li>from / are / Where / they? → <input class="gap lg" type="text" placeholder="…" style="min-width:200px"></li>
+      <li>Chiara / Do / know / you? → <input class="gap lg" type="text" placeholder="…" style="min-width:200px"></li>
+      <li>come / do / from / you / Where? → <input class="gap lg" type="text" placeholder="…" style="min-width:200px"></li>
+      <li>your children / Do / go / near here / school / to? → <input class="gap lg" type="text" placeholder="…" style="min-width:200px"></li>
+      <li>have / we / tonight / Do / homework? → <input class="gap lg" type="text" placeholder="…" style="min-width:200px"></li>
+      <li>pizza / like / your parents / Do? → <input class="gap lg" type="text" placeholder="…" style="min-width:200px"></li>
+      <li>do / How / you / know / Tim? → <input class="gap lg" type="text" placeholder="…" style="min-width:200px"></li>
+    </ol>
+    <div class="ex-actions">
+      <button class="btn-reset-ex" onclick="resetExercise('x-ex-1a-3c')">↺ Reset</button>
+      <button class="btn-edit-ex" onclick="toggleEditExercise(this,'x-ex-1a-3c')">✏️ Edit</button>
+    </div>
+  </div>
+
+  <div class="ex-block" id="x-ex-1a-3d">
+    <p class="ex-instruction"><strong>3D</strong> Match the answers (a–h) with the questions (1–8) in Ex 3C.</p>
+    <ol class="ex-items">
+      <li>Question 1 → <input class="gap sm" type="text" placeholder="a–h"></li>
+      <li>Question 2 → <input class="gap sm" type="text" placeholder="a–h"></li>
+      <li>Question 3 → <input class="gap sm" type="text" placeholder="a–h"></li>
+      <li>Question 4 → <input class="gap sm" type="text" placeholder="a–h"></li>
+      <li>Question 5 → <input class="gap sm" type="text" placeholder="a–h"></li>
+      <li>Question 6 → <input class="gap sm" type="text" placeholder="a–h"></li>
+      <li>Question 7 → <input class="gap sm" type="text" placeholder="a–h"></li>
+      <li>Question 8 → <input class="gap sm" type="text" placeholder="a–h"></li>
+    </ol>
+    <p style="font-size:.8rem;color:var(--muted);margin-top:.5rem;line-height:1.9">
+      a I'm from Turkey. · b We work together. · c Yes, they do. They love it! · d No, I don't. I speak Greek. · e Yes, I do. She's nice. · f Yes, we do. It's Exercise 8. · g They're from Egypt. · h No, they don't.
+    </p>
+    <div class="ex-actions">
+      <button class="btn-reset-ex" onclick="resetExercise('x-ex-1a-3d')">↺ Reset</button>
+      <button class="btn-edit-ex" onclick="toggleEditExercise(this,'x-ex-1a-3d')">✏️ Edit</button>
+    </div>
+  </div>
+
+  <span class="section-tag tag-pronun">Pronunciation — weak forms and linking: do you</span>
+
+  <div class="ex-block" id="x-ex-1a-4a">
+    <p class="ex-instruction"><strong>4A</strong> 🔊 1.01 | Listen to the sentences. Choose the stressed word in each of the sentences.</p>
+    <ol class="ex-items">
+      <li>How do you know Sarah? — stressed word: <input class="gap" type="text" placeholder="…"></li>
+      <li>Do you like your job? — stressed word: <input class="gap" type="text" placeholder="…"></li>
+      <li>Do you work with Paul? — stressed word: <input class="gap" type="text" placeholder="…"></li>
+      <li>Where do you live? — stressed word: <input class="gap" type="text" placeholder="…"></li>
+      <li>What do you do? — stressed word: <input class="gap" type="text" placeholder="…"></li>
+      <li>Do you come from Poland? — stressed word: <input class="gap" type="text" placeholder="…"></li>
+    </ol>
+    <p style="font-size:.82rem;color:var(--muted);font-style:italic;margin-top:.4rem">4B — 🔊 1.01 | Listen again and repeat.</p>
+  </div>
+
+  <span class="section-tag tag-listen">Listening</span>
+
+  <div class="ex-block" id="x-ex-1a-5a">
+    <p class="ex-instruction"><strong>5A</strong> 🔊 1.02 | Listen to the conversation. Choose the things the three people talk about.</p>
+    <div style="font-size:.83rem;line-height:2">
+      <label style="display:flex;align-items:center;gap:.5rem;cursor:pointer"><input type="checkbox"> a how they know each other</label>
+      <label style="display:flex;align-items:center;gap:.5rem;cursor:pointer"><input type="checkbox"> b their children</label>
+      <label style="display:flex;align-items:center;gap:.5rem;cursor:pointer"><input type="checkbox"> c countries/nationalities</label>
+      <label style="display:flex;align-items:center;gap:.5rem;cursor:pointer"><input type="checkbox"> d work</label>
+      <label style="display:flex;align-items:center;gap:.5rem;cursor:pointer"><input type="checkbox"> e food and drink</label>
+    </div>
+  </div>
+
+  <div class="ex-block" id="x-ex-1a-5b">
+    <p class="ex-instruction"><strong>5B</strong> 🔊 1.02 | Listen again. Are the statements True (T) or False (F)?</p>
+    <div>
+      <div class="tf-row"><span class="tf-n">1</span><span style="flex:1;font-size:.82rem">Ashley and Eliana don't know each other.</span><div class="tf-btns"><button class="tf-btn" onclick="tfPick(this,'T')">T</button><button class="tf-btn" onclick="tfPick(this,'F')">F</button></div></div>
+      <div class="tf-row"><span class="tf-n">2</span><span style="flex:1;font-size:.82rem">Scott and Eliana work together.</span><div class="tf-btns"><button class="tf-btn" onclick="tfPick(this,'T')">T</button><button class="tf-btn" onclick="tfPick(this,'F')">F</button></div></div>
+      <div class="tf-row"><span class="tf-n">3</span><span style="flex:1;font-size:.82rem">Scott and Ashley work together.</span><div class="tf-btns"><button class="tf-btn" onclick="tfPick(this,'T')">T</button><button class="tf-btn" onclick="tfPick(this,'F')">F</button></div></div>
+      <div class="tf-row"><span class="tf-n">4</span><span style="flex:1;font-size:.82rem">Eliana is from the USA.</span><div class="tf-btns"><button class="tf-btn" onclick="tfPick(this,'T')">T</button><button class="tf-btn" onclick="tfPick(this,'F')">F</button></div></div>
+      <div class="tf-row"><span class="tf-n">5</span><span style="flex:1;font-size:.82rem">Eliana is here for a meeting.</span><div class="tf-btns"><button class="tf-btn" onclick="tfPick(this,'T')">T</button><button class="tf-btn" onclick="tfPick(this,'F')">F</button></div></div>
+      <div class="tf-row"><span class="tf-n">6</span><span style="flex:1;font-size:.82rem">Ashley is a nurse.</span><div class="tf-btns"><button class="tf-btn" onclick="tfPick(this,'T')">T</button><button class="tf-btn" onclick="tfPick(this,'F')">F</button></div></div>
+    </div>
+  </div>
+
+  <div class="ex-block" id="x-ex-1a-5c">
+    <p class="ex-instruction"><strong>5C</strong> 🔊 1.02 | Listen again. Complete the sentences.</p>
+    <ol class="ex-items">
+      <li>How <input class="gap" type="text" placeholder="…"> things?</li>
+      <li>Not <input class="gap" type="text" placeholder="…"> bad.</li>
+      <li>Eliana, <input class="gap" type="text" placeholder="…"> is Ashley.</li>
+      <li>Nice to <input class="gap" type="text" placeholder="…"> you.</li>
+      <li>How do you <input class="gap" type="text" placeholder="…"> each other?</li>
+      <li>Are you <input class="gap" type="text" placeholder="…"> the USA?</li>
+      <li><input class="gap" type="text" placeholder="…"> you live here?</li>
+      <li>What do you <input class="gap" type="text" placeholder="…">, Ashley?</li>
+    </ol>
+  </div>
+
+  <span class="section-tag tag-writing">Writing — write a personal profile; use capital letters</span>
+
+  <div class="ex-block" id="x-ex-1a-6a">
+    <p class="ex-instruction"><strong>6A</strong> Read the personal profile from a blog. Complete the information.</p>
+    <div class="word-box" style="line-height:1.85;font-size:.82rem">
+      <strong>ABOUT ME</strong><br>
+      hi, my name's Frank Bacall and I'm a travel writer. I'm from cape Town in South Africa. I love my job because I go to lots of different countries. I often visit Thailand, france and the USA. I love to meet people and learn languages. I speak Spanish, Portuguese and a little thai. I'm interested in sport, too. I play tennis and badminton.<br><br>
+      welcome to my blog. i hope you like it! If you want to know more about the places I visit, then please contact me at fcb@mailer.com.
+    </div>
+    <ol class="ex-items">
+      <li>Full name: <input class="gap lg" type="text" placeholder="…"></li>
+      <li>Job: <input class="gap lg" type="text" placeholder="…"></li>
+      <li>Nationality: <input class="gap lg" type="text" placeholder="…"></li>
+      <li>Home town: <input class="gap lg" type="text" placeholder="…"></li>
+      <li>Interests: <input class="gap lg" type="text" placeholder="…"></li>
+      <li>Email: <input class="gap lg" type="text" placeholder="…"></li>
+    </ol>
+    <div class="ex-actions">
+      <button class="btn-reset-ex" onclick="resetExercise('x-ex-1a-6a')">↺ Reset</button>
+      <button class="btn-edit-ex" onclick="toggleEditExercise(this,'x-ex-1a-6a')">✏️ Edit</button>
+    </div>
+  </div>
+
+  <div class="ex-block" id="x-ex-1a-6b">
+    <p class="ex-instruction"><strong>6B</strong> Find and correct six mistakes with capital letters in the profile above. Write the corrections here.</p>
+    <ol class="ex-items">
+      <li><input class="gap lg" type="text" placeholder="mistake → correction…"></li>
+      <li><input class="gap lg" type="text" placeholder="mistake → correction…"></li>
+      <li><input class="gap lg" type="text" placeholder="mistake → correction…"></li>
+      <li><input class="gap lg" type="text" placeholder="mistake → correction…"></li>
+      <li><input class="gap lg" type="text" placeholder="mistake → correction…"></li>
+      <li><input class="gap lg" type="text" placeholder="mistake → correction…"></li>
+    </ol>
+    <div class="ex-actions">
+      <button class="btn-reset-ex" onclick="resetExercise('x-ex-1a-6b')">↺ Reset</button>
+      <button class="btn-edit-ex" onclick="toggleEditExercise(this,'x-ex-1a-6b')">✏️ Edit</button>
+    </div>
+  </div>
+
+  <div class="ex-block" id="x-ex-1a-6c">
+    <p class="ex-instruction"><strong>6C</strong> Imagine you are Bruna Pereira. Write your profile using the information below. Write 80–100 words.</p>
+    <div class="word-box" style="font-size:.81rem;line-height:1.8">
+      Full name: Bruna Pereira · Job: singer · Nationality: Brazilian · Home town: Rio de Janeiro · Languages: Portuguese, Spanish, a little English · Interests: tennis, cinema · Email: b.pereira@songcamp.com
+    </div>
+    <textarea class="write-area" id="x-writing-1a-6c" placeholder="Write Bruna's profile here…" rows="7" oninput="countWords(this,'x-wc-1a-6c');saveAll()"></textarea>
+    <p class="word-count" id="x-wc-1a-6c">0 words</p>
+  </div>
+
+  </div></div>
+</div><!-- /x-acc-1a -->
+
+<!-- LESSON 1B -->
+<div class="lesson-accordion" id="x-acc-1b">
+  <div class="lesson-acc-header" onclick="toggleAcc('x-acc-1b')">
+    <span class="lesson-acc-tag">Lesson 1B</span>
+    <span class="lesson-acc-title">Common verb phrases · Present simple: he, she, it</span>
+    <span class="lesson-acc-chevron">▼</span>
+  </div>
+  <div class="lesson-acc-body"><div class="lesson-acc-inner">
+  <div class="lesson-meta-line">Grammar: present simple he, she, it · Vocabulary: common verb phrases · Pronunciation: third person -s</div>
+
+  <span class="section-tag tag-vocab">Vocabulary — common verb phrases</span>
+
+  <div class="ex-block" id="x-ex-1b-1a">
+    <p class="ex-instruction"><strong>1A</strong> Match (1–8) with (a–h) to make sentences.</p>
+    <ol class="ex-items">
+      <li>I'd like to play → <input class="gap sm" type="text" placeholder="a–h"></li>
+      <li>Jiya and Carlos study business → <input class="gap sm" type="text" placeholder="a–h"></li>
+      <li>We teach → <input class="gap sm" type="text" placeholder="a–h"></li>
+      <li>I work → <input class="gap sm" type="text" placeholder="a–h"></li>
+      <li>You live → <input class="gap sm" type="text" placeholder="a–h"></li>
+      <li>Do they have → <input class="gap sm" type="text" placeholder="a–h"></li>
+      <li>I always go → <input class="gap sm" type="text" placeholder="a–h"></li>
+      <li>At the weekend, I get up → <input class="gap sm" type="text" placeholder="a–h"></li>
+    </ol>
+    <p style="font-size:.8rem;color:var(--muted);margin-top:.4rem;line-height:1.9">
+      a and economics at university. · b a car? · c late. · d from home two days a week. · e guitar. · f to bed early on Sundays. · g students from lots of countries. · h alone in a small flat.
+    </p>
+    <div class="ex-actions">
+      <button class="btn-reset-ex" onclick="resetExercise('x-ex-1b-1a')">↺ Reset</button>
+      <button class="btn-edit-ex" onclick="toggleEditExercise(this,'x-ex-1b-1a')">✏️ Edit</button>
+    </div>
+  </div>
+
+  <div class="ex-block" id="x-ex-1b-1b">
+    <p class="ex-instruction"><strong>1B</strong> Choose the correct word to complete the sentences.</p>
+    <ol class="ex-items">
+      <li>Do you <span class="pick"><span class="pick-opt" onclick="pick(this)">a live</span><span class="pick-opt" onclick="pick(this)">b go</span><span class="pick-opt" onclick="pick(this)">c get up</span></span> out a lot at the weekend?</li>
+      <li>I <span class="pick"><span class="pick-opt" onclick="pick(this)">a work</span><span class="pick-opt" onclick="pick(this)">b play</span><span class="pick-opt" onclick="pick(this)">c live</span></span> from home, not in an office.</li>
+      <li>At the weekend I usually <span class="pick"><span class="pick-opt" onclick="pick(this)">a play</span><span class="pick-opt" onclick="pick(this)">b have</span><span class="pick-opt" onclick="pick(this)">c go</span></span> running.</li>
+      <li>We <span class="pick"><span class="pick-opt" onclick="pick(this)">a have</span><span class="pick-opt" onclick="pick(this)">b go</span><span class="pick-opt" onclick="pick(this)">c live</span></span> in a small village.</li>
+      <li>Do you <span class="pick"><span class="pick-opt" onclick="pick(this)">a play</span><span class="pick-opt" onclick="pick(this)">b go</span><span class="pick-opt" onclick="pick(this)">c have</span></span> tennis?</li>
+      <li>We need to <span class="pick"><span class="pick-opt" onclick="pick(this)">a live</span><span class="pick-opt" onclick="pick(this)">b get</span><span class="pick-opt" onclick="pick(this)">c have</span></span> up early tomorrow.</li>
+    </ol>
+    <div class="ex-actions">
+      <button class="btn-reset-ex" onclick="resetExercise('x-ex-1b-1b')">↺ Reset</button>
+      <button class="btn-edit-ex" onclick="toggleEditExercise(this,'x-ex-1b-1b')">✏️ Edit</button>
+    </div>
+  </div>
+
+  <div class="ex-block" id="x-ex-1b-1c">
+    <p class="ex-instruction"><strong>1C</strong> Put the words in brackets in the correct order to make sentences.</p>
+    <ol class="ex-items">
+      <li>[tom93] I live in London. <input class="gap lg" type="text" placeholder="(university / I / a / teach / at)" style="min-width:220px">. I love my job!</li>
+      <li>[laylaamr] I live in a village. <input class="gap lg" type="text" placeholder="(day / I / up / early / every / get)" style="min-width:220px">. I go running before work.</li>
+      <li>[stargrl] I'm a singer. <input class="gap lg" type="text" placeholder="(also / guitar / I / the / play)" style="min-width:220px">. I'm in a band.</li>
+      <li>[greenlife] I live with friends. <input class="gap lg" type="text" placeholder="(a / go / we / out / lot)" style="min-width:220px">. We like parties!</li>
+      <li>[sol3] I work for a small company. <input class="gap lg" type="text" placeholder="(money / make / of / a / lot / don't / I)" style="min-width:220px">.</li>
+    </ol>
+    <div class="ex-actions">
+      <button class="btn-reset-ex" onclick="resetExercise('x-ex-1b-1c')">↺ Reset</button>
+      <button class="btn-edit-ex" onclick="toggleEditExercise(this,'x-ex-1b-1c')">✏️ Edit</button>
+    </div>
+  </div>
+
+  <span class="section-tag tag-grammar">Grammar — present simple: he, she, it</span>
+
+  <div class="ex-block" id="x-ex-1b-2a">
+    <p class="ex-instruction"><strong>2A</strong> The sentences below have a mistake. Choose the best option to correct the mistake.</p>
+    <ol class="ex-items">
+      <li>What time <u>your brother finishes</u> work?<br><span class="pick"><span class="pick-opt" onclick="pick(this)">a is your brother finish</span><span class="pick-opt" onclick="pick(this)">b does your brother finish</span><span class="pick-opt" onclick="pick(this)">c your brother finish</span></span></li>
+      <li>Kate and her friends <u>lives</u> together.<br><span class="pick"><span class="pick-opt" onclick="pick(this)">a live</span><span class="pick-opt" onclick="pick(this)">b are live</span><span class="pick-opt" onclick="pick(this)">c is live</span></span></li>
+      <li>Robin <u>don't</u> go out a lot.<br><span class="pick"><span class="pick-opt" onclick="pick(this)">a isn't</span><span class="pick-opt" onclick="pick(this)">b aren't</span><span class="pick-opt" onclick="pick(this)">c doesn't</span></span></li>
+      <li><u>Your children</u> like their school?<br><span class="pick"><span class="pick-opt" onclick="pick(this)">a Do your children</span><span class="pick-opt" onclick="pick(this)">b Does your children</span><span class="pick-opt" onclick="pick(this)">c Are your children</span></span></li>
+    </ol>
+    <div class="ex-actions">
+      <button class="btn-reset-ex" onclick="resetExercise('x-ex-1b-2a')">↺ Reset</button>
+      <button class="btn-edit-ex" onclick="toggleEditExercise(this,'x-ex-1b-2a')">✏️ Edit</button>
+    </div>
+  </div>
+
+  <div class="ex-block" id="x-ex-1b-2b">
+    <p class="ex-instruction"><strong>2B</strong> Choose the correct words to complete the text.</p>
+    <p style="font-size:.83rem;line-height:2.1">
+      My brother is a nurse and he <sup>1</sup><span class="pick"><span class="pick-opt" onclick="pick(this)">work</span><span class="pick-opt" onclick="pick(this)">works</span></span> at a hospital in our city. He <sup>2</sup><span class="pick"><span class="pick-opt" onclick="pick(this)">start</span><span class="pick-opt" onclick="pick(this)">starts</span></span> work at 10 a.m. every day and <sup>3</sup><span class="pick"><span class="pick-opt" onclick="pick(this)">finishes</span><span class="pick-opt" onclick="pick(this)">finish</span></span> at 9 p.m. On Saturdays, when he <sup>4</sup><span class="pick"><span class="pick-opt" onclick="pick(this)">doesn't</span><span class="pick-opt" onclick="pick(this)">isn't</span></span> at the hospital, he <sup>5</sup><span class="pick"><span class="pick-opt" onclick="pick(this)">eats</span><span class="pick-opt" onclick="pick(this)">eat</span></span> lunch at a café with friends. I usually <sup>6</sup><span class="pick"><span class="pick-opt" onclick="pick(this)">visit</span><span class="pick-opt" onclick="pick(this)">visits</span></span> him on Sundays and we <sup>7</sup><span class="pick"><span class="pick-opt" onclick="pick(this)">play</span><span class="pick-opt" onclick="pick(this)">plays</span></span> tennis and <sup>8</sup><span class="pick"><span class="pick-opt" onclick="pick(this)">cook</span><span class="pick-opt" onclick="pick(this)">cooks</span></span> lunch together. On Sunday evenings he <sup>9</sup><span class="pick"><span class="pick-opt" onclick="pick(this)">study</span><span class="pick-opt" onclick="pick(this)">studies</span></span> Italian for an hour and then <sup>10</sup><span class="pick"><span class="pick-opt" onclick="pick(this)">go</span><span class="pick-opt" onclick="pick(this)">goes</span></span> to bed early.
+    </p>
+    <div class="ex-actions">
+      <button class="btn-reset-ex" onclick="resetExercise('x-ex-1b-2b')">↺ Reset</button>
+      <button class="btn-edit-ex" onclick="toggleEditExercise(this,'x-ex-1b-2b')">✏️ Edit</button>
+    </div>
+  </div>
+
+  <div class="ex-block" id="x-ex-1b-2c">
+    <p class="ex-instruction"><strong>2C</strong> Complete the sentences with the correct form of the verbs in the box.</p>
+    <div class="word-box">get up · go · go out · have · start · study · teach · work</div>
+    <ol class="ex-items">
+      <li>She <input class="gap" type="text" placeholder="…"> work at 9 a.m. She <input class="gap" type="text" placeholder="…"> from home.</li>
+      <li>After that, she <input class="gap" type="text" placeholder="…"> with friends.</li>
+      <li>She <input class="gap" type="text" placeholder="…"> running, then <input class="gap" type="text" placeholder="…"> breakfast.</li>
+      <li>In the evening, she <input class="gap" type="text" placeholder="…"> French.</li>
+      <li>Anika <input class="gap" type="text" placeholder="…"> at 5 a.m.</li>
+      <li>In the afternoon, she <input class="gap" type="text" placeholder="…"> students online.</li>
+    </ol>
+    <div class="ex-actions">
+      <button class="btn-reset-ex" onclick="resetExercise('x-ex-1b-2c')">↺ Reset</button>
+      <button class="btn-edit-ex" onclick="toggleEditExercise(this,'x-ex-1b-2c')">✏️ Edit</button>
+    </div>
+  </div>
+
+  <div class="ex-block" id="x-ex-1b-2d">
+    <p class="ex-instruction"><strong>2D</strong> Put sentences (a–f) in Ex 2C in the correct order to describe Anika's day.</p>
+    <ol class="ex-items">
+      <li>1st → <input class="gap sm" type="text" placeholder="a–f"></li>
+      <li>2nd → <input class="gap sm" type="text" placeholder="a–f"></li>
+      <li>3rd → <input class="gap sm" type="text" placeholder="a–f"></li>
+      <li>4th → <input class="gap sm" type="text" placeholder="a–f"></li>
+      <li>5th → <input class="gap sm" type="text" placeholder="a–f"></li>
+      <li>6th → <input class="gap sm" type="text" placeholder="a–f"></li>
+    </ol>
+    <div class="ex-actions">
+      <button class="btn-reset-ex" onclick="resetExercise('x-ex-1b-2d')">↺ Reset</button>
+      <button class="btn-edit-ex" onclick="toggleEditExercise(this,'x-ex-1b-2d')">✏️ Edit</button>
+    </div>
+  </div>
+
+  <span class="section-tag tag-pronun">Pronunciation — third person -s</span>
+
+  <div class="ex-block" id="x-ex-1b-3a">
+    <p class="ex-instruction"><strong>3A</strong> 🔊 1.03 | Listen and choose the correct -s sound for each verb (/s/, /z/ or /ɪz/).</p>
+    <ol class="ex-items">
+      <li>studies <span class="pick"><span class="pick-opt" onclick="pick(this)">/s/</span><span class="pick-opt" onclick="pick(this)">/z/</span><span class="pick-opt" onclick="pick(this)">/ɪz/</span></span></li>
+      <li>sits <span class="pick"><span class="pick-opt" onclick="pick(this)">/s/</span><span class="pick-opt" onclick="pick(this)">/z/</span><span class="pick-opt" onclick="pick(this)">/ɪz/</span></span></li>
+      <li>works <span class="pick"><span class="pick-opt" onclick="pick(this)">/s/</span><span class="pick-opt" onclick="pick(this)">/z/</span><span class="pick-opt" onclick="pick(this)">/ɪz/</span></span></li>
+      <li>stays <span class="pick"><span class="pick-opt" onclick="pick(this)">/s/</span><span class="pick-opt" onclick="pick(this)">/z/</span><span class="pick-opt" onclick="pick(this)">/ɪz/</span></span></li>
+      <li>does <span class="pick"><span class="pick-opt" onclick="pick(this)">/s/</span><span class="pick-opt" onclick="pick(this)">/z/</span><span class="pick-opt" onclick="pick(this)">/ɪz/</span></span></li>
+      <li>finishes <span class="pick"><span class="pick-opt" onclick="pick(this)">/s/</span><span class="pick-opt" onclick="pick(this)">/z/</span><span class="pick-opt" onclick="pick(this)">/ɪz/</span></span></li>
+      <li>goes <span class="pick"><span class="pick-opt" onclick="pick(this)">/s/</span><span class="pick-opt" onclick="pick(this)">/z/</span><span class="pick-opt" onclick="pick(this)">/ɪz/</span></span></li>
+      <li>stops <span class="pick"><span class="pick-opt" onclick="pick(this)">/s/</span><span class="pick-opt" onclick="pick(this)">/z/</span><span class="pick-opt" onclick="pick(this)">/ɪz/</span></span></li>
+      <li>watches <span class="pick"><span class="pick-opt" onclick="pick(this)">/s/</span><span class="pick-opt" onclick="pick(this)">/z/</span><span class="pick-opt" onclick="pick(this)">/ɪz/</span></span></li>
+      <li>lives <span class="pick"><span class="pick-opt" onclick="pick(this)">/s/</span><span class="pick-opt" onclick="pick(this)">/z/</span><span class="pick-opt" onclick="pick(this)">/ɪz/</span></span></li>
+    </ol>
+    <p style="font-size:.82rem;color:var(--muted);font-style:italic;margin-top:.4rem">3B — 🔊 1.03 | Listen again and repeat.</p>
+  </div>
+
+  <span class="section-tag tag-listen">Reading — Best friends but different!</span>
+
+  <div class="ex-block" id="x-ex-1b-4">
+    <p class="ex-instruction"><strong>4</strong> Choose the correct word to complete the sentence.</p>
+    <p style="font-size:.83rem;line-height:1.7;margin-bottom:.6rem">Rowan is a shop assistant. He <span class="pick"><span class="pick-opt" onclick="pick(this)">a lives</span><span class="pick-opt" onclick="pick(this)">b works</span><span class="pick-opt" onclick="pick(this)">c meets</span></span> in a supermarket. He starts at 12 p.m. and he finishes at 8 p.m.</p>
+    <div class="ex-actions">
+      <button class="btn-reset-ex" onclick="resetExercise('x-ex-1b-4')">↺ Reset</button>
+      <button class="btn-edit-ex" onclick="toggleEditExercise(this,'x-ex-1b-4')">✏️ Edit</button>
+    </div>
+  </div>
+
+  <div class="ex-block" id="x-ex-1b-5a">
+    <p class="ex-instruction"><strong>5A</strong> Read the article. Are the statements True (T) or False (F)?</p>
+    <div class="word-box" style="line-height:1.8;font-size:.81rem">
+      <strong style="color:var(--rose)">Rowan</strong><br>
+      My best friend is Annie. She's great. We have very different lives though. She's a lawyer. She gets up at 7 a.m. every day. She has breakfast and then goes to work. She often works late (sometimes until 9 p.m.!), but not on Thursdays. She has a Spanish class on Thursday evenings. She studies Spanish because her boyfriend is from Argentina. I don't study. I'm a shop assistant and I work in a supermarket in the centre of town. I don't start work until 12, so I usually get up late – around 10.30 a.m. I go to work by bus and work hard all day. I finish work at 8 p.m., then come home and cook dinner. Annie and I have very different lives, but we still make time to see each other.<br><br>
+      <strong style="color:var(--rose)">Annie</strong><br>
+      I know my good friend Rowan from school. We live in the same town and we always see each other at weekends. We have different interests, so it's usually interesting to spend time together! Rowan plays a lot of sports, like football and tennis, but I like going for walks or to the cinema. So, how do we decide what to do in our free time? It's easy. One weekend I choose what to do, and the next weekend Rowan chooses. This weekend I want to watch a film, and next weekend Rowan wants to cook dinner. He loves cooking, but I hate it, so he cooks and I eat. It's perfect. I think we're good friends because we do things together that we don't usually do alone.
+    </div>
+    <div>
+      <div class="tf-row"><span class="tf-n">1</span><span style="flex:1;font-size:.82rem">Annie is Rowan's wife.</span><div class="tf-btns"><button class="tf-btn" onclick="tfPick(this,'T')">T</button><button class="tf-btn" onclick="tfPick(this,'F')">F</button></div></div>
+      <div class="tf-row"><span class="tf-n">2</span><span style="flex:1;font-size:.82rem">Annie's boyfriend is Spanish.</span><div class="tf-btns"><button class="tf-btn" onclick="tfPick(this,'T')">T</button><button class="tf-btn" onclick="tfPick(this,'F')">F</button></div></div>
+      <div class="tf-row"><span class="tf-n">3</span><span style="flex:1;font-size:.82rem">Rowan works for eight hours every day.</span><div class="tf-btns"><button class="tf-btn" onclick="tfPick(this,'T')">T</button><button class="tf-btn" onclick="tfPick(this,'F')">F</button></div></div>
+      <div class="tf-row"><span class="tf-n">4</span><span style="flex:1;font-size:.82rem">Annie always sees Rowan at the weekend.</span><div class="tf-btns"><button class="tf-btn" onclick="tfPick(this,'T')">T</button><button class="tf-btn" onclick="tfPick(this,'F')">F</button></div></div>
+      <div class="tf-row"><span class="tf-n">5</span><span style="flex:1;font-size:.82rem">Annie and Rowan go to the same school.</span><div class="tf-btns"><button class="tf-btn" onclick="tfPick(this,'T')">T</button><button class="tf-btn" onclick="tfPick(this,'F')">F</button></div></div>
+      <div class="tf-row"><span class="tf-n">6</span><span style="flex:1;font-size:.82rem">They like doing the same things.</span><div class="tf-btns"><button class="tf-btn" onclick="tfPick(this,'T')">T</button><button class="tf-btn" onclick="tfPick(this,'F')">F</button></div></div>
+      <div class="tf-row"><span class="tf-n">7</span><span style="flex:1;font-size:.82rem">Rowan likes sport.</span><div class="tf-btns"><button class="tf-btn" onclick="tfPick(this,'T')">T</button><button class="tf-btn" onclick="tfPick(this,'F')">F</button></div></div>
+      <div class="tf-row"><span class="tf-n">8</span><span style="flex:1;font-size:.82rem">Annie likes cooking.</span><div class="tf-btns"><button class="tf-btn" onclick="tfPick(this,'T')">T</button><button class="tf-btn" onclick="tfPick(this,'F')">F</button></div></div>
+    </div>
+  </div>
+
+  <div class="ex-block" id="x-ex-1b-5b">
+    <p class="ex-instruction"><strong>5B</strong> Read the article again. Choose one option (a–c) to complete the questions (1–6).</p>
+    <ol class="ex-items">
+      <li>What's Annie's job?<br><span class="pick"><span class="pick-opt" onclick="pick(this)">a a teacher</span><span class="pick-opt" onclick="pick(this)">b a shop assistant</span><span class="pick-opt" onclick="pick(this)">c a lawyer</span></span></li>
+      <li>What does she do in the morning?<br><span class="pick"><span class="pick-opt" onclick="pick(this)">a She has breakfast and goes to work.</span><span class="pick-opt" onclick="pick(this)">b She reads books or studies.</span><span class="pick-opt" onclick="pick(this)">c She goes to Spanish classes.</span></span></li>
+      <li>What does she do on Thursdays?<br><span class="pick"><span class="pick-opt" onclick="pick(this)">a She studies.</span><span class="pick-opt" onclick="pick(this)">b She cooks dinner.</span><span class="pick-opt" onclick="pick(this)">c She watches TV or reads books.</span></span></li>
+      <li>How does Rowan know Annie?<br><span class="pick"><span class="pick-opt" onclick="pick(this)">a from work</span><span class="pick-opt" onclick="pick(this)">b from his Spanish class</span><span class="pick-opt" onclick="pick(this)">c from school</span></span></li>
+      <li>What does Annie hate?<br><span class="pick"><span class="pick-opt" onclick="pick(this)">a watching films</span><span class="pick-opt" onclick="pick(this)">b cooking food</span><span class="pick-opt" onclick="pick(this)">c going to the cinema</span></span></li>
+      <li>What does Annie say about being different to Rowan?<br><span class="pick"><span class="pick-opt" onclick="pick(this)">a She doesn't like it.</span><span class="pick-opt" onclick="pick(this)">b She likes it.</span><span class="pick-opt" onclick="pick(this)">c It's OK.</span></span></li>
+    </ol>
+    <div class="ex-actions">
+      <button class="btn-reset-ex" onclick="resetExercise('x-ex-1b-5b')">↺ Reset</button>
+      <button class="btn-edit-ex" onclick="toggleEditExercise(this,'x-ex-1b-5b')">✏️ Edit</button>
+    </div>
+  </div>
+
+  </div></div>
+</div><!-- /x-acc-1b -->
+
+<!-- LESSON 1C -->
+<div class="lesson-accordion" id="x-acc-1c">
+  <div class="lesson-acc-header" onclick="toggleAcc('x-acc-1c')">
+    <span class="lesson-acc-tag">Lesson 1C</span>
+    <span class="lesson-acc-title">Make suggestions · Adjectives for feelings · Time phrases</span>
+    <span class="lesson-acc-chevron">▼</span>
+  </div>
+  <div class="lesson-acc-body"><div class="lesson-acc-inner">
+  <div class="lesson-meta-line">How to: make suggestions · Vocabulary: adjectives for feelings; time phrases · Pronunciation: intonation to show interest</div>
+
+  <span class="section-tag tag-vocab">Vocabulary — adjectives for feelings</span>
+
+  <div class="ex-block" id="x-ex-1c-1">
+    <p class="ex-instruction"><strong>1</strong> Complete the sentences with the adjectives from the box.</p>
+    <div class="word-box">all right · angry · bored · hungry · ill · relaxed · thirsty · tired</div>
+    <ol class="ex-items">
+      <li>Can I have some water? I'm really <input class="gap" type="text" placeholder="…">.</li>
+      <li>Greg isn't at work today. He's at the doctor's because he's <input class="gap" type="text" placeholder="…">.</li>
+      <li>I'm sorry I'm late. Please don't be <input class="gap" type="text" placeholder="…">!</li>
+      <li>I'm <input class="gap" type="text" placeholder="…">. Let's do something interesting.</li>
+      <li>I feel <input class="gap" type="text" placeholder="…"> – not happy, not sad. Just normal.</li>
+      <li>I want to go to bed. I'm very <input class="gap" type="text" placeholder="…">.</li>
+      <li>What time is dinner? I'm really <input class="gap" type="text" placeholder="…">.</li>
+      <li>I always feel <input class="gap" type="text" placeholder="…"> after a hot bath.</li>
+    </ol>
+    <div class="ex-actions">
+      <button class="btn-reset-ex" onclick="resetExercise('x-ex-1c-1')">↺ Reset</button>
+      <button class="btn-edit-ex" onclick="toggleEditExercise(this,'x-ex-1c-1')">✏️ Edit</button>
+    </div>
+  </div>
+
+  <span class="section-tag tag-vocab">Vocabulary — time phrases</span>
+
+  <div class="ex-block" id="x-ex-1c-2a">
+    <p class="ex-instruction"><strong>2A</strong> Choose the correct answer to complete the sentences.</p>
+    <ol class="ex-items">
+      <li>I get up <span class="pick"><span class="pick-opt" onclick="pick(this)">–</span><span class="pick-opt" onclick="pick(this)">on</span><span class="pick-opt" onclick="pick(this)">at</span></span> 5 a.m. every day.</li>
+      <li>Do we have a class <span class="pick"><span class="pick-opt" onclick="pick(this)">next</span><span class="pick-opt" onclick="pick(this)">at</span><span class="pick-opt" onclick="pick(this)">on</span></span> week?</li>
+      <li>Let's play tennis <span class="pick"><span class="pick-opt" onclick="pick(this)">on</span><span class="pick-opt" onclick="pick(this)">–</span><span class="pick-opt" onclick="pick(this)">next</span></span> tomorrow.</li>
+      <li>I teach German <span class="pick"><span class="pick-opt" onclick="pick(this)">at</span><span class="pick-opt" onclick="pick(this)">on</span><span class="pick-opt" onclick="pick(this)">this</span></span> Tuesdays.</li>
+      <li>I have an English class <span class="pick"><span class="pick-opt" onclick="pick(this)">at</span><span class="pick-opt" onclick="pick(this)">–</span><span class="pick-opt" onclick="pick(this)">on</span></span> Thursday morning.</li>
+      <li>What shall we do <span class="pick"><span class="pick-opt" onclick="pick(this)">this</span><span class="pick-opt" onclick="pick(this)">next</span><span class="pick-opt" onclick="pick(this)">at</span></span> evening?</li>
+    </ol>
+    <div class="ex-actions">
+      <button class="btn-reset-ex" onclick="resetExercise('x-ex-1c-2a')">↺ Reset</button>
+      <button class="btn-edit-ex" onclick="toggleEditExercise(this,'x-ex-1c-2a')">✏️ Edit</button>
+    </div>
+  </div>
+
+  <div class="ex-block" id="x-ex-1c-2b">
+    <p class="ex-instruction"><strong>2B</strong> Complete the messages with one word in each gap. If no word is necessary, write (–).</p>
+    <div class="convo">
+      <div class="convo-line"><span class="convo-sp" style="min-width:60px;color:var(--ink);font-weight:600">Aiko:</span><span>Do we have a class <sup>1</sup><input class="gap sm" type="text" placeholder="…"> today?</span></div>
+      <div class="convo-line"><span class="convo-sp" style="min-width:60px;color:var(--ink);font-weight:600">Victor:</span><span>Yes, it's <sup>2</sup><input class="gap sm" type="text" placeholder="…"> noon.</span></div>
+      <div class="convo-line"><span class="convo-sp" style="min-width:60px;color:var(--ink);font-weight:600">Gloria:</span><span>I can't come. I need to study for a French test <sup>3</sup><input class="gap sm" type="text" placeholder="…"> tonight.</span></div>
+      <div class="convo-line"><span class="convo-sp" style="min-width:60px;color:var(--ink);font-weight:600">Victor:</span><span>Oh! Good luck, Gloria!</span></div>
+      <div class="convo-line"><span class="convo-sp" style="min-width:60px;color:var(--ink);font-weight:600">Aiko:</span><span>Gloria and Victor, do you want to do something <sup>4</sup><input class="gap sm" type="text" placeholder="…"> weekend?</span></div>
+      <div class="convo-line"><span class="convo-sp" style="min-width:60px;color:var(--ink);font-weight:600">Gloria:</span><span>Sure! Can we meet for a coffee <sup>5</sup><input class="gap sm" type="text" placeholder="…"> Saturday?</span></div>
+      <div class="convo-line"><span class="convo-sp" style="min-width:60px;color:var(--ink);font-weight:600">Victor:</span><span>I can't do Saturday. Can we meet <sup>6</sup><input class="gap sm" type="text" placeholder="…"> Sunday afternoon, <sup>7</sup><input class="gap sm" type="text" placeholder="…"> 1 o'clock?</span></div>
+      <div class="convo-line"><span class="convo-sp" style="min-width:60px;color:var(--ink);font-weight:600">Aiko:</span><span>That's fine with me.</span></div>
+      <div class="convo-line"><span class="convo-sp" style="min-width:60px;color:var(--ink);font-weight:600">Gloria:</span><span>Great! See you <sup>8</sup><input class="gap sm" type="text" placeholder="…"> the weekend!</span></div>
+    </div>
+    <div class="ex-actions">
+      <button class="btn-reset-ex" onclick="resetExercise('x-ex-1c-2b')">↺ Reset</button>
+      <button class="btn-edit-ex" onclick="toggleEditExercise(this,'x-ex-1c-2b')">✏️ Edit</button>
+    </div>
+  </div>
+
+  <span class="section-tag tag-grammar">How to — make suggestions</span>
+
+  <div class="ex-block" id="x-ex-1c-3a">
+    <p class="ex-instruction"><strong>3A</strong> 🔊 1.04 | Listen to the conversation. Answer the questions with Mike (M) or Fran (F).</p>
+    <ol class="ex-items">
+      <li>Who feels hungry? <input class="gap sm" type="text" placeholder="M or F"></li>
+      <li>Who has a class at twelve? <input class="gap sm" type="text" placeholder="M or F"></li>
+      <li>Who asks to meet at the café on East Street? <input class="gap sm" type="text" placeholder="M or F"></li>
+      <li>Who loves the café? <input class="gap sm" type="text" placeholder="M or F"></li>
+      <li>Who asks to meet at two? <input class="gap sm" type="text" placeholder="M or F"></li>
+    </ol>
+  </div>
+
+  <div class="ex-block" id="x-ex-1c-3b">
+    <p class="ex-instruction"><strong>3B</strong> 🔊 1.05 | Listen to the recording. Write what you hear. You will hear the sentences only once.</p>
+    <ol class="ex-items">
+      <li><input class="gap" type="text" placeholder="Write sentence 1…" style="min-width:260px"></li>
+      <li><input class="gap" type="text" placeholder="Write sentence 2…" style="min-width:260px"></li>
+      <li><input class="gap" type="text" placeholder="Write sentence 3…" style="min-width:260px"></li>
+    </ol>
+  </div>
+
+  <span class="section-tag tag-pronun">Pronunciation — intonation to show interest</span>
+
+  <div class="ex-block" id="x-ex-1c-4a">
+    <p class="ex-instruction"><strong>4A</strong> 🔊 1.06 | Listen to the phrases. Do the people sound interested (I) or not interested (N)?</p>
+    <ol class="ex-items">
+      <li>Sure! <span class="pick"><span class="pick-opt" onclick="pick(this)">I</span><span class="pick-opt" onclick="pick(this)">N</span></span></li>
+      <li>Good idea. <span class="pick"><span class="pick-opt" onclick="pick(this)">I</span><span class="pick-opt" onclick="pick(this)">N</span></span></li>
+      <li>I'd love to! <span class="pick"><span class="pick-opt" onclick="pick(this)">I</span><span class="pick-opt" onclick="pick(this)">N</span></span></li>
+      <li>Perfect! <span class="pick"><span class="pick-opt" onclick="pick(this)">I</span><span class="pick-opt" onclick="pick(this)">N</span></span></li>
+      <li>Sure, that's fine. <span class="pick"><span class="pick-opt" onclick="pick(this)">I</span><span class="pick-opt" onclick="pick(this)">N</span></span></li>
+      <li>OK. <span class="pick"><span class="pick-opt" onclick="pick(this)">I</span><span class="pick-opt" onclick="pick(this)">N</span></span></li>
+    </ol>
+    <p style="font-size:.82rem;color:var(--muted);font-style:italic;margin-top:.4rem">4B — 🔊 1.07 | Listen and repeat the interested phrases.</p>
+  </div>
+
+  <div class="ex-block" id="x-ex-1c-5a">
+    <p class="ex-instruction"><strong>5A</strong> 🔊 1.08 | Complete the conversation with the words in the box. Then listen and check.</p>
+    <div class="word-box">bye · can't · OK · things · would</div>
+    <div class="convo">
+      <div class="convo-line"><span class="convo-sp">A:</span><span>Hi!</span></div>
+      <div class="convo-line"><span class="convo-sp">B:</span><span>Hello, how are <sup>1</sup><input class="gap sm" type="text" placeholder="…">?</span></div>
+      <div class="convo-line"><span class="convo-sp">A:</span><span>I'm bored. How about you?</span></div>
+      <div class="convo-line"><span class="convo-sp">B:</span><span>I'm all right. <sup>2</sup><input class="gap sm" type="text" placeholder="…"> you like to have dinner?</span></div>
+      <div class="convo-line"><span class="convo-sp">A:</span><span>Good idea. How about meeting at 5 o'clock?</span></div>
+      <div class="convo-line"><span class="convo-sp">B:</span><span>Sorry, I <sup>3</sup><input class="gap sm" type="text" placeholder="…">. What about 6.30?</span></div>
+      <div class="convo-line"><span class="convo-sp">A:</span><span>Sure. Can we meet at the restaurant?</span></div>
+      <div class="convo-line"><span class="convo-sp">B:</span><span><sup>4</sup><input class="gap sm" type="text" placeholder="…">.</span></div>
+      <div class="convo-line"><span class="convo-sp">A:</span><span>Perfect! See you then.</span></div>
+      <div class="convo-line"><span class="convo-sp">B:</span><span>See you then. <sup>5</sup><input class="gap sm" type="text" placeholder="…">.</span></div>
+    </div>
+    <div class="ex-actions">
+      <button class="btn-reset-ex" onclick="resetExercise('x-ex-1c-5a')">↺ Reset</button>
+      <button class="btn-edit-ex" onclick="toggleEditExercise(this,'x-ex-1c-5a')">✏️ Edit</button>
+    </div>
+  </div>
+
+  </div></div>
+</div><!-- /x-acc-1c -->
+
+<!-- LESSON 1D -->
+<div class="lesson-accordion" id="x-acc-1d">
+  <div class="lesson-acc-header" onclick="toggleAcc('x-acc-1d')">
+    <span class="lesson-acc-tag">Lesson 1D</span>
+    <span class="lesson-acc-title">Possessives 's, s' · Talk about family</span>
+    <span class="lesson-acc-chevron">▼</span>
+  </div>
+  <div class="lesson-acc-body"><div class="lesson-acc-inner">
+  <div class="lesson-meta-line">Grammar: possessive 's, s' · Listening: talk about family</div>
+
+  <span class="section-tag tag-grammar">Grammar — possessives: 's, s'</span>
+
+  <div class="ex-block" id="x-ex-1d-1a">
+    <p class="ex-instruction"><strong>1A</strong> The sentences below have a mistake. Choose the best option to correct the mistake.</p>
+    <ol class="ex-items">
+      <li>My <u>brothers'</u> name is Harry.<br><span class="pick"><span class="pick-opt" onclick="pick(this)">a brothers</span><span class="pick-opt" onclick="pick(this)">b brother</span><span class="pick-opt" onclick="pick(this)">c brother's</span></span></li>
+      <li>This isn't my room. It's the <u>childrens'</u>.<br><span class="pick"><span class="pick-opt" onclick="pick(this)">a children's</span><span class="pick-opt" onclick="pick(this)">b children</span><span class="pick-opt" onclick="pick(this)">c childrens</span></span></li>
+      <li>Where are <u>the keys of Anna</u>?<br><span class="pick"><span class="pick-opt" onclick="pick(this)">a the keys' of Anna</span><span class="pick-opt" onclick="pick(this)">b Anna's keys</span><span class="pick-opt" onclick="pick(this)">c Annas' keys</span></span></li>
+      <li><u>Mia's Tim</u> sister.<br><span class="pick"><span class="pick-opt" onclick="pick(this)">a Mia Tim's</span><span class="pick-opt" onclick="pick(this)">b Mia's Tim's</span><span class="pick-opt" onclick="pick(this)">c Mia's Tims'</span></span></li>
+    </ol>
+    <div class="ex-actions">
+      <button class="btn-reset-ex" onclick="resetExercise('x-ex-1d-1a')">↺ Reset</button>
+      <button class="btn-edit-ex" onclick="toggleEditExercise(this,'x-ex-1d-1a')">✏️ Edit</button>
+    </div>
+  </div>
+
+  <div class="ex-block" id="x-ex-1d-1b">
+    <p class="ex-instruction"><strong>1B</strong> Complete the conversation with seven apostrophes (four for possession and three for contractions).</p>
+    <div class="convo" style="font-size:.83rem;line-height:1.9">
+      <div class="convo-line"><span class="convo-sp">A:</span><span>Whos that in the photo?</span></div>
+      <div class="convo-line"><span class="convo-sp">B:</span><span>Thats my sister and her family. Her names Charlotte. Her husbands name is Andy, and theyre both teachers.</span></div>
+      <div class="convo-line"><span class="convo-sp">A:</span><span>Do they have children?</span></div>
+      <div class="convo-line"><span class="convo-sp">B:</span><span>They have a daughter. Their daughters name is Emily. They also have a dog. Their dogs name is Buster.</span></div>
+      <div class="convo-line"><span class="convo-sp">A:</span><span>Do you live near your parents?</span></div>
+      <div class="convo-line"><span class="convo-sp">B:</span><span>Yes, we all do. My parents house is in the street next to us, so we all live quite near.</span></div>
+    </div>
+    <p style="font-size:.81rem;color:var(--muted);margin-top:.5rem">Rewrite the corrected conversation here:</p>
+    <textarea class="write-area" id="x-writing-1d-1b" placeholder="Write the conversation with correct apostrophes…" rows="8" oninput="saveAll()"></textarea>
+    <div class="ex-actions">
+      <button class="btn-reset-ex" onclick="resetExercise('x-ex-1d-1b')">↺ Reset</button>
+      <button class="btn-edit-ex" onclick="toggleEditExercise(this,'x-ex-1d-1b')">✏️ Edit</button>
+    </div>
+  </div>
+
+  <span class="section-tag tag-listen">Listening — talk about family</span>
+
+  <div class="ex-block" id="x-ex-1d-2a">
+    <p class="ex-instruction"><strong>2A</strong> 🔊 1.10 | Listen to Grace and Marco talk about their families. Complete the table.</p>
+    <table style="width:100%;border-collapse:collapse;font-size:.83rem;margin-top:.4rem">
+      <thead>
+        <tr style="border-bottom:2px solid var(--border)">
+          <th style="padding:.5rem;text-align:left;width:30%"></th>
+          <th style="padding:.5rem;text-align:left;background:rgba(26,20,16,.04)">Grace</th>
+          <th style="padding:.5rem;text-align:left">Marco</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="border-bottom:1px solid var(--border)">
+          <td style="padding:.5rem;font-weight:500">From:</td>
+          <td style="padding:.5rem;background:rgba(26,20,16,.02)"><input class="gap lg" type="text" placeholder="…" style="width:100%"></td>
+          <td style="padding:.5rem"><input class="gap lg" type="text" placeholder="…" style="width:100%"></td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--border)">
+          <td style="padding:.5rem;font-weight:500">Lives in:</td>
+          <td style="padding:.5rem;background:rgba(26,20,16,.02)"><input class="gap lg" type="text" placeholder="…" style="width:100%"></td>
+          <td style="padding:.5rem"><input class="gap lg" type="text" placeholder="…" style="width:100%"></td>
+        </tr>
+        <tr>
+          <td style="padding:.5rem;font-weight:500">Job:</td>
+          <td style="padding:.5rem;background:rgba(26,20,16,.02)"><input class="gap lg" type="text" placeholder="…" style="width:100%"></td>
+          <td style="padding:.5rem"><input class="gap lg" type="text" placeholder="…" style="width:100%"></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="ex-block" id="x-ex-1d-2b">
+    <p class="ex-instruction"><strong>2B</strong> 🔊 1.10 | Listen again. Complete the gaps in the family tree (1–8) with the names in the box.</p>
+    <div class="word-box">Alan · April · Deepak · Leila · Oliver · Sally · Veronika · Zach</div>
+    <div style="font-size:.83rem;background:rgba(26,20,16,.03);border-radius:4px;padding:1rem;margin-top:.5rem;line-height:2.2">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem 2rem">
+        <div>1 <input class="gap" type="text" placeholder="…"> (Grace's family)</div>
+        <div>2 <input class="gap" type="text" placeholder="…"> (Grace's family)</div>
+        <div>3 <input class="gap" type="text" placeholder="…"> (Grace's sibling)</div>
+        <div>4 <input class="gap" type="text" placeholder="…"> (Grace's family)</div>
+        <div>5 <input class="gap" type="text" placeholder="…"> (Marco's family)</div>
+        <div>6 <input class="gap" type="text" placeholder="…"> (Marco's family)</div>
+        <div>7 <input class="gap" type="text" placeholder="…"> (Marco's family)</div>
+        <div>8 <input class="gap" type="text" placeholder="…"> (Marco's family)</div>
+      </div>
+    </div>
+  </div>
+
+  </div></div>
+</div><!-- /x-acc-1d -->
+
+
+<!-- EXTRA PRACTICE -->
+<div class="lesson-accordion" id="x-acc-extra">
+  <div class="lesson-acc-header" onclick="toggleAcc('x-acc-extra')">
+    <span class="lesson-acc-tag" style="color:var(--gold)">⭐ Extra</span>
+    <span class="lesson-acc-title">Extra Practice — am/is/are · Contractions · Negatives · Profile</span>
+    <span class="lesson-acc-chevron">▼</span>
+  </div>
+  <div class="lesson-acc-body"><div class="lesson-acc-inner">
+  <div class="lesson-meta-line">Grammar: am / is / are · contractions · negatives · questions · Writing: personal profile</div>
+
+  <span class="section-tag tag-grammar">1A — am, is, are</span>
+
+  <div class="ex-block" id="x-ex-extra-1aa">
+    <p class="ex-instruction"><strong>1A a</strong> Complete with <em>am</em>, <em>is</em>, or <em>are</em>.</p>
+    <p style="font-size:.82rem;color:var(--muted);margin-bottom:.4rem">I <em>am</em> Mike. (example)</p>
+    <ol class="ex-items">
+      <li>We <input class="gap sm" type="text" placeholder="…"> from Córdoba.</li>
+      <li>He <input class="gap sm" type="text" placeholder="…"> early.</li>
+      <li>They <input class="gap sm" type="text" placeholder="…"> teachers.</li>
+      <li>Today <input class="gap sm" type="text" placeholder="…"> Wednesday.</li>
+      <li>I <input class="gap sm" type="text" placeholder="…"> sorry.</li>
+      <li>It <input class="gap sm" type="text" placeholder="…"> a hotel.</li>
+      <li>You <input class="gap sm" type="text" placeholder="…"> in room 402.</li>
+      <li>She <input class="gap sm" type="text" placeholder="…"> a student.</li>
+      <li>My name <input class="gap sm" type="text" placeholder="…"> Carla.</li>
+      <li>I <input class="gap sm" type="text" placeholder="…"> in a taxi.</li>
+    </ol>
+    <div class="ex-actions">
+      <button class="btn-reset-ex" onclick="resetExercise('x-ex-extra-1aa')">↺ Reset</button>
+      <button class="btn-edit-ex" onclick="toggleEditExercise(this,'x-ex-extra-1aa')">✏️ Edit</button>
+    </div>
+  </div>
+
+  <div class="ex-block" id="x-ex-extra-1ab">
+    <p class="ex-instruction"><strong>1A b</strong> Write the sentences with contractions.</p>
+    <p style="font-size:.82rem;color:var(--muted);margin-bottom:.4rem">He is late. → <em>He's late.</em> (example)</p>
+    <ol class="ex-items">
+      <li>It is Friday. → <input class="gap lg" type="text" placeholder="…" style="min-width:200px"></li>
+      <li>They are at school. → <input class="gap lg" type="text" placeholder="…" style="min-width:200px"></li>
+      <li>I am very well. → <input class="gap lg" type="text" placeholder="…" style="min-width:200px"></li>
+      <li>You are in my class. → <input class="gap lg" type="text" placeholder="…" style="min-width:200px"></li>
+    </ol>
+    <div class="ex-actions">
+      <button class="btn-reset-ex" onclick="resetExercise('x-ex-extra-1ab')">↺ Reset</button>
+      <button class="btn-edit-ex" onclick="toggleEditExercise(this,'x-ex-extra-1ab')">✏️ Edit</button>
+    </div>
+  </div>
+
+  <div class="ex-block" id="x-ex-extra-1ac">
+    <p class="ex-instruction"><strong>1A c</strong> Write the sentences with a subject pronoun (<em>I, They</em>, etc.) and a contraction.</p>
+    <p style="font-size:.82rem;color:var(--muted);margin-bottom:.4rem"><strong>Mike and Hannah are</strong> students. → <em>They're</em> _______ students. (example)</p>
+    <ol class="ex-items">
+      <li><strong>John is</strong> in room 5. → <input class="gap" type="text" placeholder="…"> in room 5.</li>
+      <li><strong>Sam and I are</strong> friends. → <input class="gap" type="text" placeholder="…"> friends.</li>
+      <li><strong>Julia is</strong> a teacher. → <input class="gap" type="text" placeholder="…"> a teacher.</li>
+      <li><strong>The school is</strong> in Brighton. → <input class="gap" type="text" placeholder="…"> in Brighton.</li>
+      <li><strong>Nico and Fernanda are</strong> in my class. → <input class="gap" type="text" placeholder="…"> in my class.</li>
+    </ol>
+    <div class="ex-actions">
+      <button class="btn-reset-ex" onclick="resetExercise('x-ex-extra-1ac')">↺ Reset</button>
+      <button class="btn-edit-ex" onclick="toggleEditExercise(this,'x-ex-extra-1ac')">✏️ Edit</button>
+    </div>
+  </div>
+
+  <span class="section-tag tag-grammar">1B — Negatives · Questions</span>
+
+  <div class="ex-block" id="x-ex-extra-1ba">
+    <p class="ex-instruction"><strong>1B a</strong> Write negative sentences.</p>
+    <p style="font-size:.82rem;color:var(--muted);margin-bottom:.4rem">She's Australian. → <em>She isn't Australian.</em> (example)</p>
+    <ol class="ex-items">
+      <li>I'm British. → <input class="gap lg" type="text" placeholder="…" style="min-width:200px"></li>
+      <li>They're Brazilian. → <input class="gap lg" type="text" placeholder="…" style="min-width:200px"></li>
+      <li>It's in South America. → <input class="gap lg" type="text" placeholder="…" style="min-width:200px"></li>
+      <li>You're French. → <input class="gap lg" type="text" placeholder="…" style="min-width:200px"></li>
+    </ol>
+    <div class="ex-actions">
+      <button class="btn-reset-ex" onclick="resetExercise('x-ex-extra-1ba')">↺ Reset</button>
+      <button class="btn-edit-ex" onclick="toggleEditExercise(this,'x-ex-extra-1ba')">✏️ Edit</button>
+    </div>
+  </div>
+
+  <div class="ex-block" id="x-ex-extra-1bb">
+    <p class="ex-instruction"><strong>1B b</strong> Make questions and short answers.</p>
+    <p style="font-size:.82rem;color:var(--muted);margin-bottom:.4rem">/ you English? → <em>Are you English?</em> ✓ <em>Yes, I am.</em> (example)</p>
+    <ol class="ex-items">
+      <li>/ I in room 10? → <input class="gap lg" type="text" placeholder="question…" style="min-width:180px"> ✓ <input class="gap" type="text" placeholder="short answer…"></li>
+      <li>/ it Spanish? → <input class="gap lg" type="text" placeholder="question…" style="min-width:180px"> ✗ <input class="gap" type="text" placeholder="short answer…"></li>
+      <li>/ they students? → <input class="gap lg" type="text" placeholder="question…" style="min-width:180px"> ✗ <input class="gap" type="text" placeholder="short answer…"></li>
+      <li>/ he from the USA? → <input class="gap lg" type="text" placeholder="question…" style="min-width:180px"> ✓ <input class="gap" type="text" placeholder="short answer…"></li>
+      <li>/ you Mike Bell? → <input class="gap lg" type="text" placeholder="question…" style="min-width:180px"> ✗ <input class="gap" type="text" placeholder="short answer…"></li>
+    </ol>
+    <div class="ex-actions">
+      <button class="btn-reset-ex" onclick="resetExercise('x-ex-extra-1bb')">↺ Reset</button>
+      <button class="btn-edit-ex" onclick="toggleEditExercise(this,'x-ex-extra-1bb')">✏️ Edit</button>
+    </div>
+  </div>
+
+  <div class="ex-block" id="x-ex-extra-1bc">
+    <p class="ex-instruction"><strong>1B c</strong> Complete the conversation. Use contractions, e.g. <em>'m, 's</em>, if possible.</p>
+    <div class="convo">
+      <div class="convo-line"><span class="convo-sp">A</span><span>Hi. I'<em>m</em> Mark.</span></div>
+      <div class="convo-line"><span class="convo-sp">B</span><span>Hello Mark. My name <sup>1</sup><input class="gap sm" type="text" placeholder="…"> Maria.</span></div>
+      <div class="convo-line"><span class="convo-sp">A</span><span><sup>2</sup><input class="gap sm" type="text" placeholder="…"> you Spanish, Maria?</span></div>
+      <div class="convo-line"><span class="convo-sp">B</span><span>No. I <sup>3</sup><input class="gap sm" type="text" placeholder="…"> not. I <sup>4</sup><input class="gap sm" type="text" placeholder="…"> from Mexico.</span></div>
+      <div class="convo-line"><span class="convo-sp">A</span><span><sup>5</sup><input class="gap sm" type="text" placeholder="…"> you from Mexico City?</span></div>
+      <div class="convo-line"><span class="convo-sp">B</span><span>No. I <sup>6</sup><input class="gap sm" type="text" placeholder="…"> from Tijuana.</span></div>
+      <div class="convo-line"><span class="convo-sp">A</span><span><sup>7</sup><input class="gap sm" type="text" placeholder="…"> Tijuana near Mexico City?</span></div>
+      <div class="convo-line"><span class="convo-sp">B</span><span>No, it <sup>8</sup><input class="gap sm" type="text" placeholder="…">. It <sup>9</sup><input class="gap sm" type="text" placeholder="…"> in the north.</span></div>
+      <div class="convo-line"><span class="convo-sp">A</span><span><sup>10</sup><input class="gap sm" type="text" placeholder="…"> you in class 1?</span></div>
+      <div class="convo-line"><span class="convo-sp">B</span><span>No. I <sup>11</sup><input class="gap sm" type="text" placeholder="…"> in class 2.</span></div>
+    </div>
+    <div class="ex-actions">
+      <button class="btn-reset-ex" onclick="resetExercise('x-ex-extra-1bc')">↺ Reset</button>
+      <button class="btn-edit-ex" onclick="toggleEditExercise(this,'x-ex-extra-1bc')">✏️ Edit</button>
+    </div>
+  </div>
+
+  <span class="section-tag tag-writing">Writing — Personal Profile (Group-Chat)</span>
+
+  <div class="ex-block" id="x-ex-extra-8a">
+    <p class="ex-instruction"><strong>8A</strong> Work in pairs. Look at the website form. Answer the questions.</p>
+    <ol class="ex-items">
+      <li>This website is for people who want:<br>
+        <span class="pick"><span class="pick-opt" onclick="pick(this)">a a new job</span><span class="pick-opt" onclick="pick(this)">b new friends</span></span>
+      </li>
+      <li>The form asks for information about:<br>
+        <span class="pick"><span class="pick-opt" onclick="pick(this)">a contact details</span><span class="pick-opt" onclick="pick(this)">b favourite places</span></span>
+      </li>
+      <li>In the bio/interests, you write about:<br>
+        <span class="pick"><span class="pick-opt" onclick="pick(this)">a your address</span><span class="pick-opt" onclick="pick(this)">b your life</span></span>
+      </li>
+    </ol>
+    <div class="ex-actions">
+      <button class="btn-reset-ex" onclick="resetExercise('x-ex-extra-8a')">↺ Reset</button>
+      <button class="btn-edit-ex" onclick="toggleEditExercise(this,'x-ex-extra-8a')">✏️ Edit</button>
+    </div>
+  </div>
+
+  <div class="ex-block" id="x-ex-extra-8b">
+    <p class="ex-instruction"><strong>8B</strong> Read Alexis Wilson's profile. Then complete your own Group-Chat profile below.</p>
+    <div class="word-box" style="font-size:.81rem;line-height:1.8;margin-bottom:.8rem">
+      <strong>Alexis Wilson</strong> · AlexIsNo1 · alexis.wilson129@wahoo.com · @alexwilson129 · Tarragona<br><br>
+      Hi, I'm Alexis! I'm a writer and website developer and I have a small company, AW Design. I live in Tarragona near the city centre. I'm thirty-two and this is my first year here in Spain. I would like to meet local people to practise my Spanish. I speak a little Spanish and French, but my English is best (I'm American). I'm interested in meeting people to go to a museum or simply to have a coffee. Contact me if you're interested!
+    </div>
+    <div style="background:rgba(26,20,16,.03);border-radius:6px;padding:1rem 1.2rem;border:1px solid var(--border)">
+      <div style="font-size:.78rem;font-weight:700;color:var(--muted);margin-bottom:.8rem;letter-spacing:.06em">NEW IN TOWN? JOIN GROUP-CHAT AND MEET NEW PEOPLE</div>
+      <div style="display:flex;flex-direction:column;gap:.5rem;font-size:.83rem">
+        <div style="display:flex;align-items:center;gap:.8rem"><span style="min-width:90px;color:var(--muted)">full name</span><input class="gap lg" type="text" placeholder="…" style="flex:1;border:1px solid var(--border);border-radius:3px;padding:.35rem .6rem;background:var(--paper);outline:none" id="x-profile-name" oninput="saveAll()"></div>
+        <div style="display:flex;align-items:center;gap:.8rem"><span style="min-width:90px;color:var(--muted)">username</span><input class="gap lg" type="text" placeholder="…" style="flex:1;border:1px solid var(--border);border-radius:3px;padding:.35rem .6rem;background:var(--paper);outline:none" id="x-profile-user" oninput="saveAll()"></div>
+        <div style="display:flex;align-items:center;gap:.8rem"><span style="min-width:90px;color:var(--muted)">email</span><input class="gap lg" type="text" placeholder="…" style="flex:1;border:1px solid var(--border);border-radius:3px;padding:.35rem .6rem;background:var(--paper);outline:none" id="x-profile-email" oninput="saveAll()"></div>
+        <div style="display:flex;align-items:center;gap:.8rem"><span style="min-width:90px;color:var(--muted)">Instagram</span><input class="gap lg" type="text" placeholder="…" style="flex:1;border:1px solid var(--border);border-radius:3px;padding:.35rem .6rem;background:var(--paper);outline:none" id="x-profile-insta" oninput="saveAll()"></div>
+        <div style="display:flex;align-items:center;gap:.8rem"><span style="min-width:90px;color:var(--muted)">location</span><input class="gap lg" type="text" placeholder="…" style="flex:1;border:1px solid var(--border);border-radius:3px;padding:.35rem .6rem;background:var(--paper);outline:none" id="x-profile-loc" oninput="saveAll()"></div>
+        <div style="display:flex;align-items:flex-start;gap:.8rem"><span style="min-width:90px;color:var(--muted);margin-top:.4rem">bio/interests</span><textarea id="x-profile-bio" placeholder="Write about yourself…" rows="5" style="flex:1;border:1px solid var(--border);border-radius:3px;padding:.35rem .6rem;background:var(--paper);outline:none;font-family:'DM Sans',sans-serif;font-size:.83rem;resize:vertical" oninput="saveAll()"></textarea></div>
+      </div>
+    </div>
+  </div>
+
+  </div></div>
+</div><!-- /x-acc-extra -->
+
+
+<div id="blocks-hw-unit-1"></div>
+<div class="block-picker" id="blockpicker-hw-unit-1">
+  <button class="block-type-btn" onclick="addBlock('hw-unit-1','note')">📝 Note</button>
+  <button class="block-type-btn" onclick="addBlock('hw-unit-1','text')">📄 Text</button>
+  <button class="block-type-btn" onclick="addBlock('hw-unit-1','image')">🖼️ Image</button>
+  <button class="block-type-btn" onclick="addBlock('hw-unit-1','link')">🔗 Link</button>
+  <button class="block-type-btn" onclick="addBlock('hw-unit-1','task')">✅ Tasks</button>
+  <button class="block-type-btn" onclick="addBlock('hw-unit-1','vocab')">📋 Vocabulary</button>
+</div>
+<button class="btn-add-block" onclick="toggleBlockPicker('hw-unit-1')">＋ Add block</button>
+        </div></div>
+      </div>
+
+    </div>
+  </div>
+</div><!-- /tab-homework -->
+
+<!-- VOCABULARY TAB -->
+<div class="tab-page" id="tab-vocabulary">
+  <div class="units-page">
+    <div class="units-page-header">
+      <h2><span>Vocabulary</span></h2>
+      <button class="btn-new-unit" onclick="openModal('vocabunit')">＋ Add unit</button>
+    </div>
+    <div id="vocabUnitsList">
+
+    <!-- Unit 1 -->
+    <div class="unit-item" id="vocab-unit-1">
+      <div class="unit-header" onclick="toggleUnit('vocab-unit-1')">
+        <span class="unit-number">Unit 1</span>
+        <span class="unit-title-text">Unit 1</span>
+        <span class="unit-chevron">▼</span>
+      </div>
+      <div class="unit-body"><div class="unit-body-inner">
+        <div class="unit-notes-label" style="margin-bottom:.4rem">Common verbs · Everyday activities · Feelings · Jobs</div>
+        <textarea class="unit-textarea" id="vocab-u1" placeholder="Word — translation&#10;e.g. to miss — скучать" rows="10" oninput="saveAll()" style="min-height:200px;font-family:monospace;font-size:.82rem"></textarea>
+        <div style="margin-top:.7rem">
+          <div class="unit-notes-label" style="margin-bottom:.35rem">🔗 Links & files</div>
+          <ul class="simple-hw-list" id="vocablinks-unit-1"></ul>
+          <button class="btn-add-hw" onclick="showHwForm('vocablink-unit-1')">＋ Add link</button>
+          <div class="add-hw-form" id="hwform-vocablink-unit-1">
+            <div class="form-row">
+              <input type="text" class="inp-main" placeholder="Title (e.g. Quizlet Unit 1)" id="hwtxt-vocablink-unit-1">
+            </div>
+            <div class="form-row">
+              <input type="url" class="inp-url" placeholder="https://..." id="hwpages-vocablink-unit-1" style="flex:1">
+            </div>
+            <div class="form-actions">
+              <button class="btn-save-hw" onclick="saveLinkItem('vocablink-unit-1','vocablinks-unit-1')">Save</button>
+              <button class="btn-cancel-hw" onclick="hideHwForm('vocablink-unit-1')">Cancel</button>
+            </div>
+          </div>
+        </div>
+      
+<div id="blocks-vocab-unit-1"></div>
+<div class="block-picker" id="blockpicker-vocab-unit-1">
+  <button class="block-type-btn" onclick="addBlock('vocab-unit-1','note')">📝 Note</button>
+  <button class="block-type-btn" onclick="addBlock('vocab-unit-1','text')">📄 Text</button>
+  <button class="block-type-btn" onclick="addBlock('vocab-unit-1','image')">🖼️ Image</button>
+  <button class="block-type-btn" onclick="addBlock('vocab-unit-1','link')">🔗 Link</button>
+  <button class="block-type-btn" onclick="addBlock('vocab-unit-1','task')">✅ Tasks</button>
+  <button class="block-type-btn" onclick="addBlock('vocab-unit-1','vocab')">📋 Vocabulary</button>
+</div>
+<button class="btn-add-block" onclick="toggleBlockPicker('vocab-unit-1')">＋ Add block</button>
+</div></div>
+    </div>
+
+    <!-- Unit 2 -->
+    <div class="unit-item" id="vocab-unit-2">
+      <div class="unit-header" onclick="toggleUnit('vocab-unit-2')">
+        <span class="unit-number">Unit 2</span>
+        <span class="unit-title-text">Unit 2</span>
+        <span class="unit-chevron">▼</span>
+      </div>
+      <div class="unit-body"><div class="unit-body-inner">
+        <div class="unit-notes-label" style="margin-bottom:.4rem">Animals · Air travel · Actions · Feelings</div>
+        <textarea class="unit-textarea" id="vocab-u2" placeholder="Word — translation&#10;e.g. fur — мех" rows="10" oninput="saveAll()" style="min-height:200px;font-family:monospace;font-size:.82rem"></textarea>
+        <div style="margin-top:.7rem">
+          <div class="unit-notes-label" style="margin-bottom:.35rem">🔗 Links & files</div>
+          <ul class="simple-hw-list" id="vocablinks-unit-2"></ul>
+          <button class="btn-add-hw" onclick="showHwForm('vocablink-unit-2')">＋ Add link</button>
+          <div class="add-hw-form" id="hwform-vocablink-unit-2">
+            <div class="form-row">
+              <input type="text" class="inp-main" placeholder="Title (e.g. Quizlet Unit 2)" id="hwtxt-vocablink-unit-2">
+            </div>
+            <div class="form-row">
+              <input type="url" class="inp-url" placeholder="https://..." id="hwpages-vocablink-unit-2" style="flex:1">
+            </div>
+            <div class="form-actions">
+              <button class="btn-save-hw" onclick="saveLinkItem('vocablink-unit-2','vocablinks-unit-2')">Save</button>
+              <button class="btn-cancel-hw" onclick="hideHwForm('vocablink-unit-2')">Cancel</button>
+            </div>
+          </div>
+        </div>
+      
+<div id="blocks-vocab-unit-2"></div>
+<div class="block-picker" id="blockpicker-vocab-unit-2">
+  <button class="block-type-btn" onclick="addBlock('vocab-unit-2','note')">📝 Note</button>
+  <button class="block-type-btn" onclick="addBlock('vocab-unit-2','text')">📄 Text</button>
+  <button class="block-type-btn" onclick="addBlock('vocab-unit-2','image')">🖼️ Image</button>
+  <button class="block-type-btn" onclick="addBlock('vocab-unit-2','link')">🔗 Link</button>
+  <button class="block-type-btn" onclick="addBlock('vocab-unit-2','task')">✅ Tasks</button>
+  <button class="block-type-btn" onclick="addBlock('vocab-unit-2','vocab')">📋 Vocabulary</button>
+</div>
+<button class="btn-add-block" onclick="toggleBlockPicker('vocab-unit-2')">＋ Add block</button>
+</div></div>
+    </div>
+
+
+    </div><!-- /vocabUnitsList -->
+  </div>
+</div>
+
+<!-- REVIEW TAB -->
+<div class="tab-page" id="tab-review">
+  <div class="units-page">
+    <div class="units-page-header">
+      <h2><span>Review</span> Notes</h2>
+      <button class="btn-new-unit" onclick="openModal('reviewunit')">＋ Add unit</button>
+    </div>
+    <div id="reviewUnitsList">
+
+    <!-- Unit 1 review -->
+    <div class="unit-item" id="review-unit-1">
+      <div class="unit-header" onclick="toggleUnit('review-unit-1')">
+        <span class="unit-number">Unit 1</span>
+        <span class="unit-title-text">Unit 1 — Review</span>
+        <span class="unit-chevron">▼</span>
+      </div>
+      <div class="unit-body"><div class="unit-body-inner">
+        <div class="unit-notes-row" style="margin-bottom:.8rem">
+          <div class="unit-notes-col">
+            <div class="unit-notes-label">✅ What I know well</div>
+            <textarea class="unit-textarea" id="review-u1-know" placeholder="Topics I'm confident with…" oninput="saveAll()"></textarea>
+          </div>
+          <div class="unit-notes-col">
+            <div class="unit-notes-label">🔁 What to practise more</div>
+            <textarea class="unit-textarea" id="review-u1-practise" placeholder="Topics to revise…" oninput="saveAll()"></textarea>
+          </div>
+        </div>
+        <div class="unit-notes-label" style="margin-bottom:.35rem">📝 General notes</div>
+        <textarea class="unit-textarea" id="review-u1-notes" placeholder="Any other notes…" oninput="saveAll()"></textarea>
+        <div style="margin-top:.7rem">
+          <div class="unit-notes-label" style="margin-bottom:.35rem">🔗 Links & files</div>
+          <ul class="simple-hw-list" id="reviewlinks-unit-1"></ul>
+          <button class="btn-add-hw" onclick="showHwForm('reviewlink-unit-1')">＋ Add link</button>
+          <div class="add-hw-form" id="hwform-reviewlink-unit-1">
+            <div class="form-row">
+              <input type="text" class="inp-main" placeholder="Title (e.g. Review PDF)" id="hwtxt-reviewlink-unit-1">
+            </div>
+            <div class="form-row">
+              <input type="url" class="inp-url" placeholder="https://..." id="hwpages-reviewlink-unit-1" style="flex:1">
+            </div>
+            <div class="form-actions">
+              <button class="btn-save-hw" onclick="saveLinkItem('reviewlink-unit-1','reviewlinks-unit-1')">Save</button>
+              <button class="btn-cancel-hw" onclick="hideHwForm('reviewlink-unit-1')">Cancel</button>
+            </div>
+          </div>
+        </div>
+      
+<div id="blocks-review-unit-1"></div>
+<div class="block-picker" id="blockpicker-review-unit-1">
+  <button class="block-type-btn" onclick="addBlock('review-unit-1','note')">📝 Note</button>
+  <button class="block-type-btn" onclick="addBlock('review-unit-1','text')">📄 Text</button>
+  <button class="block-type-btn" onclick="addBlock('review-unit-1','image')">🖼️ Image</button>
+  <button class="block-type-btn" onclick="addBlock('review-unit-1','link')">🔗 Link</button>
+  <button class="block-type-btn" onclick="addBlock('review-unit-1','task')">✅ Tasks</button>
+  <button class="block-type-btn" onclick="addBlock('review-unit-1','vocab')">📋 Vocabulary</button>
+</div>
+<button class="btn-add-block" onclick="toggleBlockPicker('review-unit-1')">＋ Add block</button>
+</div></div>
+    </div>
+
+    <!-- Unit 2 review -->
+    <div class="unit-item" id="review-unit-2">
+      <div class="unit-header" onclick="toggleUnit('review-unit-2')">
+        <span class="unit-number">Unit 2</span>
+        <span class="unit-title-text">Unit 2 — Review</span>
+        <span class="unit-chevron">▼</span>
+      </div>
+      <div class="unit-body"><div class="unit-body-inner">
+        <div class="unit-notes-row" style="margin-bottom:.8rem">
+          <div class="unit-notes-col">
+            <div class="unit-notes-label">✅ What I know well</div>
+            <textarea class="unit-textarea" id="review-u2-know" placeholder="Topics I'm confident with…" oninput="saveAll()"></textarea>
+          </div>
+          <div class="unit-notes-col">
+            <div class="unit-notes-label">🔁 What to practise more</div>
+            <textarea class="unit-textarea" id="review-u2-practise" placeholder="Topics to revise…" oninput="saveAll()"></textarea>
+          </div>
+        </div>
+        <div class="unit-notes-label" style="margin-bottom:.35rem">📝 General notes</div>
+        <textarea class="unit-textarea" id="review-u2-notes" placeholder="Any other notes…" oninput="saveAll()"></textarea>
+        <div style="margin-top:.7rem">
+          <div class="unit-notes-label" style="margin-bottom:.35rem">🔗 Links & files</div>
+          <ul class="simple-hw-list" id="reviewlinks-unit-2"></ul>
+          <button class="btn-add-hw" onclick="showHwForm('reviewlink-unit-2')">＋ Add link</button>
+          <div class="add-hw-form" id="hwform-reviewlink-unit-2">
+            <div class="form-row">
+              <input type="text" class="inp-main" placeholder="Title" id="hwtxt-reviewlink-unit-2">
+            </div>
+            <div class="form-row">
+              <input type="url" class="inp-url" placeholder="https://..." id="hwpages-reviewlink-unit-2" style="flex:1">
+            </div>
+            <div class="form-actions">
+              <button class="btn-save-hw" onclick="saveLinkItem('reviewlink-unit-2','reviewlinks-unit-2')">Save</button>
+              <button class="btn-cancel-hw" onclick="hideHwForm('reviewlink-unit-2')">Cancel</button>
+            </div>
+          </div>
+        </div>
+      
+<div id="blocks-review-unit-2"></div>
+<div class="block-picker" id="blockpicker-review-unit-2">
+  <button class="block-type-btn" onclick="addBlock('review-unit-2','note')">📝 Note</button>
+  <button class="block-type-btn" onclick="addBlock('review-unit-2','text')">📄 Text</button>
+  <button class="block-type-btn" onclick="addBlock('review-unit-2','image')">🖼️ Image</button>
+  <button class="block-type-btn" onclick="addBlock('review-unit-2','link')">🔗 Link</button>
+  <button class="block-type-btn" onclick="addBlock('review-unit-2','task')">✅ Tasks</button>
+  <button class="block-type-btn" onclick="addBlock('review-unit-2','vocab')">📋 Vocabulary</button>
+</div>
+<button class="btn-add-block" onclick="toggleBlockPicker('review-unit-2')">＋ Add block</button>
+</div></div>
+    </div>
+
+    <!-- Unit 3 review -->
+    
+
+    </div><!-- /reviewUnitsList -->
+  </div>
+</div>
+
+<!-- MATERIALS TAB -->
+<div class="tab-page" id="tab-materials">
+  <div class="materials-page">
+    <div class="materials-header"><h2>Course <span>Materials</span></h2></div>
+    <div class="grid" id="cardGrid">
+      <a class="card rose" href="https://drive.google.com/file/d/1Dq5WdujxtvIh_q-gHea5BAmqtyq7OCiQ/view?usp=sharing" target="_blank">
+        <span class="card-icon">📖</span><div class="card-label">Textbook</div><h3>Student's Book</h3><p>Main course book.</p><span class="card-arrow">→</span>
+      </a>
+      <a class="card sage" href="https://drive.google.com/file/d/1ebpyJgb4ctCMnSaucfgk5C2PdCvJiS7h/view?usp=sharing" target="_blank">
+        <span class="card-icon">📝</span><div class="card-label">Practice</div><h3>Workbook</h3><p>Exercises and practice tasks.</p><span class="card-arrow">→</span>
+      </a>
+      <a class="card gold" href="https://drive.google.com/drive/folders/1Kzo-6f-kWLQ4GoO0HnkCUSWplx2Hq5o_" target="_blank">
+        <span class="card-icon">🎧</span><div class="card-label">Audio</div><h3>Workbook Audio</h3><p>All listening tracks.</p><span class="card-arrow">→</span>
+      </a>
+      <a class="card blue" href="https://drive.google.com/drive/folders/1UsrGiaMP-MeOjAuquJdGbAbccDn_skmA" target="_blank">
+        <span class="card-icon">🔊</span><div class="card-label">Audio</div><h3>Student's Book Audio</h3><p>All audio tracks.</p><span class="card-arrow">→</span>
+      </a>
+      <a class="card" style="background:linear-gradient(135deg,#f0eaf8,#e8dff5);border-color:#c9b8e8" href="https://drive.google.com/drive/folders/1MkmTd-1RMZUD5gaPnrxO-1B-OF55QYgJ" target="_blank">
+        <span class="card-icon">🎬</span><div class="card-label" style="color:#9b59b6">Video</div><h3>Video</h3><p>Course video materials.</p><span class="card-arrow" style="color:#9b59b6">→</span>
+      </a>
+      <a class="card board" href="https://miro.com/app/board/uXjVPQMjB3I=/" target="_blank">
+        <div class="board-text"><div class="card-label">Interactive</div><h3>Miro Board</h3><p>Shared workspace.</p></div>
+        <div class="board-visual">🗂️</div>
+        <span class="card-arrow" style="bottom:1rem;right:1.1rem;position:absolute">→</span>
+      </a>
+    </div>
+  </div>
+  <div class="add-section">
+    <button class="add-btn" onclick="openModal('resource')"><span style="font-size:1.1rem">＋</span> Add a resource</button>
+  </div>
+</div>
+
+
+
+<footer>Made with care for Xenia &nbsp;·&nbsp; ✦</footer>
+
+<button class="teacher-mode-btn" id="teacherBtn" onclick="toggleTeacherMode()">✏️ Teacher Mode</button>
+
+<div class="teacher-mode-bar" id="teacherBar">
+  <span>✏️ Teacher Mode — click any text to edit it · click gaps to set answers · click options to rename them</span>
+  <button onclick="toggleTeacherMode()" style="margin-left:auto;background:var(--rose);color:white;border:none;border-radius:3px;padding:.3rem .8rem;font-family:'DM Sans',sans-serif;font-size:.73rem;cursor:pointer;">✓ Done editing</button>
+</div>
+
+<div class="ans-edit-popup" id="ansPopup">
+  <label>Correct answer</label>
+  <input id="ansPopupInput" placeholder="answer…" onkeydown="if(event.key==='Enter')saveAnsPopup()">
+  <button onclick="saveAnsPopup()">Save answer</button>
+</div>
+<!-- MODALS -->
+<div class="modal-overlay" id="modal-resource">
+  <div class="modal"><button class="close-modal" onclick="closeModal('resource')">✕</button>
+    <h3>Add a Resource</h3>
+    <label>Title</label><input type="text" id="rTitle" placeholder="Grammar Reference">
+    <label>URL</label><input type="url" id="rUrl" placeholder="https://...">
+    <label>Description</label><input type="text" id="rDesc" placeholder="Short description">
+    <label>Category</label>
+    <select id="rColor"><option value="rose">📖 Textbook</option><option value="sage">📝 Practice</option><option value="gold">🎧 Audio</option><option value="blue">🔗 Other</option></select>
+    <div class="modal-actions"><button class="btn-modal-cancel" onclick="closeModal('resource')">Cancel</button><button class="btn-modal-add" onclick="addCard()">Add →</button></div>
+  </div>
+</div>
+<div class="modal-overlay" id="modal-vocabunit">
+  <div class="modal"><button class="close-modal" onclick="closeModal('vocabunit')">✕</button>
+    <h3>New Vocabulary Unit</h3>
+    <label>Unit number</label><input type="text" id="vuNum" placeholder="4">
+    <label>Unit title</label><input type="text" id="vuName" placeholder="e.g. City Life">
+    <div class="modal-actions"><button class="btn-modal-cancel" onclick="closeModal('vocabunit')">Cancel</button><button class="btn-modal-add" onclick="addVocabUnit()">Add →</button></div>
+  </div>
+</div>
+<div class="modal-overlay" id="modal-reviewunit">
+  <div class="modal"><button class="close-modal" onclick="closeModal('reviewunit')">✕</button>
+    <h3>New Review Unit</h3>
+    <label>Unit number</label><input type="text" id="ruNum" placeholder="4">
+    <label>Unit title</label><input type="text" id="ruName" placeholder="e.g. City Life">
+    <div class="modal-actions"><button class="btn-modal-cancel" onclick="closeModal('reviewunit')">Cancel</button><button class="btn-modal-add" onclick="addReviewUnit()">Add →</button></div>
+  </div>
+</div>
+<div class="modal-overlay" id="modal-cunit">
+  <div class="modal"><button class="close-modal" onclick="closeModal('cunit')">✕</button>
+    <h3>New Classwork Unit</h3>
+    <label>Unit number</label><input type="text" id="cuNum" placeholder="3">
+    <label>Unit title</label><input type="text" id="cuName" placeholder="e.g. Travel">
+    <div class="modal-actions"><button class="btn-modal-cancel" onclick="closeModal('cunit')">Cancel</button><button class="btn-modal-add" onclick="addUnit('cw','cwUnitsList','cuNum','cuName')">Add →</button></div>
+  </div>
+</div>
+<div class="modal-overlay" id="modal-hwunit">
+  <div class="modal"><button class="close-modal" onclick="closeModal('hwunit')">✕</button>
+    <h3>New Homework Unit</h3>
+    <label>Unit number</label><input type="text" id="hwuNum" placeholder="4">
+    <label>Unit title</label><input type="text" id="hwuName" placeholder="e.g. People">
+    <div class="modal-actions"><button class="btn-modal-cancel" onclick="closeModal('hwunit')">Cancel</button><button class="btn-modal-add" onclick="addUnit('hw','hwUnitsList','hwuNum','hwuName')">Add →</button></div>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+<script>
+// ═══════════════════════════════════════════════
+// ANSWERS DATABASE
+// ═══════════════════════════════════════════════
+const ANSWERS = {
+  // ── UNIT 1 LESSON 1A ──
+  // Ex 1 pick: common verbs
+  'u1-1a-ex1-1': 'c', // join
+  'u1-1a-ex1-2': 'b', // join
+  'u1-1a-ex1-3': 'a', // waiting
+  'u1-1a-ex1-4': 'c', // miss
+  'u1-1a-ex1-5': 'a', // pack
+  'u1-1a-ex1-6': 'c', // lock
+  // Ex 2A match
+  'u1-1a-ex2a-1': 'c', 'u1-1a-ex2a-2': 'f', 'u1-1a-ex2a-3': 'e',
+  'u1-1a-ex2a-4': 'd', 'u1-1a-ex2a-5': 'a', 'u1-1a-ex2a-6': 'b',
+  // Ex 2B blog gaps
+  'u1-1a-ex2b-1': 'dressed', 'u1-1a-ex2b-2': 'dry', 'u1-1a-ex2b-3': 'do',
+  'u1-1a-ex2b-4': 'away', 'u1-1a-ex2b-5': 'brush', 'u1-1a-ex2b-6': 'shut',
+  'u1-1a-ex2b-7': 'lock', 'u1-1a-ex2b-8': 'switch',
+  // Ex 3A pick
+  'u1-1a-ex3a-1': 'a', 'u1-1a-ex3a-2': 'c', 'u1-1a-ex3a-3': 'b',
+  'u1-1a-ex3a-4': 'b', 'u1-1a-ex3a-5': 'c', 'u1-1a-ex3a-6': 'c',
+  // Ex 3B gaps
+  'u1-1a-ex3b-1': 'Where', 'u1-1a-ex3b-2': 'is', 'u1-1a-ex3b-3': 'of',
+  'u1-1a-ex3b-4': 'Why', 'u1-1a-ex3b-5': 'Have', 'u1-1a-ex3b-6': 'do',
+  'u1-1a-ex3b-7': 'far', 'u1-1a-ex3b-8': 'Which',
+  // Ex 4A intonation R/F
+  'u1-1a-ex4a-1': 'F', 'u1-1a-ex4a-2': 'F', 'u1-1a-ex4a-3': 'R',
+  'u1-1a-ex4a-4': 'R', 'u1-1a-ex4a-5': 'F', 'u1-1a-ex4a-6': 'R',
+  // Ex 5 pick
+  'u1-1a-ex5-1': 'friends', 'u1-1a-ex5-2': 'similar',
+  // Ex 6A checkboxes: same for both: 1 birthday, 3 primary school, 5 job, 6 type of home, 7 hobby
+  // Ex 6B gaps
+  'u1-1a-ex6b-1': '1999', 'u1-1a-ex6b-2': '1997', 'u1-1a-ex6b-3': 'three',
+  'u1-1a-ex6b-4': 'restaurant', 'u1-1a-ex6b-5': 'Glasgow', 'u1-1a-ex6b-6': 'art',
+  'u1-1a-ex6b-7': 'three', 'u1-1a-ex6b-8': 'fifth', 'u1-1a-ex6b-9': 'museum',
+  'u1-1a-ex6b-10': 'cousin',
+  // Ex 6C pick M/H
+  'u1-1a-ex6c-1': 'M', 'u1-1a-ex6c-2': 'H', 'u1-1a-ex6c-3': 'H',
+  'u1-1a-ex6c-4': 'M', 'u1-1a-ex6c-5': 'H',
+
+  // ── UNIT 1 LESSON 1B ──
+  'u1-1b-ex1-1': 'b', 'u1-1b-ex1-2': 'c', 'u1-1b-ex1-3': 'f',
+  'u1-1b-ex1-4': 'h', 'u1-1b-ex1-5': 'e', 'u1-1b-ex1-6': 'a',
+  'u1-1b-ex1-7': 'd', 'u1-1b-ex1-8': 'g',
+  'u1-1b-ex2a-1': 'b', 'u1-1b-ex2a-2': 'a', 'u1-1b-ex2a-3': 'b',
+  'u1-1b-ex2a-4': 'c', 'u1-1b-ex2a-5': 'a', 'u1-1b-ex2a-6': 'c',
+  'u1-1b-ex2b-1': 'industry', 'u1-1b-ex2b-2': 'career', 'u1-1b-ex2b-3': 'interviews',
+  'u1-1b-ex2b-4': 'offered', 'u1-1b-ex2b-5': 'pay', 'u1-1b-ex2b-6': 'contract',
+  'u1-1b-ex2b-7': 'job', 'u1-1b-ex2b-8': 'business',
+  'u1-1b-ex3a-1': 'b', 'u1-1b-ex3a-2': 'c', 'u1-1b-ex3a-3': 'a', 'u1-1b-ex3a-4': 'c',
+  'u1-1b-ex3b-1': 'Are', 'u1-1b-ex3b-2': 'work', 'u1-1b-ex3b-3': '\'m sitting',
+  'u1-1b-ex3b-4a': 'Are', 'u1-1b-ex3b-4b': 'having',
+  'u1-1b-ex3b-5a': 'do', 'u1-1b-ex3b-5b': 'make',
+  'u1-1b-ex3b-6a': 'are', 'u1-1b-ex3b-6b': 'eating',
+  'u1-1b-ex3b-7': '\'m enjoying', 'u1-1b-ex3b-8': '\'s having',
+  'u1-1b-ex3b-9a': 'Does', 'u1-1b-ex3b-9b': 'eat',
+  'u1-1b-ex3b-10': 'don\'t have',
+  'u1-1b-ex6a': 'b',
+  'u1-1b-ex6b-1': 'F', 'u1-1b-ex6b-2': 'F', 'u1-1b-ex6b-3': 'F',
+  'u1-1b-ex6b-4': 'T', 'u1-1b-ex6b-5': 'F',
+  'u1-1b-ex6c-1': '500', 'u1-1b-ex6c-2': 'arguing', 'u1-1b-ex6c-3': 'seven',
+  'u1-1b-ex6c-4': 'hotel', 'u1-1b-ex6c-5': 'happy',
+  'u1-1b-ex7a-1': 'a few months', 'u1-1b-ex7a-2': 'works',
+  'u1-1b-ex7a-3': 'with others', 'u1-1b-ex7a-4': 'isn\'t', 'u1-1b-ex7a-5': 'free time',
+
+  // ── UNIT 1 LESSON 1C ──
+  'u1-1c-ex1a-1': 'confident', 'u1-1c-ex1a-2': 'positive', 'u1-1c-ex1a-3': 'afraid',
+  'u1-1c-ex1a-4': 'pleased', 'u1-1c-ex1a-5': 'lonely', 'u1-1c-ex1a-6': 'stressed',
+  'u1-1c-ex1a-7': 'unhappy', 'u1-1c-ex1a-8': 'interested',
+  'u1-1c-ex1b-1': 'unhappy', 'u1-1c-ex1b-2': 'confident', 'u1-1c-ex1b-3': 'afraid',
+  'u1-1c-ex1b-4': 'lonely', 'u1-1c-ex1b-5': 'interested', 'u1-1c-ex1b-6': 'stressed',
+  'u1-1c-ex2-1': 'b', 'u1-1c-ex2-2': 'b', 'u1-1c-ex2-3': 'b',
+  'u1-1c-ex2-4': 'b', 'u1-1c-ex2-5': 'b', 'u1-1c-ex2-6': 'b',
+  'u1-1c-ex3b-1a': 'looks', 'u1-1c-ex3b-1b': 'Nice',
+  'u1-1c-ex3b-2': 'done', 'u1-1c-ex3b-3': 'it', 'u1-1c-ex3b-4': 'on',
+  'u1-1c-ex3b-5': 'all right', 'u1-1c-ex3b-6a': 'Don\'t', 'u1-1c-ex3b-6b': 'really',
+  'u1-1c-ex3b-7': 'understand', 'u1-1c-ex3b-8': 'That\'s',
+  'u1-1c-ex4a-1': 'mean', 'u1-1c-ex4a-2': 'think', 'u1-1c-ex4a-3': 'worry',
+  'u1-1c-ex4a-4': 'that\'s', 'u1-1c-ex4a-5': 'well', 'u1-1c-ex4a-6': 'you\'ll',
+
+  // ── UNIT 1 LESSON 1D ──
+  'u1-1d-ex1-1': 'enjoying', 'u1-1d-ex1-2': 'making', 'u1-1d-ex1-3': 'cooking',
+  'u1-1d-ex1-4': 'beginning', 'u1-1d-ex1-5': 'not sleeping', 'u1-1d-ex1-6': 'to have',
+  'u1-1d-ex1-7': 'helping', 'u1-1d-ex1-8': 'don\'t like',
+  'u1-1d-ex2-1': 'dancing', 'u1-1d-ex2-2': 'getting', 'u1-1d-ex2-3': 'getting',
+  'u1-1d-ex2-4': 'doing', 'u1-1d-ex2-5': 'to have', 'u1-1d-ex2-6': 'visiting',
+  'u1-1d-ex2-7': 'travelling', 'u1-1d-ex2-8': 'seeing', 'u1-1d-ex2-9': 'saying',
+  'u1-1d-ex2-10': 'taking', 'u1-1d-ex2-11': 'using', 'u1-1d-ex2-12': 'being',
+  'u1-1d-ex4-1': 'cold', 'u1-1d-ex4-2': 'mind', 'u1-1d-ex4-3': 'arriving at',
+  'u1-1d-ex4-4': 'early', 'u1-1d-ex4-5': 'baths', 'u1-1d-ex4-6': 'enjoys',
+
+  // ── UNIT 2 LESSON 2A ──
+  'u2-2a-ex1-1': 'fur', 'u2-2a-ex1-2': 'web', 'u2-2a-ex1-3': 'skin',
+  'u2-2a-ex1-4': 'trunk', 'u2-2a-ex1-5': 'wings', 'u2-2a-ex1-6': 'shell',
+  'u2-2a-ex1-7': 'feathers', 'u2-2a-ex1-8': 'tail',
+  'u2-2a-ex2-1': 'dolphin', 'u2-2a-ex2-2': 'bee', 'u2-2a-ex2-3': 'rabbit',
+  'u2-2a-ex2-4': 'frog', 'u2-2a-ex2-5': 'tiger', 'u2-2a-ex2-6': 'snake',
+  'u2-2a-ex2-7': 'butterfly', 'u2-2a-ex2-8': 'wolf',
+  'u2-2a-ex3a-1': 'b', 'u2-2a-ex3a-2': 'b', 'u2-2a-ex3a-3': 'a', 'u2-2a-ex3a-4': 'b',
+  'u2-2a-ex3b-1': 'was walking', 'u2-2a-ex3b-2': 'had', 'u2-2a-ex3b-3': 'didn\'t hear',
+  'u2-2a-ex3b-4a': 'made', 'u2-2a-ex3b-4b': 'were walking',
+  'u2-2a-ex3b-5a': 'was crossing', 'u2-2a-ex3b-5b': 'fell',
+  'u2-2a-ex3b-6a': 'found', 'u2-2a-ex3b-6b': 'took',
+  'u2-2a-ex3c-1': 'were you doing', 'u2-2a-ex3c-2': 'was playing',
+  'u2-2a-ex3c-3': 'was walking', 'u2-2a-ex3c-4': 'heard',
+  'u2-2a-ex3c-5': 'was lying', 'u2-2a-ex3c-6': 'did you do',
+  'u2-2a-ex3c-7': 'called', 'u2-2a-ex3c-8': 'came',
+  'u2-2a-ex3c-9': 'spoke', 'u2-2a-ex3c-10': 'told',
+  'u2-2a-ex5b-1': 'a', 'u2-2a-ex5b-2': 'c', 'u2-2a-ex5b-3': 'c',
+  'u2-2a-ex5b-4': 'a', 'u2-2a-ex5b-5': 'b', 'u2-2a-ex5b-6': 'c',
+  'u2-2a-ex6a-1': 'dog', 'u2-2a-ex6a-2': 'house', 'u2-2a-ex6a-3': 'phone',
+  'u2-2a-ex6b-1': 'Just then', 'u2-2a-ex6b-2': 'First',
+  'u2-2a-ex6b-3': 'Then', 'u2-2a-ex6b-4': 'Later',
+
+  // ── UNIT 2 LESSON 2B ──
+  'u2-2b-ex1-1': 'fly out', 'u2-2b-ex1-2': 'land', 'u2-2b-ex1-3': 'flight',
+  'u2-2b-ex1-4': 'take off', 'u2-2b-ex1-5': 'delay', 'u2-2b-ex1-6': 'due to arrive',
+  'u2-2b-ex1-7': 'land', 'u2-2b-ex1-8': 'arrival time', 'u2-2b-ex1-9': 'made a reservation',
+  'u2-2b-ex2a-1': 'a', 'u2-2b-ex2a-2': 'b', 'u2-2b-ex2a-3': 'a',
+  'u2-2b-ex2a-4': 'b', 'u2-2b-ex2a-5': 'c', 'u2-2b-ex2a-6': 'c',
+  'u2-2b-ex2b-1': 'Check', 'u2-2b-ex2b-2': 'boarding', 'u2-2b-ex2b-3': 'Security',
+  'u2-2b-ex2b-4': 'lounge', 'u2-2b-ex2b-5': 'board', 'u2-2b-ex2b-6': 'control',
+  'u2-2b-ex2b-7': 'get', 'u2-2b-ex2b-8': 'Baggage', 'u2-2b-ex2b-9': 'Customs',
+  'u2-2b-ex2b-10': 'Arrivals',
+  'u2-2b-ex3a-1': 'the seat', 'u2-2b-ex3a-2': 'The flight', 'u2-2b-ex3a-3': 'time',
+  'u2-2b-ex3a-4': 'the Sahara', 'u2-2b-ex3a-5': 'in the morning', 'u2-2b-ex3a-6': 'the train station',
+  'u2-2b-ex3b-1': '–', 'u2-2b-ex3b-2': '–', 'u2-2b-ex3b-3': 'the',
+  'u2-2b-ex3b-4': 'the', 'u2-2b-ex3b-5': 'the', 'u2-2b-ex3b-6': '–',
+  'u2-2b-ex3b-7': 'the', 'u2-2b-ex3b-8': 'The', 'u2-2b-ex3b-9': 'the', 'u2-2b-ex3b-10': '–',
+  'u2-2b-ex5-1': '4', 'u2-2b-ex5-2': '3', 'u2-2b-ex5-3': '1', 'u2-2b-ex5-4': '2',
+  'u2-2b-ex6a-1': 'T', 'u2-2b-ex6a-2': 'F', 'u2-2b-ex6a-3': 'T', 'u2-2b-ex6a-4': 'F',
+  'u2-2b-ex6a-5': 'T', 'u2-2b-ex6a-6': 'F', 'u2-2b-ex6a-7': 'F', 'u2-2b-ex6a-8': 'F',
+  'u2-2b-ex6a-9': 'T', 'u2-2b-ex6a-10': 'F',
+  'u2-2b-ex6b-1': 'pool', 'u2-2b-ex6b-2': 'take photos', 'u2-2b-ex6b-3': 'husband',
+  'u2-2b-ex6b-4': 'week', 'u2-2b-ex6b-5': 'arrivals hall', 'u2-2b-ex6b-6': 'airline desk',
+  'u2-2b-ex6c-1': 'Alice', 'u2-2b-ex6c-2': 'Lucas', 'u2-2b-ex6c-3': 'Emi', 'u2-2b-ex6c-4': 'Darius',
+
+  // ── UNIT 2 LESSON 2C ──
+  'u2-2c-ex1a-1': 'b', 'u2-2c-ex1a-2': 'a', 'u2-2c-ex1a-3': 'a',
+  'u2-2c-ex1a-4': 'c', 'u2-2c-ex1a-5': 'b', 'u2-2c-ex1a-6': 'c',
+  'u2-2c-ex1b-1': 'take', 'u2-2c-ex1b-2': 'cancelled', 'u2-2c-ex1b-3': 'answered',
+  'u2-2c-ex1b-4': 'brought', 'u2-2c-ex1b-5': 'carried', 'u2-2c-ex1b-6': 'made',
+  'u2-2c-ex1b-7': 'answered',
+  'u2-2c-ex2b-1': 'Do you want me to help?', 'u2-2c-ex2b-2': 'Yes, that would be great, please.',
+  'u2-2c-ex2b-3': 'I can do the washing up.', 'u2-2c-ex2b-4': 'I\'ll put all these cups in the kitchen.',
+  'u2-2c-ex2b-5': 'Do you want me to cancel it?', 'u2-2c-ex2b-6': 'Shall I book the one on the 24th?',
+  'u2-2c-ex2b-7': 'Do you want me to email you the information?',
+  'u2-2c-ex2b-8': 'Thank you, but I\'m OK.', 'u2-2c-ex2b-9': 'Shall I talk to her?',
+  'u2-2c-ex2b-10': 'That\'s kind of you.', 'u2-2c-ex2b-11': 'Let me talk to him first.',
+  'u2-2c-ex2b-12': 'OK, that\'s a great help.',
+  'u2-2c-ex4a-1': 'Shall', 'u2-2c-ex4a-2': 'can', 'u2-2c-ex4a-3': 'good',
+  'u2-2c-ex4a-4': 'can', 'u2-2c-ex4a-5': 'want', 'u2-2c-ex4a-6': 'but',
+  'u2-2c-ex4a-7': 'Let',
+
+  // ── UNIT 2 LESSON 2D ──
+  'u2-2d-ex1-1': 'e', 'u2-2d-ex1-2': 'b', 'u2-2d-ex1-3': 'a',
+  'u2-2d-ex1-4': 'f', 'u2-2d-ex1-5': 'd', 'u2-2d-ex1-6': 'c',
+  'u2-2d-ex2-1': 'none', 'u2-2d-ex2-2': 'Both', 'u2-2d-ex2-3': 'them',
+  'u2-2d-ex2-4': 'them', 'u2-2d-ex2-5': 'the', 'u2-2d-ex2-6': 'all',
+  'u2-2d-ex3a': 'b',
+  'u2-2d-ex3b-1': 'small', 'u2-2d-ex3b-2': 'sometimes', 'u2-2d-ex3b-3': 'turning off phones',
+  'u2-2d-ex3b-4': 'regularly', 'u2-2d-ex3b-5': 'good', 'u2-2d-ex3b-6': 'talking',
+  'u2-2d-ex3b-7': 'don\'t always', 'u2-2d-ex3b-8': 'different',
+  'u2-2d-ex4-1': 'real', 'u2-2d-ex4-2': 'lecture', 'u2-2d-ex4-3': 'walk',
+  'u2-2d-ex4-4': 'switch', 'u2-2d-ex4-5': 'club',
+
+  // ── REVIEW 1-2 ──
+  'u2-rev-ex2-1': 'lives', 'u2-rev-ex2-2': '\'s working', 'u2-rev-ex2-3': 'likes',
+  'u2-rev-ex2-4': 'works', 'u2-rev-ex2-5': 'enjoys', 'u2-rev-ex2-6': 'plays',
+  'u2-rev-ex2-7': 'doesn\'t work',
+  'u2-rev-ex3-1': 'going', 'u2-rev-ex3-2': 'working', 'u2-rev-ex3-3': 'to travel',
+  'u2-rev-ex3-4': 'making', 'u2-rev-ex3-5': 'doing', 'u2-rev-ex3-6': 'swimming',
+  'u2-rev-ex3-7': 'to have', 'u2-rev-ex3-8': 'joining',
+  'u2-rev-ex4-1': 'was eating', 'u2-rev-ex4-2': 'woke', 'u2-rev-ex4-3': 'watched',
+  'u2-rev-ex4-4': 'when', 'u2-rev-ex4-5': 'were starting', 'u2-rev-ex4-6': 'was getting',
+  'u2-rev-ex4-7': 'went', 'u2-rev-ex4-8': 'was still sleeping',
+  'u2-rev-ex6-1': 'b', 'u2-rev-ex6-2': 'a', 'u2-rev-ex6-3': 'a',
+  'u2-rev-ex6-4': 'b', 'u2-rev-ex6-5': 'c', 'u2-rev-ex6-6': 'b',
+  'u2-rev-ex11-1': 'delay', 'u2-rev-ex11-2': 'changed', 'u2-rev-ex11-3': 'security',
+  'u2-rev-ex11-4': 'boarding passes', 'u2-rev-ex11-5': 'landed', 'u2-rev-ex11-6': 'departure lounge',
+  'u2-rev-ex11-7': 'baggage reclaim', 'u2-rev-ex11-8': 'due to arrive',
+  'u2-rev-ex12-1': 'Cancel', 'u2-rev-ex12-2': 'make', 'u2-rev-ex12-3': 'Make',
+  'u2-rev-ex12-4': 'carry', 'u2-rev-ex12-5': 'Take', 'u2-rev-ex12-6': 'answer',
+  'u2-rev-ex12-7': 'Answer', 'u2-rev-ex12-8': 'Bring', 'u2-rev-ex12-9': 'take',
+};
+
+// ═══════════════════════════════════════════════
+// CORE FUNCTIONS
+// ═══════════════════════════════════════════════
+
+// -- Tabs --
+document.querySelectorAll('.tab-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.tab-page').forEach(p=>p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    document.getElementById('tab-'+btn.dataset.tab).classList.add('active');
+    btn.classList.add('active');
+  });
+});
+
+// -- Accordion --
+function toggleUnit(id){document.getElementById(id).classList.toggle('open');}
+function toggleAcc(id){document.getElementById(id).classList.toggle('open');}
+
+// -- Multiple choice (single select in .pick group) --
+function pick(el){
+  el.closest('.pick').querySelectorAll('.pick-opt').forEach(o=>o.classList.remove('selected'));
+  el.classList.add('selected');
+  saveAll();
+}
+
+// -- T/F --
+function tfPick(btn,val){
+  const row=btn.closest('.tf-btns');
+  row.querySelectorAll('.tf-btn').forEach(b=>b.classList.remove('sel-t','sel-f'));
+  btn.classList.add(val==='T'?'sel-t':'sel-f');
+  saveAll();
+}
+
+// -- Word count --
+function countWords(el,id){
+  const n=el.value.trim().split(/\s+/).filter(Boolean).length;
+  document.getElementById(id).textContent=n+' words';
+}
+
+// ═══════════════════════════════════════════════
+// CHECK / HINT / SHOW / RESET
+// ═══════════════════════════════════════════════
+
+function pickMatches(optText, ans){
+  // ans may be "fur", "b note", "was walking", "F", etc.
+  const t=optText.toLowerCase().trim();
+  const a=ans.toLowerCase().trim();
+  // Exact match
+  if(t===a) return true;
+  // Text after letter prefix: "b note" → check if opt text contains "note"
+  const bare=a.replace(/^[a-h]\s+/,'');
+  if(t===bare) return true;
+  // Starts with answer
+  if(t.startsWith(a)) return true;
+  // Pipe alternatives
+  if(a.split('|').some(x=>t===x.trim()||t.startsWith(x.trim()))) return true;
+  return false;
+}
+
+function checkExercise(blockId){
+  const block=document.getElementById(blockId);
+  let correct=0, total=0;
+
+  // Text gaps
+  block.querySelectorAll('input.gap[data-ans], input.order-input[data-ans]').forEach(inp=>{
+    const ans=inp.dataset.ans.toLowerCase().trim();
+    const val=inp.value.toLowerCase().trim();
+    inp.classList.remove('correct','wrong','hint-on');
+    if(!val) return;
+    total++;
+    const alts=ans.split('|').map(x=>x.trim());
+    if(alts.includes(val)){inp.classList.add('correct');correct++;}
+    else{inp.classList.add('wrong');}
+  });
+
+  // Pick groups
+  block.querySelectorAll('.pick[data-ans]').forEach(grp=>{
+    const ans=grp.dataset.ans;
+    const sel=grp.querySelector('.pick-opt.selected');
+    grp.querySelectorAll('.pick-opt').forEach(o=>{
+      o.classList.remove('pick-correct','pick-wrong');
+      o.style.outline='';
+    });
+    if(!sel) return;
+    total++;
+    if(pickMatches(sel.textContent, ans)){
+      sel.classList.add('pick-correct'); correct++;
+    } else {
+      sel.classList.add('pick-wrong');
+      grp.querySelectorAll('.pick-opt').forEach(o=>{
+        if(pickMatches(o.textContent, ans)) o.style.outline='2px solid var(--sage)';
+      });
+    }
+  });
+
+  // T/F
+  block.querySelectorAll('.tf-row[data-ans]').forEach(row=>{
+    const ans=row.dataset.ans;
+    const selT=row.querySelector('.tf-btn.sel-t');
+    const selF=row.querySelector('.tf-btn.sel-f');
+    if(!selT&&!selF) return;
+    total++;
+    const chosen=selT?'T':'F';
+    row.querySelectorAll('.tf-btn').forEach(b=>b.classList.remove('tf-right-answer','tf-wrong'));
+    if(chosen===ans){
+      (selT||selF).classList.add('tf-right-answer'); correct++;
+    } else {
+      (selT||selF).classList.add('tf-wrong');
+      row.querySelectorAll('.tf-btn').forEach(b=>{
+        if((b.textContent.trim()==='T'&&ans==='T')||(b.textContent.trim()==='F'&&ans==='F'))
+          b.classList.add('tf-right-answer');
+      });
+    }
+  });
+
+  const scoreEl=block.querySelector('.ex-score');
+  if(scoreEl&&total>0) scoreEl.textContent=`${correct}/${total} correct`;
+}
+
+function hintExercise(blockId){
+  const block=document.getElementById(blockId);
+  block.querySelectorAll('input.gap[data-ans], input.order-input[data-ans]').forEach(inp=>{
+    if(inp.value)return; // already answered
+    const ans=inp.dataset.ans.split('|')[0];
+    inp.value=ans[0].toUpperCase();
+    inp.classList.add('hint-on');
+  });
+  // For pick: show hint on correct option if nothing selected
+  block.querySelectorAll('.pick[data-ans]').forEach(grp=>{
+    if(grp.querySelector('.selected')) return;
+    const ans=grp.dataset.ans;
+    const firstLetter=ans.replace(/^[a-h]\s+/,'')[0].toLowerCase();
+    grp.querySelectorAll('.pick-opt').forEach(o=>{
+      const bare=o.textContent.replace(/^[a-h]\s+/i,'').toLowerCase().trim();
+      if(bare.startsWith(firstLetter) && !o.classList.contains('pick-hint'))
+        o.classList.add('pick-hint');
+    });
+  });
+}
+
+function showAnswers(blockId){
+  const block=document.getElementById(blockId);
+  // Text inputs
+  block.querySelectorAll('input.gap[data-ans], input.order-input[data-ans]').forEach(inp=>{
+    inp.value=inp.dataset.ans.split('|')[0];
+    inp.classList.remove('wrong','hint-on');
+    inp.classList.add('correct');
+  });
+  // Pick
+  block.querySelectorAll('.pick[data-ans]').forEach(grp=>{
+    const ans=grp.dataset.ans;
+    grp.querySelectorAll('.pick-opt').forEach(o=>{
+      o.classList.remove('selected','pick-correct','pick-wrong','pick-hint');
+      o.style.outline='';
+      if(pickMatches(o.textContent, ans)) o.classList.add('pick-correct');
+    });
+  });
+  // T/F
+  block.querySelectorAll('.tf-row[data-ans]').forEach(row=>{
+    const ans=row.dataset.ans;
+    row.querySelectorAll('.tf-btn').forEach(b=>{
+      b.classList.remove('sel-t','sel-f','tf-right-answer','tf-wrong');
+      if((b.textContent.trim()==='T'&&ans==='T')||(b.textContent.trim()==='F'&&ans==='F'))
+        b.classList.add('tf-right-answer');
+    });
+  });
+  saveAll();
+}
+
+function resetExercise(blockId){
+  const block=document.getElementById(blockId);
+  block.querySelectorAll('input.gap, input.order-input').forEach(inp=>{
+    inp.value='';
+    inp.classList.remove('correct','wrong','hint-on');
+  });
+  block.querySelectorAll('.pick-opt').forEach(o=>{
+    o.classList.remove('selected','pick-correct','pick-wrong','pick-hint');
+    o.style.outline='';
+  });
+  block.querySelectorAll('.tf-btn').forEach(b=>{
+    b.classList.remove('sel-t','sel-f','tf-right-answer','tf-wrong');
+  });
+  const scoreEl=block.querySelector('.ex-score');
+  if(scoreEl)scoreEl.textContent='';
+  saveAll();
+}
+
+// ═══════════════════════════════════════════════
+// ═══════════════════════════════════════════════
+// FIREBASE SYNC
+// ═══════════════════════════════════════════════
+const firebaseConfig = {
+  apiKey: "AIzaSyCFDL2atLoLAtmf9_Zxptki3eduTUdlO2c",
+  authDomain: "cate-portal.firebaseapp.com",
+  databaseURL: "https://cate-portal-default-rtdb.firebaseio.com",
+  projectId: "cate-portal",
+  storageBucket: "cate-portal.firebasestorage.app",
+  messagingSenderId: "926076456940",
+  appId: "1:926076456940:web:fe5b8d48d07d20c3f5bac9"
+};
+
+// Load Firebase from CDN
+const _fbScript = document.createElement('script');
+_fbScript.src = 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js';
+_fbScript.onload = () => {
+  const _fbDbScript = document.createElement('script');
+  _fbDbScript.src = 'https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js';
+  _fbDbScript.onload = () => {
+    firebase.initializeApp(firebaseConfig);
+    window._db = firebase.database();
+    window._dbRef = _db.ref('xenia/progress');
+    // Load from Firebase on start
+    _dbRef.once('value').then(snap => {
+      const state = snap.val();
+      if(state) applyState(state);
+      // Then keep listening for changes from other devices
+      _dbRef.on('value', snap => {
+        const s = snap.val();
+        if(s) applyState(s);
+      });
+    });
+    showSynced('☁️ Connected');
+  };
+  document.head.appendChild(_fbDbScript);
+};
+document.head.appendChild(_fbScript);
+
+let saveTimer = null;
+
+function collectState(){
+  const state = {};
+  document.querySelectorAll('input.gap[id], input.order-input[id]').forEach(inp => {
+    if(inp.id) state[inp.id] = inp.value;
+  });
+  document.querySelectorAll('textarea[id]').forEach(ta => {
+    if(ta.id) state[ta.id] = ta.value;
+  });
+  document.querySelectorAll('.pick[id]').forEach(pick => {
+    const sel = pick.querySelector('.pick-opt.selected');
+    if(sel) state[pick.id] = Array.from(pick.querySelectorAll('.pick-opt')).indexOf(sel);
+  });
+  document.querySelectorAll('.tf-row[id]').forEach(row => {
+    if(row.querySelector('.sel-t')) state[row.id] = 'T';
+    else if(row.querySelector('.sel-f')) state[row.id] = 'F';
+  });
+  document.querySelectorAll('input[type="checkbox"][id]').forEach(cb => {
+    state[cb.id] = cb.checked;
+  });
+  state['globalNotesOpen'] = document.querySelector('.global-notes-wrap')?.classList.contains('open') || false;
+  document.querySelectorAll('.unit-item[id], .lesson-accordion[id]').forEach(el => {
+    state['open_' + el.id] = el.classList.contains('open');
+  });
+  return state;
+}
+
+function applyState(state){
+  document.querySelectorAll('input.gap[id], input.order-input[id]').forEach(inp => {
+    if(inp.id && state[inp.id] !== undefined) inp.value = state[inp.id];
+  });
+  document.querySelectorAll('textarea[id]').forEach(ta => {
+    if(ta.id && state[ta.id] !== undefined){
+      ta.value = state[ta.id];
+      const wcId = ta.getAttribute('oninput')?.match(/'([^']+)'\)/)?.[1];
+      if(wcId){ const el = document.getElementById(wcId); if(el) el.textContent = ta.value.trim().split(/\s+/).filter(Boolean).length + ' words'; }
+    }
+  });
+  document.querySelectorAll('.pick[id]').forEach(pick => {
+    const idx = state[pick.id];
+    if(idx !== undefined){
+      const opts = pick.querySelectorAll('.pick-opt');
+      if(opts[idx]) opts[idx].classList.add('selected');
+    }
+  });
+  document.querySelectorAll('.tf-row[id]').forEach(row => {
+    const val = state[row.id];
+    if(val === 'T'){ const b = row.querySelector('.tf-btn'); if(b) b.classList.add('sel-t'); }
+    else if(val === 'F'){ const btns = row.querySelectorAll('.tf-btn'); if(btns[1]) btns[1].classList.add('sel-f'); }
+  });
+  document.querySelectorAll('input[type="checkbox"][id]').forEach(cb => {
+    if(state[cb.id] !== undefined) cb.checked = state[cb.id];
+  });
+  if(state['globalNotesOpen']) document.querySelector('.global-notes-wrap')?.classList.add('open');
+  document.querySelectorAll('.unit-item[id], .lesson-accordion[id]').forEach(el => {
+    if(state['open_' + el.id] === true) el.classList.add('open');
+    else if(state['open_' + el.id] === false) el.classList.remove('open');
+  });
+}
+
+function saveAll(){
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => {
+    const state = collectState();
+    // Save to localStorage as backup
+    localStorage.setItem('xenia_portal_v1', JSON.stringify(state));
+    // Save to Firebase
+    if(window._dbRef){
+      _dbRef.set(state)
+        .then(() => showSynced('☁️ Saved'))
+        .catch(() => showSynced('⚠️ Offline'));
+    } else {
+      showSynced('💾 Saved locally');
+    }
+  }, 600);
+}
+
+function loadAll(){
+  // Fallback: load from localStorage while Firebase connects
+  const raw = localStorage.getItem('xenia_portal_v1');
+  if(raw){ try{ applyState(JSON.parse(raw)); } catch{} }
+}
+
+function showSynced(msg){
+  const bar = document.getElementById('saveBar');
+  const status = bar.querySelector('.save-status');
+  if(status){ status.innerHTML = msg; }
+  bar.classList.add('show');
+  clearTimeout(window._saveBarTimer);
+  window._saveBarTimer = setTimeout(() => bar.classList.remove('show'), 2000);
+}
+
+// Auto-save on any input
+document.addEventListener('input', e => {
+  if(e.target.matches('input.gap,input.order-input,textarea')) saveAll();
+});
+document.addEventListener('change', e => {
+  if(e.target.matches('input[type="checkbox"]')) saveAll();
+});
+
+// ═══════════════════════════════════════════════
+// EXPORT / IMPORT (backup)
+// ═══════════════════════════════════════════════
+function exportData(){
+  const state = collectState();
+  const blob = new Blob([JSON.stringify(state)], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'xenia_progress.json';
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+function importData(event){
+  const file = event.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const data = JSON.parse(e.target.result);
+      applyState(data);
+      if(window._dbRef) _dbRef.set(data);
+      localStorage.setItem('xenia_portal_v1', JSON.stringify(data));
+      showSynced('✓ Imported!');
+    } catch { alert('Invalid file.'); }
+  };
+  reader.readAsText(file);
+  event.target.value = '';
+}
+
+function toggleGlobalNotes(){
+  document.querySelector('.global-notes-wrap').classList.toggle('open');
+  saveAll();
+}
+
+// Load on start
+window.addEventListener('DOMContentLoaded', loadAll);
+// ═══════════════════════════════════════════════
+function showHwForm(uid){
+  const f=document.getElementById('hwform-'+uid);
+  if(f){f.classList.add('visible');const t=document.getElementById('hwtxt-'+uid);if(t)t.focus();}
+}
+function hideHwForm(uid){const f=document.getElementById('hwform-'+uid);if(f)f.classList.remove('visible');}
+function saveHw(uid){
+  const txt=document.getElementById('hwtxt-'+uid)?.value.trim();
+  const pages=document.getElementById('hwpages-'+uid)?.value.trim();
+  if(!txt)return;
+  const list=document.getElementById('hwlist-'+uid);
+  if(!list)return;
+  const li=document.createElement('li');
+  const id='hwi-'+Date.now();li.id=id;
+  li.innerHTML=`<div class="hw-chk" onclick="toggleHwItem('${id}')"></div><span class="hw-txt">${txt}</span>${pages?`<span style="font-size:.7rem;color:var(--muted);background:rgba(26,20,16,.06);padding:.1rem .4rem;border-radius:2px;white-space:nowrap;margin-left:.3rem">${pages}</span>`:''}<button onclick="this.closest('li').remove();saveAll()" style="background:none;border:none;cursor:pointer;color:#c0b4aa;font-size:.72rem;margin-left:auto">✕</button>`;
+  list.appendChild(li);
+  document.getElementById('hwtxt-'+uid).value='';
+  if(document.getElementById('hwpages-'+uid))document.getElementById('hwpages-'+uid).value='';
+  hideHwForm(uid);
+  const unitEl=document.getElementById(uid);if(unitEl)unitEl.classList.add('open');
+  saveAll();
+}
+function toggleHwItem(id){
+  const li=document.getElementById(id);
+  const chk=li.querySelector('.hw-chk');const txt=li.querySelector('.hw-txt');
+  const done=chk.classList.toggle('done');
+  chk.textContent=done?'✓':'';
+  txt.classList.toggle('done',done);
+  saveAll();
+}
+
+// Dynamic unit/card
+function addUnit(prefix,listId,numId,nameId){
+  const num=document.getElementById(numId).value.trim();
+  const name=document.getElementById(nameId).value.trim();
+  if(!num){alert('Please enter a unit number.');return;}
+  const uid=prefix+'-unit-'+num.replace(/\s+/g,'-');
+  if(document.getElementById(uid)){alert('Unit '+num+' already exists.');return;}
+  const lbl=prefix==='cw'?'Add classwork':'Add homework';
+  const div=document.createElement('div');div.className='unit-item';div.id=uid;
+  div.style.cssText='opacity:0;transform:translateY(12px)';
+  div.innerHTML=`<div class="unit-header" onclick="toggleUnit('${uid}')"><span class="unit-number">Unit ${num}</span><span class="unit-title-text">${name||'—'}</span><span class="unit-chevron">▼</span></div><div class="unit-body"><div class="unit-body-inner"><ul class="simple-hw-list" id="hwlist-${uid}"></ul><button class="btn-add-hw" onclick="showHwForm('${uid}')">＋ ${lbl}</button><div class="add-hw-form" id="hwform-${uid}"><div class="form-row"><input type="text" class="inp-main" placeholder="Task…" id="hwtxt-${uid}"><input type="text" class="inp-pages" placeholder="p. 10" id="hwpages-${uid}"></div><div class="form-actions"><button class="btn-save-hw" onclick="saveHw('${uid}')">Save</button><button class="btn-cancel-hw" onclick="hideHwForm('${uid}')">Cancel</button></div></div></div></div>`;
+  document.getElementById(listId).appendChild(div);
+  requestAnimationFrame(()=>{div.style.transition='opacity .35s ease,transform .35s ease';div.style.opacity='1';div.style.transform='translateY(0)';});
+  document.getElementById(numId).value='';document.getElementById(nameId).value='';
+  closeModal(prefix==='cw'?'cunit':'hwunit');
+}
+const _icons={rose:'📖',sage:'📝',gold:'🎧',blue:'🔗'};
+const _clabels={rose:'Textbook',sage:'Practice',gold:'Audio',blue:'Resource'};
+function addCard(){
+  const title=document.getElementById('rTitle').value.trim();
+  const url=document.getElementById('rUrl').value.trim();
+  const desc=document.getElementById('rDesc').value.trim();
+  const color=document.getElementById('rColor').value;
+  if(!title||!url){alert('Please fill in title and URL.');return;}
+  const board=document.getElementById('cardGrid').querySelector('.board');
+  const card=document.createElement('a');card.className='card '+color;card.href=url;card.target='_blank';
+  card.style.cssText='opacity:0;animation:none';
+  card.innerHTML=`<span class="card-icon">${_icons[color]}</span><div class="card-label">${_clabels[color]}</div><h3>${title}</h3><p>${desc||'Click to open.'}</p><span class="card-arrow">→</span>`;
+  document.getElementById('cardGrid').insertBefore(card,board);
+  requestAnimationFrame(()=>{card.style.transition='opacity .4s ease,transform .4s ease';card.style.transform='translateY(14px)';requestAnimationFrame(()=>{card.style.opacity='1';card.style.transform='translateY(0)';});});
+  ['rTitle','rUrl','rDesc'].forEach(i=>document.getElementById(i).value='');
+  closeModal('resource');
+}
+function openModal(n){const el=document.getElementById('modal-'+n);el.style.display='flex';setTimeout(()=>{const f=el.querySelector('input');if(f)f.focus();},80);}
+function closeModal(n){document.getElementById('modal-'+n).style.display='none';}
+document.querySelectorAll('.modal-overlay').forEach(ov=>ov.addEventListener('click',e=>{if(e.target===ov)ov.style.display='none';}));
+
+function exportData(){
+  const raw = localStorage.getItem(STORAGE_KEY);
+  if(!raw){ alert('Nothing saved yet.'); return; }
+  const blob = new Blob([raw], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'xenia_progress.json';
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+function importData(event){
+  const file = event.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const data = JSON.parse(e.target.result);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+      loadAll();
+      const bar = document.getElementById('saveBar');
+      bar.querySelector('.save-status').textContent = '✓ Loaded!';
+      bar.classList.add('show');
+      setTimeout(()=>{ bar.querySelector('.save-status').innerHTML = '<div class="save-dot"></div> Saved'; bar.classList.remove('show'); }, 2500);
+    } catch {
+      alert('Invalid file. Please use a file exported from this portal.');
+    }
+  };
+  reader.readAsText(file);
+  event.target.value = '';
+}
+
+function saveLinkItem(formId, listId){
+  const title = document.getElementById('hwtxt-'+formId)?.value.trim();
+  const url   = document.getElementById('hwpages-'+formId)?.value.trim();
+  if(!title) return;
+  const list = document.getElementById(listId);
+  if(!list) return;
+  const li = document.createElement('li');
+  li.innerHTML = `<div class="hw-chk" style="border-color:var(--sage);cursor:default;background:var(--sage);color:white;font-size:.65rem">↗</div><span class="hw-txt">${url ? `<a href="${url}" target="_blank" style="color:var(--rose);text-decoration:none">${title}</a>` : title}</span><button onclick="this.closest('li').remove();saveAll()" style="background:none;border:none;cursor:pointer;color:#c0b4aa;font-size:.72rem;margin-left:auto">✕</button>`;
+  list.appendChild(li);
+  document.getElementById('hwtxt-'+formId).value = '';
+  document.getElementById('hwpages-'+formId).value = '';
+  hideHwForm(formId);
+  saveAll();
+}
+
+function addVocabUnit(){
+  const num  = document.getElementById('vuNum').value.trim();
+  const name = document.getElementById('vuName').value.trim();
+  if(!num){ alert('Please enter a unit number.'); return; }
+  const uid = 'vocab-unit-' + num;
+  if(document.getElementById(uid)){ alert('Unit '+num+' already exists.'); return; }
+  const div = document.createElement('div');
+  div.className = 'unit-item'; div.id = uid;
+  div.style.cssText = 'opacity:0;transform:translateY(12px)';
+  const lid = 'vocablinks-unit-'+num; const fid = 'vocablink-unit-'+num;
+  div.innerHTML = `<div class="unit-header" onclick="toggleUnit('${uid}')"><span class="unit-number">Unit ${num}</span><span class="unit-title-text">${name||'—'}</span><span class="unit-chevron">▼</span></div><div class="unit-body"><div class="unit-body-inner"><textarea class="unit-textarea" id="vocab-u${num}" placeholder="Word — translation" rows="8" oninput="saveAll()" style="min-height:160px;font-family:monospace;font-size:.82rem"></textarea><div style="margin-top:.7rem"><div class="unit-notes-label" style="margin-bottom:.35rem">🔗 Links &amp; files</div><ul class="simple-hw-list" id="${lid}"></ul><button class="btn-add-hw" onclick="showHwForm('${fid}')">＋ Add link</button><div class="add-hw-form" id="hwform-${fid}"><div class="form-row"><input type="text" class="inp-main" placeholder="Title" id="hwtxt-${fid}"></div><div class="form-row"><input type="url" class="inp-url" placeholder="https://..." id="hwpages-${fid}" style="flex:1"></div><div class="form-actions"><button class="btn-save-hw" onclick="saveLinkItem('${fid}','${lid}')">Save</button><button class="btn-cancel-hw" onclick="hideHwForm('${fid}')">Cancel</button></div></div></div></div></div>`;
+  document.getElementById('vocabUnitsList').appendChild(div);
+  requestAnimationFrame(()=>{ div.style.transition='opacity .35s ease,transform .35s ease'; div.style.opacity='1'; div.style.transform='translateY(0)'; });
+  document.getElementById('vuNum').value=''; document.getElementById('vuName').value='';
+  closeModal('vocabunit');
+}
+
+function addReviewUnit(){
+  const num  = document.getElementById('ruNum').value.trim();
+  const name = document.getElementById('ruName').value.trim();
+  if(!num){ alert('Please enter a unit number.'); return; }
+  const uid = 'review-unit-' + num;
+  if(document.getElementById(uid)){ alert('Unit '+num+' already exists.'); return; }
+  const div = document.createElement('div');
+  div.className = 'unit-item'; div.id = uid;
+  div.style.cssText = 'opacity:0;transform:translateY(12px)';
+  const lid = 'reviewlinks-unit-'+num; const fid = 'reviewlink-unit-'+num;
+  div.innerHTML = `<div class="unit-header" onclick="toggleUnit('${uid}')"><span class="unit-number">Unit ${num}</span><span class="unit-title-text">${name||'—'} — Review</span><span class="unit-chevron">▼</span></div><div class="unit-body"><div class="unit-body-inner"><div class="unit-notes-row" style="margin-bottom:.8rem"><div class="unit-notes-col"><div class="unit-notes-label">✅ What I know well</div><textarea class="unit-textarea" id="review-u${num}-know" placeholder="Topics I'm confident with…" oninput="saveAll()"></textarea></div><div class="unit-notes-col"><div class="unit-notes-label">🔁 What to practise more</div><textarea class="unit-textarea" id="review-u${num}-practise" placeholder="Topics to revise…" oninput="saveAll()"></textarea></div></div><div class="unit-notes-label" style="margin-bottom:.35rem">📝 General notes</div><textarea class="unit-textarea" id="review-u${num}-notes" placeholder="Any other notes…" oninput="saveAll()"></textarea><div style="margin-top:.7rem"><div class="unit-notes-label" style="margin-bottom:.35rem">🔗 Links &amp; files</div><ul class="simple-hw-list" id="${lid}"></ul><button class="btn-add-hw" onclick="showHwForm('${fid}')">＋ Add link</button><div class="add-hw-form" id="hwform-${fid}"><div class="form-row"><input type="text" class="inp-main" placeholder="Title" id="hwtxt-${fid}"></div><div class="form-row"><input type="url" class="inp-url" placeholder="https://..." id="hwpages-${fid}" style="flex:1"></div><div class="form-actions"><button class="btn-save-hw" onclick="saveLinkItem('${fid}','${lid}')">Save</button><button class="btn-cancel-hw" onclick="hideHwForm('${fid}')">Cancel</button></div></div></div></div></div>`;
+  document.getElementById('reviewUnitsList').appendChild(div);
+  requestAnimationFrame(()=>{ div.style.transition='opacity .35s ease,transform .35s ease'; div.style.opacity='1'; div.style.transform='translateY(0)'; });
+  document.getElementById('ruNum').value=''; document.getElementById('ruName').value='';
+  closeModal('reviewunit');
+}
+
+// ═══════════════════════════════════════════════
+// BLOCK SYSTEM
+// ═══════════════════════════════════════════════
+function toggleBlockPicker(uid){
+  const picker = document.getElementById('blockpicker-'+uid);
+  if(picker) picker.classList.toggle('open');
+}
+
+function addBlock(uid, type){
+  const container = document.getElementById('blocks-'+uid);
+  if(!container) return;
+  const bid = 'block-'+Date.now();
+  let inner = '';
+  if(type==='note'){
+    inner=`<div class="block-label">📝 Note</div><textarea class="block-textarea" id="${bid}-txt" placeholder="Write your note…" oninput="saveAll()"></textarea>`;
+  } else if(type==='text'){
+    inner=`<div class="block-label">📄 Text / Task</div><textarea class="block-text-area" id="${bid}-txt" placeholder="Add task description, instructions, reading text…" oninput="saveAll()"></textarea>`;
+  } else if(type==='image'){
+    inner=`<div class="block-label">🖼️ Image</div><div class="block-img-upload"><label class="block-img-btn">📁 Choose image<input type="file" accept="image/*" style="display:none" onchange="loadBlockImage(this,'${bid}')"></label><img id="${bid}-img" class="block-img-preview" alt=""><input class="block-img-caption" id="${bid}-cap" placeholder="Caption (optional)…" oninput="saveAll()"></div>`;
+  } else if(type==='link'){
+    inner=`<div class="block-label">🔗 Link</div><div class="block-link-row"><input class="block-link-input" id="${bid}-title" placeholder="Title…" oninput="saveAll()"><input class="block-link-input" id="${bid}-url" placeholder="https://…" oninput="saveAll()"><button class="block-link-btn" onclick="openBlockLink('${bid}')">Open →</button></div>`;
+  } else if(type==='task'){
+    inner=`<div class="block-label">✅ Tasks</div><ul class="block-task-list" id="${bid}-list"></ul><div class="block-add-task"><input type="text" id="${bid}-inp" placeholder="Add task…" onkeydown="if(event.key==='Enter')addBlockTask('${bid}')"><button onclick="addBlockTask('${bid}')">＋</button></div>`;
+  } else if(type==='vocab'){
+    inner=`<div class="block-label">📋 Vocabulary</div><table class="vocab-table"><thead><tr><th>Word / Phrase</th><th>Translation</th></tr></thead><tbody id="${bid}-tbody"><tr><td><input placeholder="word…" oninput="saveAll()"></td><td><input placeholder="перевод…" oninput="saveAll()"></td></tr><tr><td><input placeholder="word…" oninput="saveAll()"></td><td><input placeholder="перевод…" oninput="saveAll()"></td></tr></tbody></table><button class="btn-add-vocab-row" onclick="addVocabRow('${bid}-tbody')">＋ Add row</button>`;
+  }
+  const div = document.createElement('div');
+  div.className='content-block'; div.id=bid;
+  div.innerHTML=`<button class="block-delete" onclick="document.getElementById('${bid}').remove();saveAll()" title="Delete">✕</button>${inner}`;
+  container.appendChild(div);
+  const picker=document.getElementById('blockpicker-'+uid);
+  if(picker) picker.classList.remove('open');
+  saveAll();
+}
+
+function openBlockLink(bid){
+  const url=document.getElementById(bid+'-url')?.value.trim();
+  if(url) window.open(url,'_blank');
+}
+
+function loadBlockImage(input, bid){
+  const file = input.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const img = document.getElementById(bid+'-img');
+    if(img){ img.src = e.target.result; img.classList.add('show'); }
+    saveAll();
+  };
+  reader.readAsDataURL(file);
+}
+
+// ═══════════════════════════════════════════════
+// TEACHER MODE — edit everything
+// ═══════════════════════════════════════════════
+let teacherMode = false;
+let currentAnsTarget = null;
+
+function toggleTeacherMode(){
+  teacherMode = !teacherMode;
+  document.body.classList.toggle('teacher-mode', teacherMode);
+  document.getElementById('teacherBtn').classList.toggle('active', teacherMode);
+  document.getElementById('teacherBtn').textContent = teacherMode ? '✓ Done editing' : '✏️ Teacher Mode';
+  document.getElementById('teacherBar').classList.toggle('show', teacherMode);
+
+  if(teacherMode){
+    enableTeacherMode();
+  } else {
+    disableTeacherMode();
+    saveAll();
+  }
+}
+
+function enableTeacherMode(){
+  // Make all text elements editable
+  const editableSelectors = [
+    '.ex-instruction', '.lesson-acc-title', '.lesson-meta-line',
+    '.section-tag', '.word-box', '.ex-items li',
+    '.convo-line span:last-child', '.convo', 'sup',
+    '.unit-notes-label', '.unit-title-text'
+  ];
+  editableSelectors.forEach(sel => {
+    document.querySelectorAll(sel).forEach(el => {
+      if(el.querySelector('input,textarea,button,select')) return;
+      el.contentEditable = 'true';
+      el.dataset.origContent = el.innerHTML;
+    });
+  });
+
+  // Make gap inputs show answer key and be editable
+  document.querySelectorAll('input.gap[id]').forEach(inp => {
+    inp.placeholder = inp.dataset.ans || '(no answer set)';
+    inp.title = 'Click to edit answer key';
+    inp.addEventListener('click', openAnsPopupForGap, true);
+  });
+
+  // Make pick options editable
+  document.querySelectorAll('.pick-opt').forEach(opt => {
+    opt.contentEditable = 'true';
+  });
+
+  // Make pick groups show their answer
+  document.querySelectorAll('.pick[data-ans]').forEach(grp => {
+    const badge = document.createElement('span');
+    badge.className = 'ans-badge';
+    badge.textContent = '✓ ' + grp.dataset.ans;
+    badge.onclick = e => { e.stopPropagation(); openAnsPopupForPick(grp, badge); };
+    grp.appendChild(badge);
+  });
+
+  // Make tf-rows show answer
+  document.querySelectorAll('.tf-row[data-ans]').forEach(row => {
+    const badge = document.createElement('span');
+    badge.className = 'ans-badge';
+    badge.textContent = '✓ ' + row.dataset.ans;
+    badge.onclick = e => { e.stopPropagation(); openAnsPopupForTF(row, badge); };
+    row.appendChild(badge);
+  });
+}
+
+function disableTeacherMode(){
+  // Remove contenteditable
+  document.querySelectorAll('[contenteditable="true"]').forEach(el => {
+    el.contentEditable = 'false';
+  });
+
+  // Remove answer badges
+  document.querySelectorAll('.ans-badge').forEach(b => b.remove());
+
+  // Restore gap placeholders
+  document.querySelectorAll('input.gap').forEach(inp => {
+    inp.placeholder = '…';
+    inp.removeEventListener('click', openAnsPopupForGap, true);
+  });
+
+  // Make pick opts non-editable
+  document.querySelectorAll('.pick-opt').forEach(opt => {
+    opt.contentEditable = 'false';
+  });
+
+  hideAnsPopup();
+}
+
+function openAnsPopupForGap(e){
+  if(!teacherMode) return;
+  e.stopPropagation();
+  currentAnsTarget = e.target;
+  const popup = document.getElementById('ansPopup');
+  const input = document.getElementById('ansPopupInput');
+  input.value = e.target.dataset.ans || '';
+  // Position near the gap
+  const rect = e.target.getBoundingClientRect();
+  popup.style.left = Math.min(rect.left, window.innerWidth - 200) + 'px';
+  popup.style.top = (rect.bottom + window.scrollY + 4) + 'px';
+  popup.style.bottom = 'auto';
+  popup.classList.add('show');
+  input.focus();
+}
+
+function openAnsPopupForPick(grp, badge){
+  currentAnsTarget = grp;
+  const popup = document.getElementById('ansPopup');
+  const input = document.getElementById('ansPopupInput');
+  input.value = grp.dataset.ans || '';
+  const rect = badge.getBoundingClientRect();
+  popup.style.left = Math.min(rect.left, window.innerWidth - 200) + 'px';
+  popup.style.top = (rect.bottom + window.scrollY + 4) + 'px';
+  popup.style.bottom = 'auto';
+  popup.classList.add('show');
+  input.focus();
+}
+
+function openAnsPopupForTF(row, badge){
+  currentAnsTarget = row;
+  const popup = document.getElementById('ansPopup');
+  const input = document.getElementById('ansPopupInput');
+  input.value = row.dataset.ans || '';
+  document.getElementById('ansPopup').querySelector('label').textContent = 'Answer (T or F)';
+  const rect = badge.getBoundingClientRect();
+  popup.style.left = Math.min(rect.left, window.innerWidth - 200) + 'px';
+  popup.style.top = (rect.bottom + window.scrollY + 4) + 'px';
+  popup.classList.add('show');
+  input.focus();
+}
+
+function saveAnsPopup(){
+  if(!currentAnsTarget) return;
+  const val = document.getElementById('ansPopupInput').value.trim();
+  currentAnsTarget.dataset.ans = val;
+  // Update badge
+  const badge = currentAnsTarget.querySelector ? currentAnsTarget.querySelector('.ans-badge') : null;
+  if(badge) badge.textContent = '✓ ' + val;
+  // For gap: update placeholder
+  if(currentAnsTarget.classList && currentAnsTarget.classList.contains('gap')){
+    currentAnsTarget.placeholder = val || '(no answer set)';
+  }
+  hideAnsPopup();
+  saveAll();
+}
+
+function hideAnsPopup(){
+  document.getElementById('ansPopup').classList.remove('show');
+  document.getElementById('ansPopup').querySelector('label').textContent = 'Correct answer';
+  currentAnsTarget = null;
+}
+
+// Close popup on outside click
+document.addEventListener('click', e => {
+  const popup = document.getElementById('ansPopup');
+  if(popup && !popup.contains(e.target)) hideAnsPopup();
+});
+
+// Keep old per-exercise edit button working too
+function toggleEditExercise(btn, blockId){
+  const block = document.getElementById(blockId);
+  const instr = block.querySelector('.ex-instruction');
+  if(!instr) return;
+  const isEditing = btn.classList.contains('editing');
+  if(isEditing){
+    const ta = instr.querySelector('textarea');
+    if(ta){ instr.innerHTML = ta.value; }
+    btn.classList.remove('editing');
+    btn.textContent = '✏️ Edit';
+    saveAll();
+  } else {
+    if(!instr.dataset.origHtml) instr.dataset.origHtml = instr.innerHTML;
+    const ta = document.createElement('textarea');
+    ta.className = 'ex-edit-area';
+    ta.value = instr.innerText;
+    ta.rows = Math.max(2, Math.ceil(instr.innerText.length / 70));
+    ta.style.width = '100%';
+    instr.innerHTML = '';
+    instr.appendChild(ta);
+    ta.focus();
+    btn.classList.add('editing');
+    btn.textContent = '✓ Done';
+  }
+}
+
+function addBlockTask(bid){
+  const inp=document.getElementById(bid+'-inp');
+  if(!inp||!inp.value.trim()) return;
+  const list=document.getElementById(bid+'-list');
+  const li=document.createElement('li'); li.className='block-task-item';
+  const tid='bt-'+Date.now(); li.id=tid;
+  li.innerHTML=`<div class="block-task-check" onclick="toggleBlockTask('${tid}')"></div><span class="block-task-text">${inp.value.trim()}</span><button onclick="document.getElementById('${tid}').remove();saveAll()" style="background:none;border:none;cursor:pointer;color:#c0b4aa;font-size:.7rem">✕</button>`;
+  list.appendChild(li); inp.value=''; saveAll();
+}
+
+function toggleBlockTask(tid){
+  const li=document.getElementById(tid);
+  const chk=li.querySelector('.block-task-check'); const txt=li.querySelector('.block-task-text');
+  const done=chk.classList.toggle('done'); chk.textContent=done?'✓':'';
+  txt.classList.toggle('done',done); saveAll();
+}
+
+function addVocabRow(tbodyId){
+  const tbody=document.getElementById(tbodyId); if(!tbody) return;
+  const tr=document.createElement('tr');
+  tr.innerHTML=`<td><input placeholder="word…" oninput="saveAll()"></td><td><input placeholder="перевод…" oninput="saveAll()"></td>`;
+  tbody.appendChild(tr); saveAll();
+}
+</script>
+</body>
+</html>
