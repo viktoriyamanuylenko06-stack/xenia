@@ -353,17 +353,91 @@ footer{text-align:center;padding:2rem;font-size:.7rem;color:#a89e94;letter-spaci
 <!-- CLASSWORK TAB -->
 <div class="tab-page active" id="tab-classwork">
   <div class="units-page">
-    <div class="units-page-header" style="justify-content:center;">
-      <h2><span>Classwork</span></h2>
+    <div class="units-page-header">
+      <h2><span>Classwork</span> Units</h2>
+      <button class="btn-new-unit" onclick="openModal('cunit')">＋ Add unit</button>
     </div>
-    <div style="display:flex;justify-content:center;padding:3rem 1rem;">
-      <a href="https://miro.com/app/board/uXjVPQMjB3I=/" target="_blank" style="display:flex;align-items:center;gap:1rem;background:var(--paper);border:1px solid var(--border);border-radius:6px;padding:1.5rem 2.5rem;text-decoration:none;color:var(--ink);transition:all .25s;box-shadow:0 3px 12px var(--shadow);">
-        <span style="font-size:2.2rem;">🗂️</span>
-        <div>
-          <div style="font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:600;">Miro Board</div>
-          <div style="font-size:.82rem;color:var(--muted);margin-top:.2rem;">Open shared workspace →</div>
+    <div id="cwUnitsList">
+      <div class="unit-item" id="cw-unit-1">
+        <div class="unit-header" onclick="toggleUnit('cw-unit-1')">
+          <span class="unit-number">Unit 1</span><span class="unit-title-text">Unit 1</span>
+          <span class="unit-hw-count" id="count-cw-unit-1">0 tasks</span><span class="unit-chevron">▼</span>
         </div>
-      </a>
+        <div class="unit-body"><div class="unit-body-inner">
+
+<!-- Notes & Vocab for unit 1 -->
+<div class="unit-notes-section">
+  <div class="unit-notes-row">
+    <div class="unit-notes-col">
+      <div class="unit-notes-label">📝 Homework Notes</div>
+      <textarea class="unit-textarea" id="hwnotes-cw-1" placeholder="Write what's assigned for homework…" oninput="saveAll()"></textarea>
+    </div>
+    <div class="unit-notes-col">
+      <div class="unit-notes-label">📖 Vocabulary</div>
+      <textarea class="unit-textarea" id="vocabnotes-cw-1" placeholder="New words, phrases, translations…" oninput="saveAll()"></textarea>
+    </div>
+  </div>
+</div>
+          <ul id="hw-cw-unit-1" style="list-style:none"></ul>
+          <button class="btn-add-hw" onclick="showHwForm('cw-unit-1')">＋ Add classwork</button>
+          <div class="add-hw-form" id="hwform-cw-unit-1">
+            <div class="form-row"><input type="text" class="inp-main" placeholder="Task…" id="hwtxt-cw-unit-1"><input type="text" class="inp-pages" placeholder="p. 10" id="hwpages-cw-unit-1"></div>
+            <div class="form-row"><input type="url" class="inp-url" placeholder="Link (optional)" id="hwurl-cw-unit-1"></div>
+            <div class="form-actions"><button class="btn-save-hw" onclick="saveHw('cw-unit-1')">Save</button><button class="btn-cancel-hw" onclick="hideHwForm('cw-unit-1')">Cancel</button></div>
+          </div>
+        
+<div id="blocks-cw-unit-1"></div>
+<div class="block-picker" id="blockpicker-cw-unit-1">
+  <button class="block-type-btn" onclick="addBlock('cw-unit-1','note')">📝 Note</button>
+  <button class="block-type-btn" onclick="addBlock('cw-unit-1','text')">📄 Text</button>
+  <button class="block-type-btn" onclick="addBlock('cw-unit-1','image')">🖼️ Image</button>
+  <button class="block-type-btn" onclick="addBlock('cw-unit-1','link')">🔗 Link</button>
+  <button class="block-type-btn" onclick="addBlock('cw-unit-1','task')">✅ Tasks</button>
+  <button class="block-type-btn" onclick="addBlock('cw-unit-1','vocab')">📋 Vocabulary</button>
+</div>
+<button class="btn-add-block" onclick="toggleBlockPicker('cw-unit-1')">＋ Add block</button>
+</div></div>
+      </div>
+      <div class="unit-item" id="cw-unit-2">
+        <div class="unit-header" onclick="toggleUnit('cw-unit-2')">
+          <span class="unit-number">Unit 2</span><span class="unit-title-text">Unit 2</span>
+          <span class="unit-hw-count" id="count-cw-unit-2">0 tasks</span><span class="unit-chevron">▼</span>
+        </div>
+        <div class="unit-body"><div class="unit-body-inner">
+
+<!-- Notes & Vocab for unit 2 -->
+<div class="unit-notes-section">
+  <div class="unit-notes-row">
+    <div class="unit-notes-col">
+      <div class="unit-notes-label">📝 Homework Notes</div>
+      <textarea class="unit-textarea" id="hwnotes-cw-2" placeholder="Write what's assigned for homework…" oninput="saveAll()"></textarea>
+    </div>
+    <div class="unit-notes-col">
+      <div class="unit-notes-label">📖 Vocabulary</div>
+      <textarea class="unit-textarea" id="vocabnotes-cw-2" placeholder="New words, phrases, translations…" oninput="saveAll()"></textarea>
+    </div>
+  </div>
+</div>
+          <ul id="hw-cw-unit-2" style="list-style:none"></ul>
+          <button class="btn-add-hw" onclick="showHwForm('cw-unit-2')">＋ Add classwork</button>
+          <div class="add-hw-form" id="hwform-cw-unit-2">
+            <div class="form-row"><input type="text" class="inp-main" placeholder="Task…" id="hwtxt-cw-unit-2"><input type="text" class="inp-pages" placeholder="p. 10" id="hwpages-cw-unit-2"></div>
+            <div class="form-row"><input type="url" class="inp-url" placeholder="Link (optional)" id="hwurl-cw-unit-2"></div>
+            <div class="form-actions"><button class="btn-save-hw" onclick="saveHw('cw-unit-2')">Save</button><button class="btn-cancel-hw" onclick="hideHwForm('cw-unit-2')">Cancel</button></div>
+          </div>
+        
+<div id="blocks-cw-unit-2"></div>
+<div class="block-picker" id="blockpicker-cw-unit-2">
+  <button class="block-type-btn" onclick="addBlock('cw-unit-2','note')">📝 Note</button>
+  <button class="block-type-btn" onclick="addBlock('cw-unit-2','text')">📄 Text</button>
+  <button class="block-type-btn" onclick="addBlock('cw-unit-2','image')">🖼️ Image</button>
+  <button class="block-type-btn" onclick="addBlock('cw-unit-2','link')">🔗 Link</button>
+  <button class="block-type-btn" onclick="addBlock('cw-unit-2','task')">✅ Tasks</button>
+  <button class="block-type-btn" onclick="addBlock('cw-unit-2','vocab')">📋 Vocabulary</button>
+</div>
+<button class="btn-add-block" onclick="toggleBlockPicker('cw-unit-2')">＋ Add block</button>
+</div></div>
+      </div>
     </div>
   </div>
 </div>
@@ -608,7 +682,7 @@ footer{text-align:center;padding:2rem;font-size:.7rem;color:#a89e94;letter-spaci
     <div class="word-box" style="line-height:1.85;font-size:.82rem">
       <strong>ABOUT ME</strong><br>
       hi, my name's Frank Bacall and I'm a travel writer. I'm from cape Town in South Africa. I love my job because I go to lots of different countries. I often visit Thailand, france and the USA. I love to meet people and learn languages. I speak Spanish, Portuguese and a little thai. I'm interested in sport, too. I play tennis and badminton.<br><br>
-      welcome to my blog. i hope you like it! If you want to know more about the places I visit, then please contact me at <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="abcdc8c9ebc6cac2c7ced985c8c4c6">[email&#160;protected]</a>.
+      welcome to my blog. i hope you like it! If you want to know more about the places I visit, then please contact me at fcb@mailer.com.
     </div>
     <ol class="ex-items">
       <li>Full name: <input class="gap lg" type="text" placeholder="…"></li>
@@ -643,7 +717,7 @@ footer{text-align:center;padding:2rem;font-size:.7rem;color:#a89e94;letter-spaci
   <div class="ex-block" id="x-ex-1a-6c">
     <p class="ex-instruction"><strong>6C</strong> Imagine you are Bruna Pereira. Write your profile using the information below. Write 80–100 words.</p>
     <div class="word-box" style="font-size:.81rem;line-height:1.8">
-      Full name: Bruna Pereira · Job: singer · Nationality: Brazilian · Home town: Rio de Janeiro · Languages: Portuguese, Spanish, a little English · Interests: tennis, cinema · Email: <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="a2c08cd2c7d0c7cbd0c3e2d1cdccc5c1c3cfd28cc1cdcf">[email&#160;protected]</a>
+      Full name: Bruna Pereira · Job: singer · Nationality: Brazilian · Home town: Rio de Janeiro · Languages: Portuguese, Spanish, a little English · Interests: tennis, cinema · Email: b.pereira@songcamp.com
     </div>
     <textarea class="write-area" id="x-writing-1a-6c" placeholder="Write Bruna's profile here…" rows="7" oninput="countWords(this,'x-wc-1a-6c');saveAll()"></textarea>
     <p class="word-count" id="x-wc-1a-6c">0 words</p>
@@ -1212,7 +1286,7 @@ footer{text-align:center;padding:2rem;font-size:.7rem;color:#a89e94;letter-spaci
   <div class="ex-block" id="x-ex-extra-8b">
     <p class="ex-instruction"><strong>8B</strong> Read Alexis Wilson's profile. Then complete your own Group-Chat profile below.</p>
     <div class="word-box" style="font-size:.81rem;line-height:1.8;margin-bottom:.8rem">
-      <strong>Alexis Wilson</strong> · AlexIsNo1 · <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="c0a1aca5b8a9b3eeb7a9acb3afaef1f2f980b7a1a8afafeea3afad">[email&#160;protected]</a> · @alexwilson129 · Tarragona<br><br>
+      <strong>Alexis Wilson</strong> · AlexIsNo1 · alexis.wilson129@wahoo.com · @alexwilson129 · Tarragona<br><br>
       Hi, I'm Alexis! I'm a writer and website developer and I have a small company, AW Design. I live in Tarragona near the city centre. I'm thirty-two and this is my first year here in Spain. I would like to meet local people to practise my Spanish. I speak a little Spanish and French, but my English is best (I'm American). I'm interested in meeting people to go to a museum or simply to have a coffee. Contact me if you're interested!
     </div>
     <div style="background:rgba(26,20,16,.03);border-radius:6px;padding:1rem 1.2rem;border:1px solid var(--border)">
@@ -1556,7 +1630,7 @@ footer{text-align:center;padding:2rem;font-size:.7rem;color:#a89e94;letter-spaci
   </div>
 </div>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
 <script>
 // ═══════════════════════════════════════════════
@@ -2511,4 +2585,17 @@ function addBlockTask(bid){
 
 function toggleBlockTask(tid){
   const li=document.getElementById(tid);
-  const chk=li.querySelector('.block-task-check'); const txt=li.querySelector('.block-task-te
+  const chk=li.querySelector('.block-task-check'); const txt=li.querySelector('.block-task-text');
+  const done=chk.classList.toggle('done'); chk.textContent=done?'✓':'';
+  txt.classList.toggle('done',done); saveAll();
+}
+
+function addVocabRow(tbodyId){
+  const tbody=document.getElementById(tbodyId); if(!tbody) return;
+  const tr=document.createElement('tr');
+  tr.innerHTML=`<td><input placeholder="word…" oninput="saveAll()"></td><td><input placeholder="перевод…" oninput="saveAll()"></td>`;
+  tbody.appendChild(tr); saveAll();
+}
+</script>
+</body>
+</html>
