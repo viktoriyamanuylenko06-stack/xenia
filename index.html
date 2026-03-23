@@ -2038,7 +2038,11 @@ _fbScript.onload = () => {
       // Then keep listening for changes from other devices
       _dbRef.on('value', snap => {
         const s = snap.val();
-        if(s) applyState(s);
+        if(s && !window._mySave) {
+          applyState(s);
+          showSynced('🔄 Synced');
+        }
+        window._mySave = false;
       });
     });
     showSynced('☁️ Connected');
@@ -2076,11 +2080,12 @@ function collectState(){
 }
 
 function applyState(state){
+  const focused = document.activeElement;
   document.querySelectorAll('input.gap[id], input.order-input[id]').forEach(inp => {
-    if(inp.id && state[inp.id] !== undefined) inp.value = state[inp.id];
+    if(inp.id && state[inp.id] !== undefined && inp !== focused) inp.value = state[inp.id];
   });
   document.querySelectorAll('textarea[id]').forEach(ta => {
-    if(ta.id && state[ta.id] !== undefined){
+    if(ta.id && state[ta.id] !== undefined && ta !== focused){
       ta.value = state[ta.id];
       const wcId = ta.getAttribute('oninput')?.match(/'([^']+)'\)/)?.[1];
       if(wcId){ const el = document.getElementById(wcId); if(el) el.textContent = ta.value.trim().split(/\s+/).filter(Boolean).length + ' words'; }
@@ -2116,9 +2121,10 @@ function saveAll(){
     localStorage.setItem('xenia_portal_v1', JSON.stringify(state));
     // Save to Firebase
     if(window._dbRef){
+      window._mySave = true;
       _dbRef.set(state)
         .then(() => showSynced('☁️ Saved'))
-        .catch(() => showSynced('⚠️ Offline'));
+        .catch(() => { window._mySave = false; showSynced('⚠️ Offline'); });
     } else {
       showSynced('💾 Saved locally');
     }
