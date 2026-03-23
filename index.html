@@ -682,7 +682,7 @@ footer{text-align:center;padding:2rem;font-size:.7rem;color:#a89e94;letter-spaci
     <div class="word-box" style="line-height:1.85;font-size:.82rem">
       <strong>ABOUT ME</strong><br>
       hi, my name's Frank Bacall and I'm a travel writer. I'm from cape Town in South Africa. I love my job because I go to lots of different countries. I often visit Thailand, france and the USA. I love to meet people and learn languages. I speak Spanish, Portuguese and a little thai. I'm interested in sport, too. I play tennis and badminton.<br><br>
-      welcome to my blog. i hope you like it! If you want to know more about the places I visit, then please contact me at fcb@mailer.com.
+      welcome to my blog. i hope you like it! If you want to know more about the places I visit, then please contact me at <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="76101514361b171f1a13045815191b">[email&#160;protected]</a>.
     </div>
     <ol class="ex-items">
       <li>Full name: <input class="gap lg" type="text" placeholder="…"></li>
@@ -717,7 +717,7 @@ footer{text-align:center;padding:2rem;font-size:.7rem;color:#a89e94;letter-spaci
   <div class="ex-block" id="x-ex-1a-6c">
     <p class="ex-instruction"><strong>6C</strong> Imagine you are Bruna Pereira. Write your profile using the information below. Write 80–100 words.</p>
     <div class="word-box" style="font-size:.81rem;line-height:1.8">
-      Full name: Bruna Pereira · Job: singer · Nationality: Brazilian · Home town: Rio de Janeiro · Languages: Portuguese, Spanish, a little English · Interests: tennis, cinema · Email: b.pereira@songcamp.com
+      Full name: Bruna Pereira · Job: singer · Nationality: Brazilian · Home town: Rio de Janeiro · Languages: Portuguese, Spanish, a little English · Interests: tennis, cinema · Email: <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="51337f2134233438233011223e3f3632303c217f323e3c">[email&#160;protected]</a>
     </div>
     <textarea class="write-area" id="x-writing-1a-6c" placeholder="Write Bruna's profile here…" rows="7" oninput="countWords(this,'x-wc-1a-6c');saveAll()"></textarea>
     <p class="word-count" id="x-wc-1a-6c">0 words</p>
@@ -1286,7 +1286,7 @@ footer{text-align:center;padding:2rem;font-size:.7rem;color:#a89e94;letter-spaci
   <div class="ex-block" id="x-ex-extra-8b">
     <p class="ex-instruction"><strong>8B</strong> Read Alexis Wilson's profile. Then complete your own Group-Chat profile below.</p>
     <div class="word-box" style="font-size:.81rem;line-height:1.8;margin-bottom:.8rem">
-      <strong>Alexis Wilson</strong> · AlexIsNo1 · alexis.wilson129@wahoo.com · @alexwilson129 · Tarragona<br><br>
+      <strong>Alexis Wilson</strong> · AlexIsNo1 · <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="a8c9c4cdd0c1db86dfc1c4dbc7c6999a91e8dfc9c0c7c786cbc7c5">[email&#160;protected]</a> · @alexwilson129 · Tarragona<br><br>
       Hi, I'm Alexis! I'm a writer and website developer and I have a small company, AW Design. I live in Tarragona near the city centre. I'm thirty-two and this is my first year here in Spain. I would like to meet local people to practise my Spanish. I speak a little Spanish and French, but my English is best (I'm American). I'm interested in meeting people to go to a museum or simply to have a coffee. Contact me if you're interested!
     </div>
     <div style="background:rgba(26,20,16,.03);border-radius:6px;padding:1rem 1.2rem;border:1px solid var(--border)">
@@ -2586,16 +2586,28 @@ function addBlockTask(bid){
 function toggleBlockTask(tid){
   const li=document.getElementById(tid);
   const chk=li.querySelector('.block-task-check'); const txt=li.querySelector('.block-task-text');
-  const done=chk.classList.toggle('done'); chk.textContent=done?'✓':'';
-  txt.classList.toggle('done',done); saveAll();
+  if(!chk || !txt) return;
+  chk.classList.toggle('done');
+  txt.classList.toggle('done');
+  saveAll();
 }
 
-function addVocabRow(tbodyId){
-  const tbody=document.getElementById(tbodyId); if(!tbody) return;
-  const tr=document.createElement('tr');
-  tr.innerHTML=`<td><input placeholder="word…" oninput="saveAll()"></td><td><input placeholder="перевод…" oninput="saveAll()"></td>`;
-  tbody.appendChild(tr); saveAll();
-}
+window.addEventListener('DOMContentLoaded', loadAll);
 </script>
+
+<button class="teacher-mode-btn" id="teacherBtn" onclick="toggleTeacherMode()">✏️ Teacher Mode</button>
+
+<div class="teacher-mode-bar" id="teacherBar">
+  <span>✏️ Teacher Mode — click any text to edit · click gaps to set answers</span>
+  <button onclick="toggleTeacherMode()" style="margin-left:auto;background:var(--rose);color:white;border:none;border-radius:3px;padding:.3rem .8rem;font-family:'DM Sans',sans-serif;font-size:.73rem;cursor:pointer;">✓ Done editing</button>
+</div>
+
+<div class="ans-edit-popup" id="ansPopup">
+  <label>Correct answer</label>
+  <input id="ansPopupInput" placeholder="answer…" onkeydown="if(event.key==='Enter')saveAnsPopup()">
+  <button onclick="saveAnsPopup()">Save answer</button>
+</div>
+
+<footer>Made with care for Xenia &nbsp;·&nbsp; ✦</footer>
 </body>
 </html>
