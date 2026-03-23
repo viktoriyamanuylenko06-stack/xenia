@@ -323,6 +323,8 @@ footer{text-align:center;padding:2rem;font-size:.7rem;color:#a89e94;letter-spaci
 @keyframes fadeUp{from{opacity:0;transform:translateY(15px)}to{opacity:1;transform:translateY(0)}}
 @media(max-width:600px){.card.board{flex-direction:column;text-align:center}h1{font-size:1.9rem}.lesson-acc-title{display:none}}
 </style>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
 </head>
 <body>
 <header>
@@ -1630,8 +1632,6 @@ footer{text-align:center;padding:2rem;font-size:.7rem;color:#a89e94;letter-spaci
   </div>
 </div>
 
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
 <script>
 // ═══════════════════════════════════════════════
 // ANSWERS DATABASE
@@ -2021,21 +2021,28 @@ const firebaseConfig = {
   appId: "1:926076456940:web:fe5b8d48d07d20c3f5bac9"
 };
 
-// Load Firebase from CDN
-const _fbScript = document.createElement('script');
-_fbScript.src = 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js';
-_fbScript.onload = () => {
-  const _fbDbScript = document.createElement('script');
-  _fbDbScript.src = 'https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js';
-  _fbDbScript.onload = () => {
-    firebase.initializeApp(firebaseConfig);
+// Firebase - loaded via static scripts in <head>
+function initFirebase(){
+  try {
+    if(typeof firebase === 'undefined') {
+      showSynced('⚠️ No connection');
+      return;
+    }
+    const firebaseConfig = {
+      apiKey: "AIzaSyCFDL2atLoLAtmf9_Zxptki3eduTUdlO2c",
+      authDomain: "cate-portal.firebaseapp.com",
+      databaseURL: "https://cate-portal-default-rtdb.firebaseio.com",
+      projectId: "cate-portal",
+      storageBucket: "cate-portal.firebasestorage.app",
+      messagingSenderId: "926076456940",
+      appId: "1:926076456940:web:placeholder"
+    };
+    if(!firebase.apps.length) firebase.initializeApp(firebaseConfig);
     window._db = firebase.database();
     window._dbRef = _db.ref('xenia/progress');
-    // Load from Firebase on start
     _dbRef.once('value').then(snap => {
       const state = snap.val();
       if(state) applyState(state);
-      // Then keep listening for changes from other devices
       _dbRef.on('value', snap => {
         const s = snap.val();
         if(s && !window._mySave) {
@@ -2046,10 +2053,11 @@ _fbScript.onload = () => {
       });
     });
     showSynced('☁️ Connected');
-  };
-  document.head.appendChild(_fbDbScript);
-};
-document.head.appendChild(_fbScript);
+  } catch(e) {
+    showSynced('⚠️ Error');
+    console.error(e);
+  }
+}
 
 let saveTimer = null;
 
@@ -2190,7 +2198,10 @@ function toggleGlobalNotes(){
 }
 
 // Load on start
-window.addEventListener('DOMContentLoaded', loadAll);
+window.addEventListener('DOMContentLoaded', () => {
+  loadAll();
+  initFirebase();
+});
 // ═══════════════════════════════════════════════
 function showHwForm(uid){
   const f=document.getElementById('hwform-'+uid);
@@ -2598,7 +2609,10 @@ function toggleBlockTask(tid){
   saveAll();
 }
 
-window.addEventListener('DOMContentLoaded', loadAll);
+window.addEventListener('DOMContentLoaded', () => {
+  loadAll();
+  initFirebase();
+});
 </script>
 
 <button class="teacher-mode-btn" id="teacherBtn" onclick="toggleTeacherMode()">✏️ Teacher Mode</button>
