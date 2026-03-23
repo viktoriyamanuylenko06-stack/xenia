@@ -490,11 +490,11 @@ footer{text-align:center;padding:2rem;font-size:.7rem;color:#a89e94;letter-spaci
     <p class="ex-instruction"><strong>1A</strong> Complete the phrases with the words in the box.</p>
     <div class="word-box">art · basketball · bus · business · farm · hotel · office · tennis · train · university</div>
     <p style="font-size:.83rem;line-height:2.2">
-      <input class="gap" type="text" placeholder="…"> | <input class="gap" type="text" placeholder="…"> player<br>
-      <input class="gap" type="text" placeholder="…"> | <input class="gap" type="text" placeholder="…"> worker<br>
-      <input class="gap" type="text" placeholder="…"> | <input class="gap" type="text" placeholder="…"> driver<br>
-      <input class="gap" type="text" placeholder="…"> | <input class="gap" type="text" placeholder="…"> student<br>
-      <input class="gap" type="text" placeholder="…"> | <input class="gap" type="text" placeholder="…"> manager
+      <input class="gap" type="text" placeholder="…" id="gap-1" oninput="saveAll()"> | <input class="gap" type="text" placeholder="…" id="gap-2" oninput="saveAll()"> player<br>
+      <input class="gap" type="text" placeholder="…" id="gap-3" oninput="saveAll()"> | <input class="gap" type="text" placeholder="…" id="gap-4" oninput="saveAll()"> worker<br>
+      <input class="gap" type="text" placeholder="…" id="gap-5" oninput="saveAll()"> | <input class="gap" type="text" placeholder="…" id="gap-6" oninput="saveAll()"> driver<br>
+      <input class="gap" type="text" placeholder="…" id="gap-7" oninput="saveAll()"> | <input class="gap" type="text" placeholder="…" id="gap-8" oninput="saveAll()"> student<br>
+      <input class="gap" type="text" placeholder="…" id="gap-9" oninput="saveAll()"> | <input class="gap" type="text" placeholder="…" id="gap-10" oninput="saveAll()"> manager
     </p>
     <div class="ex-actions">
       <button class="btn-reset-ex" onclick="resetExercise('x-ex-1a-1')">↺ Reset</button>
@@ -505,12 +505,12 @@ footer{text-align:center;padding:2rem;font-size:.7rem;color:#a89e94;letter-spaci
   <div class="ex-block" id="x-ex-1a-1b">
     <p class="ex-instruction"><strong>1B</strong> Choose the correct word to complete the sentences.</p>
     <ol class="ex-items">
-      <li>I'm a taxi <span class="pick"><span class="pick-opt" onclick="pick(this)">a worker</span><span class="pick-opt" onclick="pick(this)">b driver</span><span class="pick-opt" onclick="pick(this)">c player</span></span> and I work at night.</li>
-      <li>Are you a university <span class="pick"><span class="pick-opt" onclick="pick(this)">a driver</span><span class="pick-opt" onclick="pick(this)">b player</span><span class="pick-opt" onclick="pick(this)">c student</span></span>?</li>
-      <li>I'd like to be a business <span class="pick"><span class="pick-opt" onclick="pick(this)">a manager</span><span class="pick-opt" onclick="pick(this)">b player</span><span class="pick-opt" onclick="pick(this)">c driver</span></span>.</li>
-      <li>I'm an office <span class="pick"><span class="pick-opt" onclick="pick(this)">a driver</span><span class="pick-opt" onclick="pick(this)">b student</span><span class="pick-opt" onclick="pick(this)">c worker</span></span> and I work from 9 to 5.</li>
-      <li>Would you like to be a train <span class="pick"><span class="pick-opt" onclick="pick(this)">a driver</span><span class="pick-opt" onclick="pick(this)">b player</span><span class="pick-opt" onclick="pick(this)">c student</span></span>?</li>
-      <li>My favourite tennis <span class="pick"><span class="pick-opt" onclick="pick(this)">a worker</span><span class="pick-opt" onclick="pick(this)">b player</span><span class="pick-opt" onclick="pick(this)">c driver</span></span> is Ashleigh Barty.</li>
+      <li>I'm a taxi <span class="pick" id="pick-1"><span class="pick-opt" onclick="pick(this)">a worker</span><span class="pick-opt" onclick="pick(this)">b driver</span><span class="pick-opt" onclick="pick(this)">c player</span></span> and I work at night.</li>
+      <li>Are you a university <span class="pick" id="pick-2"><span class="pick-opt" onclick="pick(this)">a driver</span><span class="pick-opt" onclick="pick(this)">b player</span><span class="pick-opt" onclick="pick(this)">c student</span></span>?</li>
+      <li>I'd like to be a business <span class="pick" id="pick-3"><span class="pick-opt" onclick="pick(this)">a manager</span><span class="pick-opt" onclick="pick(this)">b player</span><span class="pick-opt" onclick="pick(this)">c driver</span></span>.</li>
+      <li>I'm an office <span class="pick" id="pick-4"><span class="pick-opt" onclick="pick(this)">a driver</span><span class="pick-opt" onclick="pick(this)">b student</span><span class="pick-opt" onclick="pick(this)">c worker</span></span> and I work from 9 to 5.</li>
+      <li>Would you like to be a train <span class="pick" id="pick-5"><span class="pick-opt" onclick="pick(this)">a driver</span><span class="pick-opt" onclick="pick(this)">b player</span><span class="pick-opt" onclick="pick(this)">c student</span></span>?</li>
+      <li>My favourite tennis <span class="pick" id="pick-6"><span class="pick-opt" onclick="pick(this)">a worker</span><span class="pick-opt" onclick="pick(this)">b player</span><span class="pick-opt" onclick="pick(this)">c driver</span></span> is Ashleigh Barty.</li>
     </ol>
     <div class="ex-actions">
       <button class="btn-reset-ex" onclick="resetExercise('x-ex-1a-1b')">↺ Reset</button>
@@ -542,12 +542,12 @@ footer{text-align:center;padding:2rem;font-size:.7rem;color:#a89e94;letter-spaci
     <p class="ex-instruction"><strong>2B</strong> Match the jobs from the box with the sentences (1–6).</p>
     <div class="word-box">digital designer · doctor · pilot · politician · scientist · singer</div>
     <ol class="ex-items">
-      <li>I help people who are ill. → <input class="gap" type="text" placeholder="job…"></li>
-      <li>I make music. → <input class="gap" type="text" placeholder="job…"></li>
-      <li>I work in the government. → <input class="gap" type="text" placeholder="job…"></li>
-      <li>I study new medicines. → <input class="gap" type="text" placeholder="job…"></li>
-      <li>I make websites for different companies. → <input class="gap" type="text" placeholder="job…"></li>
-      <li>I fly planes. → <input class="gap" type="text" placeholder="job…"></li>
+      <li>I help people who are ill. → <input class="gap" type="text" placeholder="job…" id="gap-11" oninput="saveAll()"></li>
+      <li>I make music. → <input class="gap" type="text" placeholder="job…" id="gap-12" oninput="saveAll()"></li>
+      <li>I work in the government. → <input class="gap" type="text" placeholder="job…" id="gap-13" oninput="saveAll()"></li>
+      <li>I study new medicines. → <input class="gap" type="text" placeholder="job…" id="gap-14" oninput="saveAll()"></li>
+      <li>I make websites for different companies. → <input class="gap" type="text" placeholder="job…" id="gap-15" oninput="saveAll()"></li>
+      <li>I fly planes. → <input class="gap" type="text" placeholder="job…" id="gap-16" oninput="saveAll()"></li>
     </ol>
     <div class="ex-actions">
       <button class="btn-reset-ex" onclick="resetExercise('x-ex-1a-2b')">↺ Reset</button>
@@ -560,12 +560,12 @@ footer{text-align:center;padding:2rem;font-size:.7rem;color:#a89e94;letter-spaci
   <div class="ex-block" id="x-ex-1a-3a">
     <p class="ex-instruction"><strong>3A</strong> Choose the correct word to complete the sentences.</p>
     <ol class="ex-items">
-      <li>They <span class="pick"><span class="pick-opt" onclick="pick(this)">don't</span><span class="pick-opt" onclick="pick(this)">are</span><span class="pick-opt" onclick="pick(this)">do</span></span> scientists.</li>
-      <li>We <span class="pick"><span class="pick-opt" onclick="pick(this)">don't</span><span class="pick-opt" onclick="pick(this)">aren't</span><span class="pick-opt" onclick="pick(this)">do</span></span> speak Japanese. We speak Korean.</li>
-      <li>A: Do you like sport? B: Yes, I <span class="pick"><span class="pick-opt" onclick="pick(this)">like</span><span class="pick-opt" onclick="pick(this)">am</span><span class="pick-opt" onclick="pick(this)">do</span></span>.</li>
-      <li>My parents <span class="pick"><span class="pick-opt" onclick="pick(this)">do</span><span class="pick-opt" onclick="pick(this)">are</span><span class="pick-opt" onclick="pick(this)">don't</span></span> from Berlin.</li>
-      <li>A: Are Ricky and Sam brothers? B: No, they <span class="pick"><span class="pick-opt" onclick="pick(this)">aren't</span><span class="pick-opt" onclick="pick(this)">don't</span><span class="pick-opt" onclick="pick(this)">are</span></span>.</li>
-      <li>They <span class="pick"><span class="pick-opt" onclick="pick(this)">are</span><span class="pick-opt" onclick="pick(this)">don't</span><span class="pick-opt" onclick="pick(this)">aren't</span></span> Spanish. They're Portuguese.</li>
+      <li>They <span class="pick" id="pick-7"><span class="pick-opt" onclick="pick(this)">don't</span><span class="pick-opt" onclick="pick(this)">are</span><span class="pick-opt" onclick="pick(this)">do</span></span> scientists.</li>
+      <li>We <span class="pick" id="pick-8"><span class="pick-opt" onclick="pick(this)">don't</span><span class="pick-opt" onclick="pick(this)">aren't</span><span class="pick-opt" onclick="pick(this)">do</span></span> speak Japanese. We speak Korean.</li>
+      <li>A: Do you like sport? B: Yes, I <span class="pick" id="pick-9"><span class="pick-opt" onclick="pick(this)">like</span><span class="pick-opt" onclick="pick(this)">am</span><span class="pick-opt" onclick="pick(this)">do</span></span>.</li>
+      <li>My parents <span class="pick" id="pick-10"><span class="pick-opt" onclick="pick(this)">do</span><span class="pick-opt" onclick="pick(this)">are</span><span class="pick-opt" onclick="pick(this)">don't</span></span> from Berlin.</li>
+      <li>A: Are Ricky and Sam brothers? B: No, they <span class="pick" id="pick-11"><span class="pick-opt" onclick="pick(this)">aren't</span><span class="pick-opt" onclick="pick(this)">don't</span><span class="pick-opt" onclick="pick(this)">are</span></span>.</li>
+      <li>They <span class="pick" id="pick-12"><span class="pick-opt" onclick="pick(this)">are</span><span class="pick-opt" onclick="pick(this)">don't</span><span class="pick-opt" onclick="pick(this)">aren't</span></span> Spanish. They're Portuguese.</li>
     </ol>
     <div class="ex-actions">
       <button class="btn-reset-ex" onclick="resetExercise('x-ex-1a-3a')">↺ Reset</button>
@@ -628,12 +628,12 @@ footer{text-align:center;padding:2rem;font-size:.7rem;color:#a89e94;letter-spaci
   <div class="ex-block" id="x-ex-1a-4a">
     <p class="ex-instruction"><strong>4A</strong> 🔊 1.01 | Listen to the sentences. Choose the stressed word in each of the sentences.</p>
     <ol class="ex-items">
-      <li>How do you know Sarah? — stressed word: <input class="gap" type="text" placeholder="…"></li>
-      <li>Do you like your job? — stressed word: <input class="gap" type="text" placeholder="…"></li>
-      <li>Do you work with Paul? — stressed word: <input class="gap" type="text" placeholder="…"></li>
-      <li>Where do you live? — stressed word: <input class="gap" type="text" placeholder="…"></li>
-      <li>What do you do? — stressed word: <input class="gap" type="text" placeholder="…"></li>
-      <li>Do you come from Poland? — stressed word: <input class="gap" type="text" placeholder="…"></li>
+      <li>How do you know Sarah? — stressed word: <input class="gap" type="text" placeholder="…" id="gap-17" oninput="saveAll()"></li>
+      <li>Do you like your job? — stressed word: <input class="gap" type="text" placeholder="…" id="gap-18" oninput="saveAll()"></li>
+      <li>Do you work with Paul? — stressed word: <input class="gap" type="text" placeholder="…" id="gap-19" oninput="saveAll()"></li>
+      <li>Where do you live? — stressed word: <input class="gap" type="text" placeholder="…" id="gap-20" oninput="saveAll()"></li>
+      <li>What do you do? — stressed word: <input class="gap" type="text" placeholder="…" id="gap-21" oninput="saveAll()"></li>
+      <li>Do you come from Poland? — stressed word: <input class="gap" type="text" placeholder="…" id="gap-22" oninput="saveAll()"></li>
     </ol>
     <p style="font-size:.82rem;color:var(--muted);font-style:italic;margin-top:.4rem">4B — 🔊 1.01 | Listen again and repeat.</p>
   </div>
@@ -666,14 +666,14 @@ footer{text-align:center;padding:2rem;font-size:.7rem;color:#a89e94;letter-spaci
   <div class="ex-block" id="x-ex-1a-5c">
     <p class="ex-instruction"><strong>5C</strong> 🔊 1.02 | Listen again. Complete the sentences.</p>
     <ol class="ex-items">
-      <li>How <input class="gap" type="text" placeholder="…"> things?</li>
-      <li>Not <input class="gap" type="text" placeholder="…"> bad.</li>
-      <li>Eliana, <input class="gap" type="text" placeholder="…"> is Ashley.</li>
-      <li>Nice to <input class="gap" type="text" placeholder="…"> you.</li>
-      <li>How do you <input class="gap" type="text" placeholder="…"> each other?</li>
-      <li>Are you <input class="gap" type="text" placeholder="…"> the USA?</li>
-      <li><input class="gap" type="text" placeholder="…"> you live here?</li>
-      <li>What do you <input class="gap" type="text" placeholder="…">, Ashley?</li>
+      <li>How <input class="gap" type="text" placeholder="…" id="gap-23" oninput="saveAll()"> things?</li>
+      <li>Not <input class="gap" type="text" placeholder="…" id="gap-24" oninput="saveAll()"> bad.</li>
+      <li>Eliana, <input class="gap" type="text" placeholder="…" id="gap-25" oninput="saveAll()"> is Ashley.</li>
+      <li>Nice to <input class="gap" type="text" placeholder="…" id="gap-26" oninput="saveAll()"> you.</li>
+      <li>How do you <input class="gap" type="text" placeholder="…" id="gap-27" oninput="saveAll()"> each other?</li>
+      <li>Are you <input class="gap" type="text" placeholder="…" id="gap-28" oninput="saveAll()"> the USA?</li>
+      <li><input class="gap" type="text" placeholder="…" id="gap-29" oninput="saveAll()"> you live here?</li>
+      <li>What do you <input class="gap" type="text" placeholder="…" id="gap-30" oninput="saveAll()">, Ashley?</li>
     </ol>
   </div>
 
@@ -764,12 +764,12 @@ footer{text-align:center;padding:2rem;font-size:.7rem;color:#a89e94;letter-spaci
   <div class="ex-block" id="x-ex-1b-1b">
     <p class="ex-instruction"><strong>1B</strong> Choose the correct word to complete the sentences.</p>
     <ol class="ex-items">
-      <li>Do you <span class="pick"><span class="pick-opt" onclick="pick(this)">a live</span><span class="pick-opt" onclick="pick(this)">b go</span><span class="pick-opt" onclick="pick(this)">c get up</span></span> out a lot at the weekend?</li>
-      <li>I <span class="pick"><span class="pick-opt" onclick="pick(this)">a work</span><span class="pick-opt" onclick="pick(this)">b play</span><span class="pick-opt" onclick="pick(this)">c live</span></span> from home, not in an office.</li>
-      <li>At the weekend I usually <span class="pick"><span class="pick-opt" onclick="pick(this)">a play</span><span class="pick-opt" onclick="pick(this)">b have</span><span class="pick-opt" onclick="pick(this)">c go</span></span> running.</li>
-      <li>We <span class="pick"><span class="pick-opt" onclick="pick(this)">a have</span><span class="pick-opt" onclick="pick(this)">b go</span><span class="pick-opt" onclick="pick(this)">c live</span></span> in a small village.</li>
-      <li>Do you <span class="pick"><span class="pick-opt" onclick="pick(this)">a play</span><span class="pick-opt" onclick="pick(this)">b go</span><span class="pick-opt" onclick="pick(this)">c have</span></span> tennis?</li>
-      <li>We need to <span class="pick"><span class="pick-opt" onclick="pick(this)">a live</span><span class="pick-opt" onclick="pick(this)">b get</span><span class="pick-opt" onclick="pick(this)">c have</span></span> up early tomorrow.</li>
+      <li>Do you <span class="pick" id="pick-13"><span class="pick-opt" onclick="pick(this)">a live</span><span class="pick-opt" onclick="pick(this)">b go</span><span class="pick-opt" onclick="pick(this)">c get up</span></span> out a lot at the weekend?</li>
+      <li>I <span class="pick" id="pick-14"><span class="pick-opt" onclick="pick(this)">a work</span><span class="pick-opt" onclick="pick(this)">b play</span><span class="pick-opt" onclick="pick(this)">c live</span></span> from home, not in an office.</li>
+      <li>At the weekend I usually <span class="pick" id="pick-15"><span class="pick-opt" onclick="pick(this)">a play</span><span class="pick-opt" onclick="pick(this)">b have</span><span class="pick-opt" onclick="pick(this)">c go</span></span> running.</li>
+      <li>We <span class="pick" id="pick-16"><span class="pick-opt" onclick="pick(this)">a have</span><span class="pick-opt" onclick="pick(this)">b go</span><span class="pick-opt" onclick="pick(this)">c live</span></span> in a small village.</li>
+      <li>Do you <span class="pick" id="pick-17"><span class="pick-opt" onclick="pick(this)">a play</span><span class="pick-opt" onclick="pick(this)">b go</span><span class="pick-opt" onclick="pick(this)">c have</span></span> tennis?</li>
+      <li>We need to <span class="pick" id="pick-18"><span class="pick-opt" onclick="pick(this)">a live</span><span class="pick-opt" onclick="pick(this)">b get</span><span class="pick-opt" onclick="pick(this)">c have</span></span> up early tomorrow.</li>
     </ol>
     <div class="ex-actions">
       <button class="btn-reset-ex" onclick="resetExercise('x-ex-1b-1b')">↺ Reset</button>
@@ -797,10 +797,10 @@ footer{text-align:center;padding:2rem;font-size:.7rem;color:#a89e94;letter-spaci
   <div class="ex-block" id="x-ex-1b-2a">
     <p class="ex-instruction"><strong>2A</strong> The sentences below have a mistake. Choose the best option to correct the mistake.</p>
     <ol class="ex-items">
-      <li>What time <u>your brother finishes</u> work?<br><span class="pick"><span class="pick-opt" onclick="pick(this)">a is your brother finish</span><span class="pick-opt" onclick="pick(this)">b does your brother finish</span><span class="pick-opt" onclick="pick(this)">c your brother finish</span></span></li>
-      <li>Kate and her friends <u>lives</u> together.<br><span class="pick"><span class="pick-opt" onclick="pick(this)">a live</span><span class="pick-opt" onclick="pick(this)">b are live</span><span class="pick-opt" onclick="pick(this)">c is live</span></span></li>
-      <li>Robin <u>don't</u> go out a lot.<br><span class="pick"><span class="pick-opt" onclick="pick(this)">a isn't</span><span class="pick-opt" onclick="pick(this)">b aren't</span><span class="pick-opt" onclick="pick(this)">c doesn't</span></span></li>
-      <li><u>Your children</u> like their school?<br><span class="pick"><span class="pick-opt" onclick="pick(this)">a Do your children</span><span class="pick-opt" onclick="pick(this)">b Does your children</span><span class="pick-opt" onclick="pick(this)">c Are your children</span></span></li>
+      <li>What time <u>your brother finishes</u> work?<br><span class="pick" id="pick-19"><span class="pick-opt" onclick="pick(this)">a is your brother finish</span><span class="pick-opt" onclick="pick(this)">b does your brother finish</span><span class="pick-opt" onclick="pick(this)">c your brother finish</span></span></li>
+      <li>Kate and her friends <u>lives</u> together.<br><span class="pick" id="pick-20"><span class="pick-opt" onclick="pick(this)">a live</span><span class="pick-opt" onclick="pick(this)">b are live</span><span class="pick-opt" onclick="pick(this)">c is live</span></span></li>
+      <li>Robin <u>don't</u> go out a lot.<br><span class="pick" id="pick-21"><span class="pick-opt" onclick="pick(this)">a isn't</span><span class="pick-opt" onclick="pick(this)">b aren't</span><span class="pick-opt" onclick="pick(this)">c doesn't</span></span></li>
+      <li><u>Your children</u> like their school?<br><span class="pick" id="pick-22"><span class="pick-opt" onclick="pick(this)">a Do your children</span><span class="pick-opt" onclick="pick(this)">b Does your children</span><span class="pick-opt" onclick="pick(this)">c Are your children</span></span></li>
     </ol>
     <div class="ex-actions">
       <button class="btn-reset-ex" onclick="resetExercise('x-ex-1b-2a')">↺ Reset</button>
@@ -811,7 +811,7 @@ footer{text-align:center;padding:2rem;font-size:.7rem;color:#a89e94;letter-spaci
   <div class="ex-block" id="x-ex-1b-2b">
     <p class="ex-instruction"><strong>2B</strong> Choose the correct words to complete the text.</p>
     <p style="font-size:.83rem;line-height:2.1">
-      My brother is a nurse and he <sup>1</sup><span class="pick"><span class="pick-opt" onclick="pick(this)">work</span><span class="pick-opt" onclick="pick(this)">works</span></span> at a hospital in our city. He <sup>2</sup><span class="pick"><span class="pick-opt" onclick="pick(this)">start</span><span class="pick-opt" onclick="pick(this)">starts</span></span> work at 10 a.m. every day and <sup>3</sup><span class="pick"><span class="pick-opt" onclick="pick(this)">finishes</span><span class="pick-opt" onclick="pick(this)">finish</span></span> at 9 p.m. On Saturdays, when he <sup>4</sup><span class="pick"><span class="pick-opt" onclick="pick(this)">doesn't</span><span class="pick-opt" onclick="pick(this)">isn't</span></span> at the hospital, he <sup>5</sup><span class="pick"><span class="pick-opt" onclick="pick(this)">eats</span><span class="pick-opt" onclick="pick(this)">eat</span></span> lunch at a café with friends. I usually <sup>6</sup><span class="pick"><span class="pick-opt" onclick="pick(this)">visit</span><span class="pick-opt" onclick="pick(this)">visits</span></span> him on Sundays and we <sup>7</sup><span class="pick"><span class="pick-opt" onclick="pick(this)">play</span><span class="pick-opt" onclick="pick(this)">plays</span></span> tennis and <sup>8</sup><span class="pick"><span class="pick-opt" onclick="pick(this)">cook</span><span class="pick-opt" onclick="pick(this)">cooks</span></span> lunch together. On Sunday evenings he <sup>9</sup><span class="pick"><span class="pick-opt" onclick="pick(this)">study</span><span class="pick-opt" onclick="pick(this)">studies</span></span> Italian for an hour and then <sup>10</sup><span class="pick"><span class="pick-opt" onclick="pick(this)">go</span><span class="pick-opt" onclick="pick(this)">goes</span></span> to bed early.
+      My brother is a nurse and he <sup>1</sup><span class="pick" id="pick-23"><span class="pick-opt" onclick="pick(this)">work</span><span class="pick-opt" onclick="pick(this)">works</span></span> at a hospital in our city. He <sup>2</sup><span class="pick" id="pick-24"><span class="pick-opt" onclick="pick(this)">start</span><span class="pick-opt" onclick="pick(this)">starts</span></span> work at 10 a.m. every day and <sup>3</sup><span class="pick" id="pick-25"><span class="pick-opt" onclick="pick(this)">finishes</span><span class="pick-opt" onclick="pick(this)">finish</span></span> at 9 p.m. On Saturdays, when he <sup>4</sup><span class="pick" id="pick-26"><span class="pick-opt" onclick="pick(this)">doesn't</span><span class="pick-opt" onclick="pick(this)">isn't</span></span> at the hospital, he <sup>5</sup><span class="pick" id="pick-27"><span class="pick-opt" onclick="pick(this)">eats</span><span class="pick-opt" onclick="pick(this)">eat</span></span> lunch at a café with friends. I usually <sup>6</sup><span class="pick" id="pick-28"><span class="pick-opt" onclick="pick(this)">visit</span><span class="pick-opt" onclick="pick(this)">visits</span></span> him on Sundays and we <sup>7</sup><span class="pick" id="pick-29"><span class="pick-opt" onclick="pick(this)">play</span><span class="pick-opt" onclick="pick(this)">plays</span></span> tennis and <sup>8</sup><span class="pick" id="pick-30"><span class="pick-opt" onclick="pick(this)">cook</span><span class="pick-opt" onclick="pick(this)">cooks</span></span> lunch together. On Sunday evenings he <sup>9</sup><span class="pick" id="pick-31"><span class="pick-opt" onclick="pick(this)">study</span><span class="pick-opt" onclick="pick(this)">studies</span></span> Italian for an hour and then <sup>10</sup><span class="pick" id="pick-32"><span class="pick-opt" onclick="pick(this)">go</span><span class="pick-opt" onclick="pick(this)">goes</span></span> to bed early.
     </p>
     <div class="ex-actions">
       <button class="btn-reset-ex" onclick="resetExercise('x-ex-1b-2b')">↺ Reset</button>
@@ -823,12 +823,12 @@ footer{text-align:center;padding:2rem;font-size:.7rem;color:#a89e94;letter-spaci
     <p class="ex-instruction"><strong>2C</strong> Complete the sentences with the correct form of the verbs in the box.</p>
     <div class="word-box">get up · go · go out · have · start · study · teach · work</div>
     <ol class="ex-items">
-      <li>She <input class="gap" type="text" placeholder="…"> work at 9 a.m. She <input class="gap" type="text" placeholder="…"> from home.</li>
-      <li>After that, she <input class="gap" type="text" placeholder="…"> with friends.</li>
-      <li>She <input class="gap" type="text" placeholder="…"> running, then <input class="gap" type="text" placeholder="…"> breakfast.</li>
-      <li>In the evening, she <input class="gap" type="text" placeholder="…"> French.</li>
-      <li>Anika <input class="gap" type="text" placeholder="…"> at 5 a.m.</li>
-      <li>In the afternoon, she <input class="gap" type="text" placeholder="…"> students online.</li>
+      <li>She <input class="gap" type="text" placeholder="…" id="gap-31" oninput="saveAll()"> work at 9 a.m. She <input class="gap" type="text" placeholder="…" id="gap-32" oninput="saveAll()"> from home.</li>
+      <li>After that, she <input class="gap" type="text" placeholder="…" id="gap-33" oninput="saveAll()"> with friends.</li>
+      <li>She <input class="gap" type="text" placeholder="…" id="gap-34" oninput="saveAll()"> running, then <input class="gap" type="text" placeholder="…" id="gap-35" oninput="saveAll()"> breakfast.</li>
+      <li>In the evening, she <input class="gap" type="text" placeholder="…" id="gap-36" oninput="saveAll()"> French.</li>
+      <li>Anika <input class="gap" type="text" placeholder="…" id="gap-37" oninput="saveAll()"> at 5 a.m.</li>
+      <li>In the afternoon, she <input class="gap" type="text" placeholder="…" id="gap-38" oninput="saveAll()"> students online.</li>
     </ol>
     <div class="ex-actions">
       <button class="btn-reset-ex" onclick="resetExercise('x-ex-1b-2c')">↺ Reset</button>
@@ -857,16 +857,16 @@ footer{text-align:center;padding:2rem;font-size:.7rem;color:#a89e94;letter-spaci
   <div class="ex-block" id="x-ex-1b-3a">
     <p class="ex-instruction"><strong>3A</strong> 🔊 1.03 | Listen and choose the correct -s sound for each verb (/s/, /z/ or /ɪz/).</p>
     <ol class="ex-items">
-      <li>studies <span class="pick"><span class="pick-opt" onclick="pick(this)">/s/</span><span class="pick-opt" onclick="pick(this)">/z/</span><span class="pick-opt" onclick="pick(this)">/ɪz/</span></span></li>
-      <li>sits <span class="pick"><span class="pick-opt" onclick="pick(this)">/s/</span><span class="pick-opt" onclick="pick(this)">/z/</span><span class="pick-opt" onclick="pick(this)">/ɪz/</span></span></li>
-      <li>works <span class="pick"><span class="pick-opt" onclick="pick(this)">/s/</span><span class="pick-opt" onclick="pick(this)">/z/</span><span class="pick-opt" onclick="pick(this)">/ɪz/</span></span></li>
-      <li>stays <span class="pick"><span class="pick-opt" onclick="pick(this)">/s/</span><span class="pick-opt" onclick="pick(this)">/z/</span><span class="pick-opt" onclick="pick(this)">/ɪz/</span></span></li>
-      <li>does <span class="pick"><span class="pick-opt" onclick="pick(this)">/s/</span><span class="pick-opt" onclick="pick(this)">/z/</span><span class="pick-opt" onclick="pick(this)">/ɪz/</span></span></li>
-      <li>finishes <span class="pick"><span class="pick-opt" onclick="pick(this)">/s/</span><span class="pick-opt" onclick="pick(this)">/z/</span><span class="pick-opt" onclick="pick(this)">/ɪz/</span></span></li>
-      <li>goes <span class="pick"><span class="pick-opt" onclick="pick(this)">/s/</span><span class="pick-opt" onclick="pick(this)">/z/</span><span class="pick-opt" onclick="pick(this)">/ɪz/</span></span></li>
-      <li>stops <span class="pick"><span class="pick-opt" onclick="pick(this)">/s/</span><span class="pick-opt" onclick="pick(this)">/z/</span><span class="pick-opt" onclick="pick(this)">/ɪz/</span></span></li>
-      <li>watches <span class="pick"><span class="pick-opt" onclick="pick(this)">/s/</span><span class="pick-opt" onclick="pick(this)">/z/</span><span class="pick-opt" onclick="pick(this)">/ɪz/</span></span></li>
-      <li>lives <span class="pick"><span class="pick-opt" onclick="pick(this)">/s/</span><span class="pick-opt" onclick="pick(this)">/z/</span><span class="pick-opt" onclick="pick(this)">/ɪz/</span></span></li>
+      <li>studies <span class="pick" id="pick-33"><span class="pick-opt" onclick="pick(this)">/s/</span><span class="pick-opt" onclick="pick(this)">/z/</span><span class="pick-opt" onclick="pick(this)">/ɪz/</span></span></li>
+      <li>sits <span class="pick" id="pick-34"><span class="pick-opt" onclick="pick(this)">/s/</span><span class="pick-opt" onclick="pick(this)">/z/</span><span class="pick-opt" onclick="pick(this)">/ɪz/</span></span></li>
+      <li>works <span class="pick" id="pick-35"><span class="pick-opt" onclick="pick(this)">/s/</span><span class="pick-opt" onclick="pick(this)">/z/</span><span class="pick-opt" onclick="pick(this)">/ɪz/</span></span></li>
+      <li>stays <span class="pick" id="pick-36"><span class="pick-opt" onclick="pick(this)">/s/</span><span class="pick-opt" onclick="pick(this)">/z/</span><span class="pick-opt" onclick="pick(this)">/ɪz/</span></span></li>
+      <li>does <span class="pick" id="pick-37"><span class="pick-opt" onclick="pick(this)">/s/</span><span class="pick-opt" onclick="pick(this)">/z/</span><span class="pick-opt" onclick="pick(this)">/ɪz/</span></span></li>
+      <li>finishes <span class="pick" id="pick-38"><span class="pick-opt" onclick="pick(this)">/s/</span><span class="pick-opt" onclick="pick(this)">/z/</span><span class="pick-opt" onclick="pick(this)">/ɪz/</span></span></li>
+      <li>goes <span class="pick" id="pick-39"><span class="pick-opt" onclick="pick(this)">/s/</span><span class="pick-opt" onclick="pick(this)">/z/</span><span class="pick-opt" onclick="pick(this)">/ɪz/</span></span></li>
+      <li>stops <span class="pick" id="pick-40"><span class="pick-opt" onclick="pick(this)">/s/</span><span class="pick-opt" onclick="pick(this)">/z/</span><span class="pick-opt" onclick="pick(this)">/ɪz/</span></span></li>
+      <li>watches <span class="pick" id="pick-41"><span class="pick-opt" onclick="pick(this)">/s/</span><span class="pick-opt" onclick="pick(this)">/z/</span><span class="pick-opt" onclick="pick(this)">/ɪz/</span></span></li>
+      <li>lives <span class="pick" id="pick-42"><span class="pick-opt" onclick="pick(this)">/s/</span><span class="pick-opt" onclick="pick(this)">/z/</span><span class="pick-opt" onclick="pick(this)">/ɪz/</span></span></li>
     </ol>
     <p style="font-size:.82rem;color:var(--muted);font-style:italic;margin-top:.4rem">3B — 🔊 1.03 | Listen again and repeat.</p>
   </div>
@@ -875,7 +875,7 @@ footer{text-align:center;padding:2rem;font-size:.7rem;color:#a89e94;letter-spaci
 
   <div class="ex-block" id="x-ex-1b-4">
     <p class="ex-instruction"><strong>4</strong> Choose the correct word to complete the sentence.</p>
-    <p style="font-size:.83rem;line-height:1.7;margin-bottom:.6rem">Rowan is a shop assistant. He <span class="pick"><span class="pick-opt" onclick="pick(this)">a lives</span><span class="pick-opt" onclick="pick(this)">b works</span><span class="pick-opt" onclick="pick(this)">c meets</span></span> in a supermarket. He starts at 12 p.m. and he finishes at 8 p.m.</p>
+    <p style="font-size:.83rem;line-height:1.7;margin-bottom:.6rem">Rowan is a shop assistant. He <span class="pick" id="pick-43"><span class="pick-opt" onclick="pick(this)">a lives</span><span class="pick-opt" onclick="pick(this)">b works</span><span class="pick-opt" onclick="pick(this)">c meets</span></span> in a supermarket. He starts at 12 p.m. and he finishes at 8 p.m.</p>
     <div class="ex-actions">
       <button class="btn-reset-ex" onclick="resetExercise('x-ex-1b-4')">↺ Reset</button>
       <button class="btn-edit-ex" onclick="toggleEditExercise(this,'x-ex-1b-4')">✏️ Edit</button>
@@ -905,12 +905,12 @@ footer{text-align:center;padding:2rem;font-size:.7rem;color:#a89e94;letter-spaci
   <div class="ex-block" id="x-ex-1b-5b">
     <p class="ex-instruction"><strong>5B</strong> Read the article again. Choose one option (a–c) to complete the questions (1–6).</p>
     <ol class="ex-items">
-      <li>What's Annie's job?<br><span class="pick"><span class="pick-opt" onclick="pick(this)">a a teacher</span><span class="pick-opt" onclick="pick(this)">b a shop assistant</span><span class="pick-opt" onclick="pick(this)">c a lawyer</span></span></li>
-      <li>What does she do in the morning?<br><span class="pick"><span class="pick-opt" onclick="pick(this)">a She has breakfast and goes to work.</span><span class="pick-opt" onclick="pick(this)">b She reads books or studies.</span><span class="pick-opt" onclick="pick(this)">c She goes to Spanish classes.</span></span></li>
-      <li>What does she do on Thursdays?<br><span class="pick"><span class="pick-opt" onclick="pick(this)">a She studies.</span><span class="pick-opt" onclick="pick(this)">b She cooks dinner.</span><span class="pick-opt" onclick="pick(this)">c She watches TV or reads books.</span></span></li>
-      <li>How does Rowan know Annie?<br><span class="pick"><span class="pick-opt" onclick="pick(this)">a from work</span><span class="pick-opt" onclick="pick(this)">b from his Spanish class</span><span class="pick-opt" onclick="pick(this)">c from school</span></span></li>
-      <li>What does Annie hate?<br><span class="pick"><span class="pick-opt" onclick="pick(this)">a watching films</span><span class="pick-opt" onclick="pick(this)">b cooking food</span><span class="pick-opt" onclick="pick(this)">c going to the cinema</span></span></li>
-      <li>What does Annie say about being different to Rowan?<br><span class="pick"><span class="pick-opt" onclick="pick(this)">a She doesn't like it.</span><span class="pick-opt" onclick="pick(this)">b She likes it.</span><span class="pick-opt" onclick="pick(this)">c It's OK.</span></span></li>
+      <li>What's Annie's job?<br><span class="pick" id="pick-44"><span class="pick-opt" onclick="pick(this)">a a teacher</span><span class="pick-opt" onclick="pick(this)">b a shop assistant</span><span class="pick-opt" onclick="pick(this)">c a lawyer</span></span></li>
+      <li>What does she do in the morning?<br><span class="pick" id="pick-45"><span class="pick-opt" onclick="pick(this)">a She has breakfast and goes to work.</span><span class="pick-opt" onclick="pick(this)">b She reads books or studies.</span><span class="pick-opt" onclick="pick(this)">c She goes to Spanish classes.</span></span></li>
+      <li>What does she do on Thursdays?<br><span class="pick" id="pick-46"><span class="pick-opt" onclick="pick(this)">a She studies.</span><span class="pick-opt" onclick="pick(this)">b She cooks dinner.</span><span class="pick-opt" onclick="pick(this)">c She watches TV or reads books.</span></span></li>
+      <li>How does Rowan know Annie?<br><span class="pick" id="pick-47"><span class="pick-opt" onclick="pick(this)">a from work</span><span class="pick-opt" onclick="pick(this)">b from his Spanish class</span><span class="pick-opt" onclick="pick(this)">c from school</span></span></li>
+      <li>What does Annie hate?<br><span class="pick" id="pick-48"><span class="pick-opt" onclick="pick(this)">a watching films</span><span class="pick-opt" onclick="pick(this)">b cooking food</span><span class="pick-opt" onclick="pick(this)">c going to the cinema</span></span></li>
+      <li>What does Annie say about being different to Rowan?<br><span class="pick" id="pick-49"><span class="pick-opt" onclick="pick(this)">a She doesn't like it.</span><span class="pick-opt" onclick="pick(this)">b She likes it.</span><span class="pick-opt" onclick="pick(this)">c It's OK.</span></span></li>
     </ol>
     <div class="ex-actions">
       <button class="btn-reset-ex" onclick="resetExercise('x-ex-1b-5b')">↺ Reset</button>
@@ -937,14 +937,14 @@ footer{text-align:center;padding:2rem;font-size:.7rem;color:#a89e94;letter-spaci
     <p class="ex-instruction"><strong>1</strong> Complete the sentences with the adjectives from the box.</p>
     <div class="word-box">all right · angry · bored · hungry · ill · relaxed · thirsty · tired</div>
     <ol class="ex-items">
-      <li>Can I have some water? I'm really <input class="gap" type="text" placeholder="…">.</li>
-      <li>Greg isn't at work today. He's at the doctor's because he's <input class="gap" type="text" placeholder="…">.</li>
-      <li>I'm sorry I'm late. Please don't be <input class="gap" type="text" placeholder="…">!</li>
-      <li>I'm <input class="gap" type="text" placeholder="…">. Let's do something interesting.</li>
-      <li>I feel <input class="gap" type="text" placeholder="…"> – not happy, not sad. Just normal.</li>
-      <li>I want to go to bed. I'm very <input class="gap" type="text" placeholder="…">.</li>
-      <li>What time is dinner? I'm really <input class="gap" type="text" placeholder="…">.</li>
-      <li>I always feel <input class="gap" type="text" placeholder="…"> after a hot bath.</li>
+      <li>Can I have some water? I'm really <input class="gap" type="text" placeholder="…" id="gap-39" oninput="saveAll()">.</li>
+      <li>Greg isn't at work today. He's at the doctor's because he's <input class="gap" type="text" placeholder="…" id="gap-40" oninput="saveAll()">.</li>
+      <li>I'm sorry I'm late. Please don't be <input class="gap" type="text" placeholder="…" id="gap-41" oninput="saveAll()">!</li>
+      <li>I'm <input class="gap" type="text" placeholder="…" id="gap-42" oninput="saveAll()">. Let's do something interesting.</li>
+      <li>I feel <input class="gap" type="text" placeholder="…" id="gap-43" oninput="saveAll()"> – not happy, not sad. Just normal.</li>
+      <li>I want to go to bed. I'm very <input class="gap" type="text" placeholder="…" id="gap-44" oninput="saveAll()">.</li>
+      <li>What time is dinner? I'm really <input class="gap" type="text" placeholder="…" id="gap-45" oninput="saveAll()">.</li>
+      <li>I always feel <input class="gap" type="text" placeholder="…" id="gap-46" oninput="saveAll()"> after a hot bath.</li>
     </ol>
     <div class="ex-actions">
       <button class="btn-reset-ex" onclick="resetExercise('x-ex-1c-1')">↺ Reset</button>
@@ -957,12 +957,12 @@ footer{text-align:center;padding:2rem;font-size:.7rem;color:#a89e94;letter-spaci
   <div class="ex-block" id="x-ex-1c-2a">
     <p class="ex-instruction"><strong>2A</strong> Choose the correct answer to complete the sentences.</p>
     <ol class="ex-items">
-      <li>I get up <span class="pick"><span class="pick-opt" onclick="pick(this)">–</span><span class="pick-opt" onclick="pick(this)">on</span><span class="pick-opt" onclick="pick(this)">at</span></span> 5 a.m. every day.</li>
-      <li>Do we have a class <span class="pick"><span class="pick-opt" onclick="pick(this)">next</span><span class="pick-opt" onclick="pick(this)">at</span><span class="pick-opt" onclick="pick(this)">on</span></span> week?</li>
-      <li>Let's play tennis <span class="pick"><span class="pick-opt" onclick="pick(this)">on</span><span class="pick-opt" onclick="pick(this)">–</span><span class="pick-opt" onclick="pick(this)">next</span></span> tomorrow.</li>
-      <li>I teach German <span class="pick"><span class="pick-opt" onclick="pick(this)">at</span><span class="pick-opt" onclick="pick(this)">on</span><span class="pick-opt" onclick="pick(this)">this</span></span> Tuesdays.</li>
-      <li>I have an English class <span class="pick"><span class="pick-opt" onclick="pick(this)">at</span><span class="pick-opt" onclick="pick(this)">–</span><span class="pick-opt" onclick="pick(this)">on</span></span> Thursday morning.</li>
-      <li>What shall we do <span class="pick"><span class="pick-opt" onclick="pick(this)">this</span><span class="pick-opt" onclick="pick(this)">next</span><span class="pick-opt" onclick="pick(this)">at</span></span> evening?</li>
+      <li>I get up <span class="pick" id="pick-50"><span class="pick-opt" onclick="pick(this)">–</span><span class="pick-opt" onclick="pick(this)">on</span><span class="pick-opt" onclick="pick(this)">at</span></span> 5 a.m. every day.</li>
+      <li>Do we have a class <span class="pick" id="pick-51"><span class="pick-opt" onclick="pick(this)">next</span><span class="pick-opt" onclick="pick(this)">at</span><span class="pick-opt" onclick="pick(this)">on</span></span> week?</li>
+      <li>Let's play tennis <span class="pick" id="pick-52"><span class="pick-opt" onclick="pick(this)">on</span><span class="pick-opt" onclick="pick(this)">–</span><span class="pick-opt" onclick="pick(this)">next</span></span> tomorrow.</li>
+      <li>I teach German <span class="pick" id="pick-53"><span class="pick-opt" onclick="pick(this)">at</span><span class="pick-opt" onclick="pick(this)">on</span><span class="pick-opt" onclick="pick(this)">this</span></span> Tuesdays.</li>
+      <li>I have an English class <span class="pick" id="pick-54"><span class="pick-opt" onclick="pick(this)">at</span><span class="pick-opt" onclick="pick(this)">–</span><span class="pick-opt" onclick="pick(this)">on</span></span> Thursday morning.</li>
+      <li>What shall we do <span class="pick" id="pick-55"><span class="pick-opt" onclick="pick(this)">this</span><span class="pick-opt" onclick="pick(this)">next</span><span class="pick-opt" onclick="pick(this)">at</span></span> evening?</li>
     </ol>
     <div class="ex-actions">
       <button class="btn-reset-ex" onclick="resetExercise('x-ex-1c-2a')">↺ Reset</button>
@@ -1005,9 +1005,9 @@ footer{text-align:center;padding:2rem;font-size:.7rem;color:#a89e94;letter-spaci
   <div class="ex-block" id="x-ex-1c-3b">
     <p class="ex-instruction"><strong>3B</strong> 🔊 1.05 | Listen to the recording. Write what you hear. You will hear the sentences only once.</p>
     <ol class="ex-items">
-      <li><input class="gap" type="text" placeholder="Write sentence 1…" style="min-width:260px"></li>
-      <li><input class="gap" type="text" placeholder="Write sentence 2…" style="min-width:260px"></li>
-      <li><input class="gap" type="text" placeholder="Write sentence 3…" style="min-width:260px"></li>
+      <li><input class="gap" type="text" placeholder="Write sentence 1…" style="min-width:260px" id="gap-47" oninput="saveAll()"></li>
+      <li><input class="gap" type="text" placeholder="Write sentence 2…" style="min-width:260px" id="gap-48" oninput="saveAll()"></li>
+      <li><input class="gap" type="text" placeholder="Write sentence 3…" style="min-width:260px" id="gap-49" oninput="saveAll()"></li>
     </ol>
   </div>
 
@@ -1016,12 +1016,12 @@ footer{text-align:center;padding:2rem;font-size:.7rem;color:#a89e94;letter-spaci
   <div class="ex-block" id="x-ex-1c-4a">
     <p class="ex-instruction"><strong>4A</strong> 🔊 1.06 | Listen to the phrases. Do the people sound interested (I) or not interested (N)?</p>
     <ol class="ex-items">
-      <li>Sure! <span class="pick"><span class="pick-opt" onclick="pick(this)">I</span><span class="pick-opt" onclick="pick(this)">N</span></span></li>
-      <li>Good idea. <span class="pick"><span class="pick-opt" onclick="pick(this)">I</span><span class="pick-opt" onclick="pick(this)">N</span></span></li>
-      <li>I'd love to! <span class="pick"><span class="pick-opt" onclick="pick(this)">I</span><span class="pick-opt" onclick="pick(this)">N</span></span></li>
-      <li>Perfect! <span class="pick"><span class="pick-opt" onclick="pick(this)">I</span><span class="pick-opt" onclick="pick(this)">N</span></span></li>
-      <li>Sure, that's fine. <span class="pick"><span class="pick-opt" onclick="pick(this)">I</span><span class="pick-opt" onclick="pick(this)">N</span></span></li>
-      <li>OK. <span class="pick"><span class="pick-opt" onclick="pick(this)">I</span><span class="pick-opt" onclick="pick(this)">N</span></span></li>
+      <li>Sure! <span class="pick" id="pick-56"><span class="pick-opt" onclick="pick(this)">I</span><span class="pick-opt" onclick="pick(this)">N</span></span></li>
+      <li>Good idea. <span class="pick" id="pick-57"><span class="pick-opt" onclick="pick(this)">I</span><span class="pick-opt" onclick="pick(this)">N</span></span></li>
+      <li>I'd love to! <span class="pick" id="pick-58"><span class="pick-opt" onclick="pick(this)">I</span><span class="pick-opt" onclick="pick(this)">N</span></span></li>
+      <li>Perfect! <span class="pick" id="pick-59"><span class="pick-opt" onclick="pick(this)">I</span><span class="pick-opt" onclick="pick(this)">N</span></span></li>
+      <li>Sure, that's fine. <span class="pick" id="pick-60"><span class="pick-opt" onclick="pick(this)">I</span><span class="pick-opt" onclick="pick(this)">N</span></span></li>
+      <li>OK. <span class="pick" id="pick-61"><span class="pick-opt" onclick="pick(this)">I</span><span class="pick-opt" onclick="pick(this)">N</span></span></li>
     </ol>
     <p style="font-size:.82rem;color:var(--muted);font-style:italic;margin-top:.4rem">4B — 🔊 1.07 | Listen and repeat the interested phrases.</p>
   </div>
@@ -1065,10 +1065,10 @@ footer{text-align:center;padding:2rem;font-size:.7rem;color:#a89e94;letter-spaci
   <div class="ex-block" id="x-ex-1d-1a">
     <p class="ex-instruction"><strong>1A</strong> The sentences below have a mistake. Choose the best option to correct the mistake.</p>
     <ol class="ex-items">
-      <li>My <u>brothers'</u> name is Harry.<br><span class="pick"><span class="pick-opt" onclick="pick(this)">a brothers</span><span class="pick-opt" onclick="pick(this)">b brother</span><span class="pick-opt" onclick="pick(this)">c brother's</span></span></li>
-      <li>This isn't my room. It's the <u>childrens'</u>.<br><span class="pick"><span class="pick-opt" onclick="pick(this)">a children's</span><span class="pick-opt" onclick="pick(this)">b children</span><span class="pick-opt" onclick="pick(this)">c childrens</span></span></li>
-      <li>Where are <u>the keys of Anna</u>?<br><span class="pick"><span class="pick-opt" onclick="pick(this)">a the keys' of Anna</span><span class="pick-opt" onclick="pick(this)">b Anna's keys</span><span class="pick-opt" onclick="pick(this)">c Annas' keys</span></span></li>
-      <li><u>Mia's Tim</u> sister.<br><span class="pick"><span class="pick-opt" onclick="pick(this)">a Mia Tim's</span><span class="pick-opt" onclick="pick(this)">b Mia's Tim's</span><span class="pick-opt" onclick="pick(this)">c Mia's Tims'</span></span></li>
+      <li>My <u>brothers'</u> name is Harry.<br><span class="pick" id="pick-62"><span class="pick-opt" onclick="pick(this)">a brothers</span><span class="pick-opt" onclick="pick(this)">b brother</span><span class="pick-opt" onclick="pick(this)">c brother's</span></span></li>
+      <li>This isn't my room. It's the <u>childrens'</u>.<br><span class="pick" id="pick-63"><span class="pick-opt" onclick="pick(this)">a children's</span><span class="pick-opt" onclick="pick(this)">b children</span><span class="pick-opt" onclick="pick(this)">c childrens</span></span></li>
+      <li>Where are <u>the keys of Anna</u>?<br><span class="pick" id="pick-64"><span class="pick-opt" onclick="pick(this)">a the keys' of Anna</span><span class="pick-opt" onclick="pick(this)">b Anna's keys</span><span class="pick-opt" onclick="pick(this)">c Annas' keys</span></span></li>
+      <li><u>Mia's Tim</u> sister.<br><span class="pick" id="pick-65"><span class="pick-opt" onclick="pick(this)">a Mia Tim's</span><span class="pick-opt" onclick="pick(this)">b Mia's Tim's</span><span class="pick-opt" onclick="pick(this)">c Mia's Tims'</span></span></li>
     </ol>
     <div class="ex-actions">
       <button class="btn-reset-ex" onclick="resetExercise('x-ex-1d-1a')">↺ Reset</button>
@@ -1131,14 +1131,14 @@ footer{text-align:center;padding:2rem;font-size:.7rem;color:#a89e94;letter-spaci
     <div class="word-box">Alan · April · Deepak · Leila · Oliver · Sally · Veronika · Zach</div>
     <div style="font-size:.83rem;background:rgba(26,20,16,.03);border-radius:4px;padding:1rem;margin-top:.5rem;line-height:2.2">
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem 2rem">
-        <div>1 <input class="gap" type="text" placeholder="…"> (Grace's family)</div>
-        <div>2 <input class="gap" type="text" placeholder="…"> (Grace's family)</div>
-        <div>3 <input class="gap" type="text" placeholder="…"> (Grace's sibling)</div>
-        <div>4 <input class="gap" type="text" placeholder="…"> (Grace's family)</div>
-        <div>5 <input class="gap" type="text" placeholder="…"> (Marco's family)</div>
-        <div>6 <input class="gap" type="text" placeholder="…"> (Marco's family)</div>
-        <div>7 <input class="gap" type="text" placeholder="…"> (Marco's family)</div>
-        <div>8 <input class="gap" type="text" placeholder="…"> (Marco's family)</div>
+        <div>1 <input class="gap" type="text" placeholder="…" id="gap-50" oninput="saveAll()"> (Grace's family)</div>
+        <div>2 <input class="gap" type="text" placeholder="…" id="gap-51" oninput="saveAll()"> (Grace's family)</div>
+        <div>3 <input class="gap" type="text" placeholder="…" id="gap-52" oninput="saveAll()"> (Grace's sibling)</div>
+        <div>4 <input class="gap" type="text" placeholder="…" id="gap-53" oninput="saveAll()"> (Grace's family)</div>
+        <div>5 <input class="gap" type="text" placeholder="…" id="gap-54" oninput="saveAll()"> (Marco's family)</div>
+        <div>6 <input class="gap" type="text" placeholder="…" id="gap-55" oninput="saveAll()"> (Marco's family)</div>
+        <div>7 <input class="gap" type="text" placeholder="…" id="gap-56" oninput="saveAll()"> (Marco's family)</div>
+        <div>8 <input class="gap" type="text" placeholder="…" id="gap-57" oninput="saveAll()"> (Marco's family)</div>
       </div>
     </div>
   </div>
@@ -1199,11 +1199,11 @@ footer{text-align:center;padding:2rem;font-size:.7rem;color:#a89e94;letter-spaci
     <p class="ex-instruction"><strong>1A c</strong> Write the sentences with a subject pronoun (<em>I, They</em>, etc.) and a contraction.</p>
     <p style="font-size:.82rem;color:var(--muted);margin-bottom:.4rem"><strong>Mike and Hannah are</strong> students. → <em>They're</em> _______ students. (example)</p>
     <ol class="ex-items">
-      <li><strong>John is</strong> in room 5. → <input class="gap" type="text" placeholder="…"> in room 5.</li>
-      <li><strong>Sam and I are</strong> friends. → <input class="gap" type="text" placeholder="…"> friends.</li>
-      <li><strong>Julia is</strong> a teacher. → <input class="gap" type="text" placeholder="…"> a teacher.</li>
-      <li><strong>The school is</strong> in Brighton. → <input class="gap" type="text" placeholder="…"> in Brighton.</li>
-      <li><strong>Nico and Fernanda are</strong> in my class. → <input class="gap" type="text" placeholder="…"> in my class.</li>
+      <li><strong>John is</strong> in room 5. → <input class="gap" type="text" placeholder="…" id="gap-58" oninput="saveAll()"> in room 5.</li>
+      <li><strong>Sam and I are</strong> friends. → <input class="gap" type="text" placeholder="…" id="gap-59" oninput="saveAll()"> friends.</li>
+      <li><strong>Julia is</strong> a teacher. → <input class="gap" type="text" placeholder="…" id="gap-60" oninput="saveAll()"> a teacher.</li>
+      <li><strong>The school is</strong> in Brighton. → <input class="gap" type="text" placeholder="…" id="gap-61" oninput="saveAll()"> in Brighton.</li>
+      <li><strong>Nico and Fernanda are</strong> in my class. → <input class="gap" type="text" placeholder="…" id="gap-62" oninput="saveAll()"> in my class.</li>
     </ol>
     <div class="ex-actions">
       <button class="btn-reset-ex" onclick="resetExercise('x-ex-extra-1ac')">↺ Reset</button>
@@ -1232,11 +1232,11 @@ footer{text-align:center;padding:2rem;font-size:.7rem;color:#a89e94;letter-spaci
     <p class="ex-instruction"><strong>1B b</strong> Make questions and short answers.</p>
     <p style="font-size:.82rem;color:var(--muted);margin-bottom:.4rem">/ you English? → <em>Are you English?</em> ✓ <em>Yes, I am.</em> (example)</p>
     <ol class="ex-items">
-      <li>/ I in room 10? → <input class="gap lg" type="text" placeholder="question…" style="min-width:180px"> ✓ <input class="gap" type="text" placeholder="short answer…"></li>
-      <li>/ it Spanish? → <input class="gap lg" type="text" placeholder="question…" style="min-width:180px"> ✗ <input class="gap" type="text" placeholder="short answer…"></li>
-      <li>/ they students? → <input class="gap lg" type="text" placeholder="question…" style="min-width:180px"> ✗ <input class="gap" type="text" placeholder="short answer…"></li>
-      <li>/ he from the USA? → <input class="gap lg" type="text" placeholder="question…" style="min-width:180px"> ✓ <input class="gap" type="text" placeholder="short answer…"></li>
-      <li>/ you Mike Bell? → <input class="gap lg" type="text" placeholder="question…" style="min-width:180px"> ✗ <input class="gap" type="text" placeholder="short answer…"></li>
+      <li>/ I in room 10? → <input class="gap lg" type="text" placeholder="question…" style="min-width:180px"> ✓ <input class="gap" type="text" placeholder="short answer…" id="gap-63" oninput="saveAll()"></li>
+      <li>/ it Spanish? → <input class="gap lg" type="text" placeholder="question…" style="min-width:180px"> ✗ <input class="gap" type="text" placeholder="short answer…" id="gap-64" oninput="saveAll()"></li>
+      <li>/ they students? → <input class="gap lg" type="text" placeholder="question…" style="min-width:180px"> ✗ <input class="gap" type="text" placeholder="short answer…" id="gap-65" oninput="saveAll()"></li>
+      <li>/ he from the USA? → <input class="gap lg" type="text" placeholder="question…" style="min-width:180px"> ✓ <input class="gap" type="text" placeholder="short answer…" id="gap-66" oninput="saveAll()"></li>
+      <li>/ you Mike Bell? → <input class="gap lg" type="text" placeholder="question…" style="min-width:180px"> ✗ <input class="gap" type="text" placeholder="short answer…" id="gap-67" oninput="saveAll()"></li>
     </ol>
     <div class="ex-actions">
       <button class="btn-reset-ex" onclick="resetExercise('x-ex-extra-1bb')">↺ Reset</button>
@@ -1270,13 +1270,13 @@ footer{text-align:center;padding:2rem;font-size:.7rem;color:#a89e94;letter-spaci
     <p class="ex-instruction"><strong>8A</strong> Work in pairs. Look at the website form. Answer the questions.</p>
     <ol class="ex-items">
       <li>This website is for people who want:<br>
-        <span class="pick"><span class="pick-opt" onclick="pick(this)">a a new job</span><span class="pick-opt" onclick="pick(this)">b new friends</span></span>
+        <span class="pick" id="pick-66"><span class="pick-opt" onclick="pick(this)">a a new job</span><span class="pick-opt" onclick="pick(this)">b new friends</span></span>
       </li>
       <li>The form asks for information about:<br>
-        <span class="pick"><span class="pick-opt" onclick="pick(this)">a contact details</span><span class="pick-opt" onclick="pick(this)">b favourite places</span></span>
+        <span class="pick" id="pick-67"><span class="pick-opt" onclick="pick(this)">a contact details</span><span class="pick-opt" onclick="pick(this)">b favourite places</span></span>
       </li>
       <li>In the bio/interests, you write about:<br>
-        <span class="pick"><span class="pick-opt" onclick="pick(this)">a your address</span><span class="pick-opt" onclick="pick(this)">b your life</span></span>
+        <span class="pick" id="pick-68"><span class="pick-opt" onclick="pick(this)">a your address</span><span class="pick-opt" onclick="pick(this)">b your life</span></span>
       </li>
     </ol>
     <div class="ex-actions">
