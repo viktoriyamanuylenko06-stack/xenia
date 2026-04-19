@@ -1,60 +1,29 @@
 <!DOCTYPE html>
 <!--
 ═══════════════════════════════════════════════════════════════
-XENIA PORTAL — FIX PATCH v2
-  (включает фиксы сохранения + автоматическую вставку
-   словаря Unit 1 вместо textarea #vocab-u1)
+XENIA PORTAL — FIX PATCH
 ═══════════════════════════════════════════════════════════════
 
 HOW TO USE:
-1. Открой исходный HTML-файл в редакторе.
-2. Найди ПОСЛЕДНИЙ </script> в конце файла.
-3. Прямо перед ним вставь блок ниже (style + script).
-4. Сохрани. Обнови страницу.
+1. Open your original HTML file in a text editor
+2. Find the LAST </script> tag (near the end of file)
+3. Just BEFORE that </script>, paste the code below
+4. Save the file
 
-Словарь появится в Vocabulary → Unit 1 автоматически.
-Textarea #vocab-u1 будет скрыта (но останется в DOM —
-старые сохранения не потеряются).
+That's it. The patch overrides the broken functions without touching anything else.
 
 ═══════════════════════════════════════════════════════════════
 -->
 
-<style>
-/* ─── стили для блока словаря (из vocabulary_block_unit1.html) ─── */
-.vbox{background:var(--paper,#ede8dc);border:1px solid var(--border,rgba(26,20,16,.09));border-radius:6px;padding:1rem 1.2rem;margin-bottom:1rem;}
-.vbox h3{font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:700;color:var(--ink,#1a1410);margin:0 0 .6rem;}
-.vbox h3 .emo{margin-right:.4rem;}
-.vbox-rule{font-size:.78rem;color:var(--muted,#7a6e64);font-style:italic;margin-bottom:.7rem;line-height:1.55;padding:.4rem .7rem;background:rgba(200,113,90,.06);border-left:3px solid var(--rose,#c8715a);border-radius:2px;}
-.vbox-rule b{color:var(--ink,#1a1410);font-style:normal;}
-.vtable{width:100%;border-collapse:collapse;font-size:.82rem;}
-.vtable th{text-align:left;font-size:.64rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted,#7a6e64);padding:.35rem .55rem;border-bottom:1.5px solid var(--border,rgba(26,20,16,.09));font-weight:700;}
-.vtable td{padding:.32rem .55rem;border-bottom:1px solid rgba(26,20,16,.05);vertical-align:top;line-height:1.45;}
-.vtable tr:last-child td{border-bottom:none;}
-.vtable td:first-child{font-weight:500;color:var(--ink,#1a1410);width:30%;}
-.vtable td:nth-child(2){color:#4a3e34;}
-.vtable.three td:first-child{width:25%;}
-.vtable.three td:nth-child(2){width:30%;color:var(--rose,#c8715a);font-weight:500;}
-.vtable.three td:nth-child(3){color:#4a3e34;}
-.vbox-note{background:rgba(122,158,135,.1);border-left:3px solid var(--sage,#7a9e87);border-radius:2px;padding:.55rem .8rem;margin-top:.7rem;font-size:.78rem;line-height:1.6;}
-.vbox-note b{color:#3a6e50;}
-.vbox-note ul{margin:.35rem 0 0 1.1rem;padding:0;}
-.vbox-note li{margin:.15rem 0;}
-.vbox-grammar{background:rgba(201,168,76,.1);border-left:3px solid var(--gold,#c9a84c);border-radius:2px;padding:.55rem .8rem;margin-top:.7rem;font-size:.8rem;line-height:1.7;}
-.vbox-grammar b{color:#8a7028;}
-</style>
-
 <script>
 // ═══════════════════════════════════════════════════════════════
-// PATCH v2 — фиксы сохранения + автовставка словаря Unit 1
+// PATCH v1 — fix saving for all answer types
+// Applies on top of existing code. Overrides broken functions.
 // ═══════════════════════════════════════════════════════════════
 (function(){
   'use strict';
 
-  // ────────────────────────────────────────────────────────────
-  // PART A. Фиксы saveAll / collectState / applyState
-  // (идентичны патчу v1)
-  // ────────────────────────────────────────────────────────────
-
+  // ── Build a stable key for any form element (works even without id) ──
   function elementKey(el){
     if(el.id) return 'id:' + el.id;
     const path = [];
@@ -72,6 +41,7 @@ Textarea #vocab-u1 будет скрыта (но останется в DOM —
     return 'p:' + path.join('>');
   }
 
+  // ── Override collectState ──
   window.collectState = function(){
     const state = {};
     document.querySelectorAll(
@@ -107,6 +77,7 @@ Textarea #vocab-u1 будет скрыта (но останется в DOM —
     return state;
   };
 
+  // ── Override applyState ──
   window.applyState = function(state){
     if(!state) return;
     const focused = document.activeElement;
@@ -163,6 +134,7 @@ Textarea #vocab-u1 будет скрыта (но останется в DOM —
     });
   };
 
+  // ── Override saveAll (fixed flag logic) ──
   let _saveTimer = null;
   window.saveAll = function(){
     clearTimeout(_saveTimer);
@@ -180,8 +152,11 @@ Textarea #vocab-u1 будет скрыта (но останется в DOM —
     }, 600);
   };
 
+  // ── Patch the Firebase listener once _dbRef is ready ──
+  // Replace the echo-detection flag with a timestamp
   function patchFirebaseListener(){
     if(!window._dbRef){ setTimeout(patchFirebaseListener, 300); return; }
+    // Remove old listener and install a new one
     window._dbRef.off('value');
     window._dbRef.on('value', snap => {
       const s = snap.val();
@@ -194,216 +169,8 @@ Textarea #vocab-u1 будет скрыта (но останется в DOM —
   }
   patchFirebaseListener();
 
-  // ────────────────────────────────────────────────────────────
-  // PART B. Автовставка словаря Unit 1
-  // Ищем <textarea id="vocab-u1"> и вставляем перед ней HTML-блок.
-  // Саму textarea прячем (не удаляем, чтобы сохранения не терялись).
-  // ────────────────────────────────────────────────────────────
-
-  const VOCAB_U1_HTML = `
-<!-- ═══ JOBS ═══ -->
-<div class="vbox">
-  <h3><span class="emo">📋</span>Jobs / Профессии</h3>
-  <div class="vbox-rule"><b>Rule:</b> She is <b>a</b> doctor. / He is <b>an</b> artist. — <b>a</b> перед согласной, <b>an</b> перед гласной.</div>
-  <table class="vtable">
-    <thead><tr><th>English</th><th>Русский</th></tr></thead>
-    <tbody>
-      <tr><td>artist</td><td>художник</td></tr>
-      <tr><td>bus driver</td><td>водитель автобуса</td></tr>
-      <tr><td>taxi driver</td><td>водитель такси</td></tr>
-      <tr><td>doctor</td><td>врач</td></tr>
-      <tr><td>engineer</td><td>инженер</td></tr>
-      <tr><td>farmer</td><td>фермер</td></tr>
-      <tr><td>manager</td><td>управляющий</td></tr>
-      <tr><td>nurse</td><td>медсестра / медбрат</td></tr>
-      <tr><td>office worker</td><td>офисный работник</td></tr>
-      <tr><td>pilot</td><td>пилот</td></tr>
-      <tr><td>police officer</td><td>полицейский</td></tr>
-      <tr><td>politician</td><td>политик</td></tr>
-      <tr><td>receptionist</td><td>администратор</td></tr>
-      <tr><td>scientist</td><td>учёный</td></tr>
-      <tr><td>shop assistant</td><td>продавец-консультант</td></tr>
-      <tr><td>singer</td><td>певец / певица</td></tr>
-      <tr><td>soldier</td><td>солдат</td></tr>
-      <tr><td>student</td><td>студент</td></tr>
-      <tr><td>teacher</td><td>учитель</td></tr>
-      <tr><td>tennis player</td><td>теннисист</td></tr>
-      <tr><td>tour guide</td><td>гид</td></tr>
-      <tr><td>waiter / waitress</td><td>официант / официантка</td></tr>
-      <tr><td>writer</td><td>писатель</td></tr>
-      <tr><td>lawyer</td><td>юрист</td></tr>
-      <tr><td>actor</td><td>актёр</td></tr>
-      <tr><td>digital designer</td><td>цифровой дизайнер</td></tr>
-    </tbody>
-  </table>
-</div>
-
-<!-- ═══ COUNTRIES ═══ -->
-<div class="vbox">
-  <h3><span class="emo">🌍</span>Countries / Nationalities / Languages</h3>
-  <div class="vbox-rule">
-    She is <b>Italian</b>. <em>(nationality — прилагательное)</em><br>
-    She is from <b>Italy</b>. <em>(country — существительное)</em><br>
-    She speaks <b>Italian</b>. <em>(language — существительное)</em>
-  </div>
-  <table class="vtable three">
-    <thead><tr><th>Country</th><th>Nationality</th><th>Language</th></tr></thead>
-    <tbody>
-      <tr><td>Argentina</td><td>Argentinian</td><td>Spanish</td></tr>
-      <tr><td>Australia</td><td>Australian</td><td>English</td></tr>
-      <tr><td>Brazil</td><td>Brazilian</td><td>Portuguese</td></tr>
-      <tr><td>Canada</td><td>Canadian</td><td>English / French</td></tr>
-      <tr><td>China</td><td>Chinese</td><td>Chinese (Mandarin)</td></tr>
-      <tr><td>Czech Republic</td><td>Czech</td><td>Czech</td></tr>
-      <tr><td>England / the UK</td><td>British</td><td>English</td></tr>
-      <tr><td>France</td><td>French</td><td>French</td></tr>
-      <tr><td>Germany</td><td>German</td><td>German</td></tr>
-      <tr><td>Greece</td><td>Greek</td><td>Greek</td></tr>
-      <tr><td>Iran</td><td>Iranian</td><td>Persian (Farsi)</td></tr>
-      <tr><td>Italy</td><td>Italian</td><td>Italian</td></tr>
-      <tr><td>Japan</td><td>Japanese</td><td>Japanese</td></tr>
-      <tr><td>Poland</td><td>Polish</td><td>Polish</td></tr>
-      <tr><td>Russia</td><td>Russian</td><td>Russian</td></tr>
-      <tr><td>Spain</td><td>Spanish</td><td>Spanish</td></tr>
-      <tr><td>Turkey</td><td>Turkish</td><td>Turkish</td></tr>
-      <tr><td>The USA</td><td>American</td><td>English</td></tr>
-    </tbody>
-  </table>
-  <div class="vbox-note">
-    <b>💡 Notice:</b> часто nationality = language, но не всегда:
-    <ul>
-      <li>Brazil → Brazilian, но язык — <b>Portuguese</b></li>
-      <li>Argentina → Argentinian, но язык — <b>Spanish</b></li>
-      <li>Australia / Canada / USA / UK — все говорят по-<b>English</b></li>
-      <li>Iran → Iranian, но язык — <b>Persian (Farsi)</b></li>
-    </ul>
-  </div>
-</div>
-
-<!-- ═══ VERB PHRASES ═══ -->
-<div class="vbox">
-  <h3><span class="emo">🗣</span>Common Verb Phrases / Глагольные фразы</h3>
-  <table class="vtable">
-    <thead><tr><th>Verb</th><th>Collocations</th></tr></thead>
-    <tbody>
-      <tr><td>work</td><td>in a theatre / for a company / from home / in the lab</td></tr>
-      <tr><td>get up</td><td>early / at 11 / late / at 7 a.m.</td></tr>
-      <tr><td>live</td><td>in a village / with friends / alone</td></tr>
-      <tr><td>have</td><td>a car / a lot of money / two sisters / breakfast / lunch / dinner / a shower / a coffee / a shave / a bath / pizza for dinner</td></tr>
-      <tr><td>study</td><td>Italian / hard / every day / penguins</td></tr>
-      <tr><td>go</td><td>out a lot / to bed late / running / shopping / home early / to Italian classes</td></tr>
-      <tr><td>teach</td><td>students / at a university / English</td></tr>
-      <tr><td>play</td><td>the guitar / in a band / tennis</td></tr>
-      <tr><td>take</td><td>photos / a shower / the dog for a walk</td></tr>
-      <tr><td>make</td><td>dinner</td></tr>
-      <tr><td>do</td><td>the housework</td></tr>
-      <tr><td>start / finish</td><td>work at 8.30 / at 6.30</td></tr>
-      <tr><td>get</td><td>dressed / home late / to work</td></tr>
-      <tr><td>put on</td><td>make-up</td></tr>
-      <tr><td>check</td><td>emails</td></tr>
-      <tr><td>walk</td><td>to work</td></tr>
-      <tr><td>sleep</td><td>for eight hours</td></tr>
-      <tr><td>see</td><td>friends</td></tr>
-      <tr><td>wake up</td><td>at 7.00</td></tr>
-      <tr><td>visit</td><td>different islands</td></tr>
-      <tr><td>write</td><td>emails</td></tr>
-      <tr><td>relax</td><td>—</td></tr>
-      <tr><td>read</td><td>a book</td></tr>
-    </tbody>
-  </table>
-</div>
-
-<!-- ═══ LIKE / WOULD LIKE ═══ -->
-<div class="vbox">
-  <h3><span class="emo">❤️</span>like / love / enjoy / hate &nbsp;vs.&nbsp; would like</h3>
-
-  <div class="vbox-rule">
-    <b>1. like / love / enjoy / hate / don't like</b> + <b>verb-ing</b> — нравится / не нравится (в общем, в принципе)
-  </div>
-  <table class="vtable">
-    <tbody>
-      <tr><td>I <b>like reading</b> books.</td><td>Я люблю читать книги.</td></tr>
-      <tr><td>She <b>loves dancing</b>.</td><td>Она обожает танцевать.</td></tr>
-      <tr><td>We <b>enjoy travelling</b>.</td><td>Мы любим путешествовать.</td></tr>
-      <tr><td>They <b>hate waiting</b>.</td><td>Они ненавидят ждать.</td></tr>
-      <tr><td>I <b>don't like cooking</b>.</td><td>Я не люблю готовить.</td></tr>
-    </tbody>
-  </table>
-
-  <div class="vbox-rule" style="margin-top:.8rem">
-    <b>2. would like ('d like)</b> + <b>to + verb</b> — хотел(а) бы (сейчас / в будущем, вежливо)
-  </div>
-  <table class="vtable">
-    <tbody>
-      <tr><td>I <b>would like to travel</b> to Japan.</td><td>Я хотел(а) бы поехать в Японию.</td></tr>
-      <tr><td>She <b>'d like to be</b> a doctor.</td><td>Она хотела бы стать врачом.</td></tr>
-      <tr><td><b>Would</b> you <b>like to have</b> a coffee?</td><td>Хотите выпить кофе?</td></tr>
-      <tr><td>We <b>'d like to go</b> home.</td><td>Нам бы хотелось пойти домой.</td></tr>
-    </tbody>
-  </table>
-
-  <div class="vbox-grammar">
-    <b>⚡ Главная разница:</b><br>
-    <b>I like coffee.</b> — Я люблю кофе <em>(всегда, в целом)</em><br>
-    <b>I'd like a coffee.</b> — Я бы хотел(а) кофе <em>(сейчас)</em>
-  </div>
-
-  <div class="vbox-note">
-    <b>🔻 Typical mistakes:</b>
-    <ul>
-      <li>❌ I <s>would like travelling</s>. → ✅ I <b>would like to travel</b>.</li>
-      <li>❌ Do you <s>like to dance</s>? → ✅ Do you <b>like dancing</b>?</li>
-      <li>❌ She <s>enjoys to read</s>. → ✅ She <b>enjoys reading</b>.</li>
-    </ul>
-  </div>
-</div>
-
-<!-- ═══ TIME SEQUENCERS ═══ -->
-<div class="vbox">
-  <h3><span class="emo">🔑</span>Time sequencers / Связки во времени</h3>
-  <table class="vtable">
-    <tbody>
-      <tr><td>first</td><td>сначала</td></tr>
-      <tr><td>then</td><td>потом</td></tr>
-      <tr><td>after that</td><td>после этого</td></tr>
-    </tbody>
-  </table>
-</div>
-`;
-
-  function injectVocabU1(){
-    const ta = document.getElementById('vocab-u1');
-    if(!ta){ return false; }
-
-    // Если уже вставили — выходим
-    if(document.getElementById('vocab-u1-block')) return true;
-
-    // Создаём контейнер для словаря
-    const wrap = document.createElement('div');
-    wrap.id = 'vocab-u1-block';
-    wrap.innerHTML = VOCAB_U1_HTML;
-
-    // Вставляем ПЕРЕД textarea
-    ta.parentNode.insertBefore(wrap, ta);
-
-    // Прячем textarea (не удаляем — чтобы сохранения/код не сломались)
-    ta.style.display = 'none';
-
-    console.log('[Xenia patch] Vocab Unit 1 injected.');
-    return true;
-  }
-
-  // Пытаемся вставить сразу; если DOM ещё не готов — ждём
-  if(!injectVocabU1()){
-    document.addEventListener('DOMContentLoaded', injectVocabU1);
-    // страховка на случай динамической вставки textarea
-    setTimeout(injectVocabU1, 800);
-    setTimeout(injectVocabU1, 2000);
-  }
-
-  // ────────────────────────────────────────────────────────────
-  // PART C. Перезагрузка состояния из localStorage с НОВЫМ applyState
-  // ────────────────────────────────────────────────────────────
+  // ── Re-load from localStorage with the NEW applyState ──
+  // (the page may have loaded with the old applyState skipping most fields)
   setTimeout(() => {
     try {
       const raw = localStorage.getItem('xenia_portal_v1');
@@ -411,6 +178,6 @@ Textarea #vocab-u1 будет скрыта (но останется в DOM —
     } catch(e){ console.error('[Xenia patch] reload failed', e); }
   }, 500);
 
-  console.log('[Xenia patch v2] Loaded. collectState/applyState/saveAll overridden + vocab-u1 injected.');
+  console.log('[Xenia patch] Loaded. collectState/applyState/saveAll overridden.');
 })();
 </script>
