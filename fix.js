@@ -1,23 +1,23 @@
 // ═══════════════════════════════════════════════════════════════
-// XENIA PORTAL — FIX PATCH v1
-// ═══════════════════════════════════════════════════════════════
-// Fixes saving of answers for:
-//   • text gaps without id
-//   • pick (multiple choice) groups without id
-//   • True/False rows (none have id in the original)
-//   • checkboxes, homework items, accordion state
-// Also fixes the Firebase echo-detection flag bug.
-//
-// How to use: put this file next to your HTML file, then add
-//   <script src="fix.js"></script>
-// right before </body> in the HTML.
+// XENIA PORTAL — FIX PATCH v2
+// v2 fixes Firebase "invalid key" error (no . # $ / [ ] allowed)
 // ═══════════════════════════════════════════════════════════════
 
 (function(){
   'use strict';
 
+  // Sanitize forbidden Firebase characters: . # $ / [ ]
+  function safe(s){
+    return s.replace(/\./g, '_dot_')
+            .replace(/#/g, '_h_')
+            .replace(/\$/g, '_s_')
+            .replace(/\//g, '_sl_')
+            .replace(/\[/g, '_bo_')
+            .replace(/\]/g, '_bc_');
+  }
+
   function elementKey(el){
-    if(el.id) return 'id:' + el.id;
+    if(el.id) return 'id-' + safe(el.id);
     var path = [];
     var cur = el;
     while(cur && cur !== document.body){
@@ -27,11 +27,12 @@
         return c.tagName === cur.tagName && c.className === cur.className;
       });
       var idx = sameTag.indexOf(cur);
-      path.unshift(cur.tagName + '.' + (cur.className || '') + '[' + idx + ']');
-      if(parent.id){ path.unshift('#' + parent.id); break; }
+      var cls = (cur.className || '').replace(/\s+/g, '-');
+      path.unshift(cur.tagName + '-' + cls + '-' + idx);
+      if(parent.id){ path.unshift('par-' + safe(parent.id)); break; }
       cur = parent;
     }
-    return 'p:' + path.join('>');
+    return safe('p-' + path.join('_'));
   }
 
   window.collectState = function(){
@@ -59,11 +60,11 @@
       var listKey = elementKey(list);
       list.querySelectorAll('li').forEach(function(li, idx){
         var chk = li.querySelector('.hw-chk');
-        if(chk && chk.classList.contains('done')) state[listKey + ':hw:' + idx] = true;
+        if(chk && chk.classList.contains('done')) state[listKey + '-hw-' + idx] = true;
       });
     });
     document.querySelectorAll('.unit-item, .lesson-accordion, .global-notes-wrap').forEach(function(el){
-      if(el.classList.contains('open')) state['open:' + elementKey(el)] = true;
+      if(el.classList.contains('open')) state['open-' + elementKey(el)] = true;
     });
     return state;
   };
@@ -111,7 +112,7 @@
       list.querySelectorAll('li').forEach(function(li, idx){
         var chk = li.querySelector('.hw-chk');
         var txt = li.querySelector('.hw-txt');
-        if(chk && state[listKey + ':hw:' + idx] === true){
+        if(chk && state[listKey + '-hw-' + idx] === true){
           chk.classList.add('done'); chk.textContent = '\u2713';
           if(txt) txt.classList.add('done');
         }
@@ -119,7 +120,7 @@
     });
     document.querySelectorAll('.unit-item, .lesson-accordion, .global-notes-wrap').forEach(function(el){
       var k = elementKey(el);
-      if(state['open:' + k] === true) el.classList.add('open');
+      if(state['open-' + k] === true) el.classList.add('open');
     });
   };
 
@@ -133,7 +134,10 @@
         window._lastLocalSave = Date.now();
         window._dbRef.set(state)
           .then(function(){ if(window.showSynced) window.showSynced('\u2601\ufe0f Saved'); })
-          .catch(function(){ if(window.showSynced) window.showSynced('\u26a0\ufe0f Offline'); });
+          .catch(function(err){
+            console.error('[Xenia patch] Firebase save failed:', err);
+            if(window.showSynced) window.showSynced('\u26a0\ufe0f Offline');
+          });
       } else {
         if(window.showSynced) window.showSynced('\ud83d\udcbe Saved locally');
       }
@@ -150,7 +154,7 @@
       window.applyState(s);
       if(window.showSynced) window.showSynced('\ud83d\udd04 Synced');
     });
-    console.log('[Xenia patch] Firebase listener re-bound.');
+    console.log('[Xenia patch v2] Firebase listener re-bound.');
   }
 
   function init(){
@@ -161,7 +165,7 @@
         if(raw) window.applyState(JSON.parse(raw));
       } catch(e){ console.error('[Xenia patch] reload failed', e); }
     }, 500);
-    console.log('[Xenia patch] Loaded. collectState/applyState/saveAll overridden.');
+    console.log('[Xenia patch v2] Loaded. collectState/applyState/saveAll overridden.');
   }
 
   if(document.readyState === 'loading'){
